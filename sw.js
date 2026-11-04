@@ -1,7 +1,8 @@
-const CACHE_NAME = 'mensfire-v5';
+const CACHE_NAME = 'mensfire-v3';
 const ASSETS = [
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './icon.svg'
 ];
 
 self.addEventListener('install', (event) => {
