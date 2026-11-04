@@ -2,7 +2,7 @@ const CACHE_NAME = 'mensfire-v1';
 const ASSETS = [
   './index.html',
   './manifest.json',
-  './icon.svg'
+  'https://cdn-icons-png.flaticon.com/512/3141/3141124.png'
 ];
 
 self.addEventListener('install', (event) => {
