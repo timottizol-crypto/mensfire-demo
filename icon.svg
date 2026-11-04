@@ -1,10 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <rect width="512" height="512" fill="#0a0a0a"/>
-  <g transform="translate(128, 128) scale(10.6)" fill="none" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-    <circle cx="6" cy="6" r="3"></circle>
-    <circle cx="6" cy="18" r="3"></circle>
-    <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
-    <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
-    <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" fill="#0a0a0a"/>
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F3E5AB"/>
+      <stop offset="50%" stop-color="#D4AF37"/>
+      <stop offset="100%" stop-color="#B5952F"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(5, 5)">
+    <path d="M 25 75 C 20 80, 15 85, 10 85 C 5 85, 0 80, 0 75 C 0 70, 5 65, 10 65 C 15 65, 20 70, 25 75 Z" fill="url(#goldGrad)"/>
+    <path d="M 75 75 C 80 80, 85 85, 90 85 C 95 85, 100 80, 100 75 C 100 70, 95 65, 90 65 C 85 65, 80 70, 75 75 Z" fill="url(#goldGrad)"/>
+    <path d="M 25 75 L 50 50 L 85 15 C 90 10, 95 15, 90 20 L 55 55 L 30 80 Z" fill="url(#goldGrad)"/>
+    <path d="M 75 75 L 50 50 L 15 15 C 10 10, 5 15, 10 20 L 45 55 L 70 80 Z" fill="url(#goldGrad)"/>
+    <circle cx="50" cy="50" r="6" fill="#0a0a0a" stroke="url(#goldGrad)" stroke-width="3"/>
   </g>
 </svg>

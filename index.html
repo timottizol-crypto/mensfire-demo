@@ -22,23 +22,25 @@
             --font-main: 'Montserrat', sans-serif;
             --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
             --smooth: cubic-bezier(0.25, 0.8, 0.25, 1);
-            /* Переменные для стекла */
-            --glass-bg: rgba(30, 30, 30, 0.65);
+            
+            --glass-bg: rgba(25, 25, 25, 0.65);
             --glass-border: rgba(255, 255, 255, 0.12);
-            --glass-blur: blur(25px);
+            --glass-blur: blur(30px) saturate(180%);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); -webkit-tap-highlight-color: transparent; }
         body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; width: 100vw; overflow: hidden; }
 
-        /* ЭТАП 1: ПРОЛЕТ СКВОЗЬ НОЖНИЦЫ */
+        /* ЭТАП 1: ПРОЛЕТ СКВОЗЬ ЛЕЗВИЯ НОЖНИЦ */
         #preSplash {
             position: fixed; inset: 0; background: #000; z-index: 100000;
             display: flex; justify-content: center; align-items: center;
         }
         .pre-splash-icon {
-            width: 120px; height: 120px; color: var(--gold);
-            animation: zoomThroughIcon 1.5s cubic-bezier(0.7, 0, 0.3, 1) forwards;
-            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.8));
+            width: 160px; height: 160px;
+            /* Центр открытых лезвий */
+            transform-origin: 50% 30%; 
+            animation: zoomThroughIcon 1.8s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+            filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.7));
         }
         @keyframes zoomThroughIcon {
             0% { transform: scale(1); opacity: 1; }
@@ -88,10 +90,8 @@
         .sl-3 { animation: shootLeft 1.2s var(--smooth) 0.8s forwards; }
 
         .splash-greeting-oval {
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            background: rgba(212, 175, 55, 0.05);
-            padding: 12px 30px; border-radius: 50px;
-            font-size: 16px; color: var(--text-main); text-align: center;
+            border: 1px solid rgba(212, 175, 55, 0.5); background: rgba(212, 175, 55, 0.05);
+            padding: 12px 30px; border-radius: 50px; font-size: 16px; color: var(--text-main); text-align: center;
             box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
             opacity: 0; transform: translateY(20px) scale(0.9);
             animation: ovalAppear 0.8s var(--spring) 1s forwards;
@@ -111,10 +111,8 @@
         
         .app-header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px; 
-            background: rgba(10, 10, 10, 0.65); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            position: absolute; top: 0; left: 0; width: 100%; z-index: 100;
-            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 20px; background: rgba(10, 10, 10, 0.65); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            position: absolute; top: 0; left: 0; width: 100%; z-index: 100; border-bottom: 1px solid var(--glass-border);
         }
         .app-header .logo { font-size: 18px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
         .app-header .logo svg { width: 20px; height: 20px; }
@@ -122,154 +120,122 @@
 
         .view {
             display: none; flex-direction: column; flex-grow: 1;
-            padding: 75px 20px 90px 20px;
-            overflow-y: auto; -webkit-overflow-scrolling: touch;
-            background: var(--bg-dark);
+            padding: 75px 20px 90px 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--bg-dark);
         }
-        .view.active { display: flex; animation: viewSlideIn 0.4s var(--spring); }
-        @keyframes viewSlideIn { 
-            from { opacity: 0; transform: translateX(20px); } 
-            to { opacity: 1; transform: translateX(0); } 
-        }
+        .view.active { display: flex; animation: viewFadeIn 0.3s var(--smooth); }
+        @keyframes viewFadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .bottom-nav {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 70px;
-            background: rgba(21, 21, 21, 0.65); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border-top: 1px solid var(--glass-border);
-            display: flex; justify-content: space-around; align-items: center; z-index: 100;
-            padding-bottom: env(safe-area-inset-bottom);
-        }
-        .nav-item {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--text-muted); font-size: 10px; font-weight: 600; cursor: pointer;
-            transition: all 0.3s var(--smooth); width: 33%; height: 100%;
-        }
-        .nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; fill: currentColor; transition: transform 0.3s var(--spring); }
-        .nav-item.active { color: var(--gold); }
-        .nav-item.active svg { transform: translateY(-3px) scale(1.1); }
+        /* --- ГЛАВНЫЙ ЭКРАН (HOME) --- */
+        .home-greeting h1 { font-size: 28px; margin-bottom: 5px; }
+        .home-greeting p { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
         
-        .nav-item-center {
-            position: relative; top: -15px; width: 60px; height: 60px;
-            background: var(--gold); border-radius: 50%; color: #000;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
-            transition: all 0.2s var(--spring);
+        .countdown-card { 
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(30, 30, 30, 0.8) 100%); 
+            backdrop-filter: var(--glass-blur); border: 1px solid var(--gold); border-radius: 24px; padding: 25px;
+            position: relative; overflow: hidden; margin-bottom: 25px;
         }
-        .nav-item-center:active { transform: scale(0.85); }
-        .nav-item-center svg { width: 28px; height: 28px; margin-bottom: 0; }
+        .countdown-card::before {
+            content: 'Ближайшая запись'; position: absolute; top: -10px; left: 20px;
+            background: var(--gold); color: #000; font-size: 10px; font-weight: 800; padding: 4px 12px; border-radius: 10px; text-transform: uppercase;
+        }
+        .countdown-time { font-size: 32px; font-weight: 800; color: var(--gold); margin-bottom: 10px; line-height: 1.1; }
+        .countdown-details { font-size: 15px; margin-bottom: 15px; }
+        .countdown-details span { color: var(--text-muted); font-size: 13px; display: block; margin-top: 4px; }
+        
+        .promo-banner {
+            background: rgba(30, 30, 30, 0.6); border: 1px dashed #555; border-radius: 16px; padding: 20px;
+            text-align: center; margin-bottom: 25px;
+        }
+        .promo-banner h3 { color: var(--gold); font-size: 16px; margin-bottom: 5px; }
+        .promo-banner p { font-size: 12px; color: var(--text-muted); }
 
-        .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { 
-            flex: 1; background: var(--bg-card); border: 1px solid #333; color: var(--text-main); 
-            padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; 
-            transition: all 0.3s var(--smooth); 
+        .home-quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .qa-btn {
+            background: var(--bg-card); border: 1px solid #333; border-radius: 16px; padding: 20px 15px;
+            display: flex; flex-direction: column; align-items: center; text-align: center; transition: all 0.2s var(--smooth);
         }
-        .tab-btn:active { transform: scale(0.95); }
+        .qa-btn:active { transform: scale(0.95); background: rgba(255,255,255,0.05); }
+        .qa-btn svg { width: 28px; height: 28px; fill: var(--gold); margin-bottom: 10px; }
+        .qa-btn span { font-size: 13px; font-weight: 600; }
+
+        /* --- НИЖНЕЕ МЕНЮ (iOS STYLE) --- */
+        .bottom-nav {
+            position: absolute; bottom: 0; left: 0; width: 100%; height: 75px;
+            background: rgba(21, 21, 21, 0.7); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            border-top: 1px solid var(--glass-border);
+            display: flex; align-items: center; z-index: 100; padding-bottom: env(safe-area-inset-bottom);
+        }
+        
+        .nav-slider {
+            position: absolute; width: 33.33%; height: 55px; 
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px; top: 10px; left: 0;
+            transition: transform 0.4s var(--spring); z-index: 1;
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
+        }
+
+        .nav-item {
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            color: var(--text-muted); font-size: 10px; font-weight: 600; cursor: pointer;
+            z-index: 2; height: 100%; transition: color 0.3s;
+        }
+        .nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; fill: currentColor; transition: fill 0.3s; }
+        .nav-item.active { color: var(--gold); }
+
+        /* --- ОСТАЛЬНЫЕ СТИЛИ (Услуги, мастера, корзина) --- */
+        .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { flex: 1; background: var(--bg-card); border: 1px solid #333; color: var(--text-main); padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; transition: all 0.3s var(--smooth); }
         .tab-btn.active { background: var(--gold); border-color: var(--gold); color: #000; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
 
         .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .service-card { 
-            background: var(--bg-card); border-radius: 14px; padding: 15px; border: 1px solid #333; 
-            display: flex; flex-direction: column; justify-content: space-between; 
-            transition: all 0.2s var(--smooth); position: relative; 
-        }
+        .service-card { background: var(--bg-card); border-radius: 14px; padding: 15px; border: 1px solid #333; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s; position: relative; }
         .service-card:active { transform: scale(0.96); }
-        .service-card.selected { border-color: var(--gold); background: rgba(212, 175, 55, 0.08); box-shadow: 0 0 15px rgba(212, 175, 55, 0.1); }
+        .service-card.selected { border-color: var(--gold); background: rgba(212, 175, 55, 0.08); }
         .service-card h3 { font-size: 13px; margin-bottom: 5px; padding-right: 20px; line-height: 1.3; }
         .service-card .time { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
         .service-card .price { font-size: 15px; font-weight: 800; color: var(--gold); }
-        .service-card .checkbox { 
-            position: absolute; top: 15px; right: 15px; width: 18px; height: 18px; 
-            border-radius: 50%; border: 2px solid var(--text-muted); 
-            display: flex; justify-content: center; align-items: center; 
-            transition: all 0.3s var(--spring); 
-        }
-        .service-card.selected .checkbox { border-color: var(--gold); background: var(--gold); transform: scale(1.1); }
+        .service-card .checkbox { position: absolute; top: 15px; right: 15px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--text-muted); display: flex; justify-content: center; align-items: center; transition: all 0.3s var(--spring); }
+        .service-card.selected .checkbox { border-color: var(--gold); background: var(--gold); }
         .service-card.selected .checkbox::after { content: '✓'; color: #000; font-weight: bold; font-size: 10px; }
 
         .masters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-top: 15px; }
-        .master-card { 
-            background: var(--bg-card); border-radius: 14px; padding: 12px; border: 1px solid #333; 
-            text-align: center; transition: all 0.2s var(--smooth); 
-        }
+        .master-card { background: var(--bg-card); border-radius: 14px; padding: 12px; border: 1px solid #333; text-align: center; transition: all 0.2s; }
         .master-card:active { transform: scale(0.95); }
-        .master-card.selected { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.15); }
-        .master-img { 
-            width: 65px; height: 65px; border-radius: 50%; margin: 0 auto 10px; background: #333; 
-            border: 2px solid transparent; display: flex; align-items: center; justify-content: center; 
-            font-size: 28px; transition: all 0.3s var(--spring); 
-        }
-        .master-card.selected .master-img { border-color: var(--gold); transform: scale(1.05); }
+        .master-card.selected { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); }
+        .master-img { width: 65px; height: 65px; border-radius: 50%; margin: 0 auto 10px; background: #333; border: 2px solid transparent; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .master-card.selected .master-img { border-color: var(--gold); }
         .master-card h3 { font-size: 13px; margin-bottom: 2px; }
         .master-card p { font-size: 9px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* СТЕКЛЯННАЯ КОРЗИНА */
-        .drawer-overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.4); 
-            z-index: 1500; opacity: 0; visibility: hidden; transition: all 0.4s var(--smooth); 
-        }
+        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 1500; opacity: 0; visibility: hidden; transition: all 0.4s; }
         .drawer-overlay.active { opacity: 1; visibility: visible; }
-        .drawer { 
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 85vh; 
-            background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border-top: 1px solid var(--glass-border);
-            z-index: 1600; transform: translateY(100%); 
-            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
-            border-radius: 24px 24px 0 0; display: flex; flex-direction: column; 
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
-        }
+        .drawer { position: fixed; bottom: 0; left: 0; width: 100%; height: 85vh; background: var(--glass-bg); backdrop-filter: var(--glass-blur); z-index: 1600; transform: translateY(100%); transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1); border-radius: 24px 24px 0 0; display: flex; flex-direction: column; border-top: 1px solid var(--glass-border); }
         .drawer.active { transform: translateY(0); }
         .drawer-header { padding: 20px; border-bottom: 1px solid var(--glass-border); display: flex; justify-content: space-between; align-items: center; }
         .drawer-header h2 { font-size: 18px; }
-        .close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 28px; cursor: pointer; line-height: 1; transition: transform 0.2s var(--spring); }
-        .close-btn:active { transform: scale(0.8); }
+        .close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 28px; cursor: pointer; }
         .drawer-body { padding: 20px; flex-grow: 1; overflow-y: auto; }
         .drawer-section { margin-bottom: 25px; }
         .drawer-section h3 { font-size: 15px; margin-bottom: 12px; color: var(--gold); }
         .selected-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
-        
         .date-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .date-opt { 
-            min-width: 65px; padding: 10px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); 
-            border-radius: 12px; text-align: center; transition: all 0.2s var(--smooth); 
-        }
-        .date-opt:active { transform: scale(0.9); }
+        .date-opt { min-width: 65px; padding: 10px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 12px; text-align: center; }
         .date-opt.selected { border-color: var(--gold); background: var(--gold); color: #000; }
-        
         .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .time-opt { 
-            padding: 12px; text-align: center; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); 
-            border-radius: 10px; font-size: 13px; transition: all 0.2s var(--smooth); 
-        }
-        .time-opt:active { transform: scale(0.9); }
+        .time-opt { padding: 12px; text-align: center; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 10px; font-size: 13px; }
         .time-opt.selected { border-color: var(--gold); background: var(--gold); color: #000; font-weight: bold; }
         .time-opt.disabled { opacity: 0.3; text-decoration: line-through; }
-        
-        .drawer-footer { padding: 20px; border-top: 1px solid var(--glass-border); background: rgba(15, 15, 15, 0.5); border-radius: 0 0 24px 24px; }
+        .drawer-footer { padding: 20px; border-top: 1px solid var(--glass-border); background: rgba(15,15,15,0.5); border-radius: 0 0 24px 24px; }
         .total-price { display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; margin-bottom: 15px; }
         .total-price span { color: var(--gold); }
-        .checkout-btn { 
-            width: 100%; padding: 16px; background: var(--gold); color: #000; border: none; 
-            border-radius: 14px; font-size: 16px; font-weight: 800; 
-            transition: all 0.2s var(--smooth); 
-        }
+        .checkout-btn { width: 100%; padding: 16px; background: var(--gold); color: #000; border: none; border-radius: 14px; font-size: 16px; font-weight: 800; }
         .checkout-btn:active { transform: scale(0.96); background: var(--gold-hover); }
 
         .profile-header { text-align: center; margin-bottom: 25px; }
-        .profile-avatar { 
-            width: 85px; height: 85px; border-radius: 50%; background: rgba(212, 175, 55, 0.1); 
-            border: 2px solid var(--gold); margin: 0 auto 15px; display: flex; justify-content: center; 
-            align-items: center; font-size: 35px; box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); 
-        }
+        .profile-avatar { width: 85px; height: 85px; border-radius: 50%; background: rgba(212, 175, 55, 0.1); border: 2px solid var(--gold); margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-size: 35px; }
         .profile-header h1 { font-size: 24px; }
         .profile-header p { color: var(--text-muted); font-size: 14px; }
-        
-        .status-block { 
-            background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px; 
-            display: flex; align-items: center; gap: 20px; margin-bottom: 25px; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-        }
+        .status-block { background: var(--glass-bg); backdrop-filter: var(--glass-blur); border: 1px solid var(--glass-border); border-radius: 20px; padding: 20px; display: flex; align-items: center; gap: 20px; margin-bottom: 25px; }
         .status-circle-container { position: relative; width: 75px; height: 75px; }
         .status-circle-container svg { width: 100%; height: 100%; transform: rotate(-90deg); }
         .status-circle-bg { fill: none; stroke: #333; stroke-width: 6; }
@@ -277,98 +243,75 @@
         .status-text-inner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 15px; font-weight: 800; color: var(--gold); }
         .status-level-name { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
         .status-hint { font-size: 12px; color: var(--text-muted); line-height: 1.3; }
-        .logout-btn { 
-            width: 100%; background: transparent; border: 1px solid rgba(255, 77, 77, 0.5); 
-            color: #ff4d4d; padding: 16px; border-radius: 14px; font-weight: bold; font-size: 15px; 
-            margin-top: 15px; transition: all 0.2s var(--smooth); 
-        }
-        .logout-btn:active { transform: scale(0.96); background: rgba(255,77,77,0.1); }
         
-        .next-visit-card { 
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(30, 30, 30, 0.6) 100%); 
-            backdrop-filter: var(--glass-blur);
-            border: 1px solid var(--gold); border-radius: 20px; padding: 25px 20px 20px; 
-            margin-bottom: 25px; position: relative; box-shadow: 0 10px 30px rgba(212,175,55,0.1); 
-        }
-        .next-visit-card::before { 
-            content: 'Ближайший визит'; position: absolute; top: -10px; left: 20px; 
-            background: var(--gold); color: #000; font-size: 10px; font-weight: 800; 
-            padding: 3px 12px; border-radius: 10px; text-transform: uppercase; letter-spacing: 1px; 
-        }
-        .next-visit-info { display: flex; flex-direction: column; gap: 12px; }
-        .nvi-block p { color: var(--text-muted); font-size: 11px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-        .nvi-block h3 { font-size: 17px; }
-        
-        .history-title { font-size: 16px; margin-bottom: 15px; color: var(--text-muted); font-weight: 600; }
-        .booking-list { display: flex; flex-direction: column; gap: 15px; }
-        .booking-card { 
-            background: var(--bg-card); padding: 18px; border-radius: 16px; 
-            border-left: 4px solid #333; transition: all 0.2s var(--smooth); 
-        }
-        .booking-card:hover { border-left-color: var(--gold); }
+        .booking-card { background: var(--bg-card); padding: 18px; border-radius: 16px; border-left: 4px solid #333; margin-bottom: 15px; }
         .bc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
         .bc-header h3 { font-size: 15px; }
         .bc-header p { font-size: 11px; color: var(--text-muted); }
         .bc-services { font-size: 13px; color: #ddd; margin-bottom: 12px; line-height: 1.4; }
         .bc-footer { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-muted); }
         .bc-price { font-size: 18px; font-weight: bold; color: var(--gold); }
-        .btn-cancel { 
-            background: transparent; border: 1px solid #555; color: #aaa; padding: 10px; 
-            border-radius: 10px; font-size: 12px; font-weight: 600; width: 100%; 
-            margin-top: 12px; transition: all 0.2s var(--smooth); 
-        }
-        .btn-cancel:active { transform: scale(0.97); background: rgba(255,255,255,0.05); }
+        .btn-cancel { background: transparent; border: 1px solid #555; color: #aaa; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; width: 100%; margin-top: 12px; }
 
-        /* СТЕКЛЯННЫЕ МОДАЛКИ */
-        .modal { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.4); 
-            z-index: 2000; display: flex; justify-content: center; align-items: center; 
-            opacity: 0; visibility: hidden; transition: all 0.3s var(--smooth); 
-        }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 2000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s; }
         .modal.active { opacity: 1; visibility: visible; }
-        .modal-content { 
-            background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
-            padding: 30px 25px; border-radius: 24px; width: 90%; 
-            max-width: 350px; text-align: center; border: 1px solid var(--glass-border); 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            transform: scale(0.85) translateY(20px); opacity: 0;
-            transition: all 0.4s var(--spring); 
-        }
-        .modal.active .modal-content { transform: scale(1) translateY(0); opacity: 1; }
-        
+        .modal-content { background: var(--glass-bg); backdrop-filter: var(--glass-blur); padding: 30px 25px; border-radius: 24px; width: 90%; max-width: 350px; text-align: center; border: 1px solid var(--glass-border); transform: scale(0.85); opacity: 0; transition: all 0.4s var(--spring); }
+        .modal.active .modal-content { transform: scale(1); opacity: 1; }
         .form-group { margin-bottom: 15px; text-align: left; }
         .form-group label { display: block; margin-bottom: 6px; font-size: 12px; color: var(--text-muted); }
-        .form-group input { 
-            width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); 
-            border-radius: 12px; color: #fff; font-size: 15px; outline: none; 
-            transition: border 0.3s var(--smooth); 
-        }
+        .form-group input { width: 100%; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-size: 15px; outline: none; }
         .form-group input:focus { border-color: var(--gold); }
-        
-        .toast-container { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; align-items: center; width: 100%; }
-        .toast { 
-            background: var(--glass-bg); backdrop-filter: var(--glass-blur);
-            padding: 14px 22px; border-radius: 12px; display: flex; align-items: center; gap: 10px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--gold); 
-            color: var(--text-main); font-weight: 600; font-size: 13px; pointer-events: auto; 
-            animation: toastSlideDown 0.4s var(--spring); 
+
+        /* Плашка установки PWA */
+        #installPWA {
+            position: fixed; bottom: 90px; left: 20px; right: 20px; background: rgba(212, 175, 55, 0.95);
+            padding: 15px 20px; border-radius: 16px; display: none; justify-content: space-between; align-items: center;
+            z-index: 1000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); color: #000; font-weight: 600;
         }
+        #installPWA button { background: #000; color: #fff; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; }
+        #iosInstallHint {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 99999;
+            display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;
+        }
+        .toast-container { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; align-items: center; width: 100%; }
+        .toast { background: var(--glass-bg); backdrop-filter: var(--glass-blur); padding: 14px 22px; border-radius: 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--gold); color: var(--text-main); font-weight: 600; font-size: 13px; pointer-events: auto; animation: toastSlideDown 0.4s var(--spring); }
         @keyframes toastSlideDown { from { transform: translateY(-20px) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Плашки установки -->
+    <div id="installPWA">
+        <span>Установить MENSFIRE?</span>
+        <button onclick="installApp()">Установить</button>
+    </div>
+    <div id="iosInstallHint">
+        <h2 style="color:var(--gold); margin-bottom: 20px;">Установите приложение</h2>
+        <p style="margin-bottom: 30px; line-height: 1.5;">Нажмите на кнопку <b>«Поделиться»</b> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle;"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg> в Safari и выберите <b>«На экран «Домой»»</b>.</p>
+        <button class="checkout-btn" onclick="document.getElementById('iosInstallHint').style.display='none'">Понятно</button>
+    </div>
+
+    <!-- ЭТАП 1: НОЖНИЦЫ -->
     <div id="preSplash">
-        <svg class="pre-splash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="6" cy="6" r="3"></circle>
-            <circle cx="6" cy="18" r="3"></circle>
-            <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
-            <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
-            <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+        <svg class="pre-splash-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#F3E5AB"/>
+                    <stop offset="50%" stop-color="#D4AF37"/>
+                    <stop offset="100%" stop-color="#B5952F"/>
+                </linearGradient>
+            </defs>
+            <!-- Детализированные лезвия -->
+            <path d="M 25 75 C 20 80, 15 85, 10 85 C 5 85, 0 80, 0 75 C 0 70, 5 65, 10 65 C 15 65, 20 70, 25 75 Z" fill="url(#goldGrad)"/>
+            <path d="M 75 75 C 80 80, 85 85, 90 85 C 95 85, 100 80, 100 75 C 100 70, 95 65, 90 65 C 85 65, 80 70, 75 75 Z" fill="url(#goldGrad)"/>
+            <path d="M 25 75 L 50 50 L 85 15 C 90 10, 95 15, 90 20 L 55 55 L 30 80 Z" fill="url(#goldGrad)"/>
+            <path d="M 75 75 L 50 50 L 15 15 C 10 10, 5 15, 10 20 L 45 55 L 70 80 Z" fill="url(#goldGrad)"/>
+            <circle cx="50" cy="50" r="6" fill="#0a0a0a" stroke="url(#goldGrad)" stroke-width="3"/>
         </svg>
     </div>
 
+    <!-- ЭТАП 2: ЗАГРУЗКА -->
     <div id="splashScreen">
         <div class="splash-content">
             <div class="splash-title-wrapper">
@@ -377,23 +320,49 @@
                 <div class="splash-line sl-3"></div>
                 <div class="splash-title">MENS<span>FIRE</span></div>
             </div>
-            <div class="splash-greeting-oval" id="splashGreeting">
-                Добро пожаловать
-            </div>
+            <div class="splash-greeting-oval" id="splashGreeting">Добро пожаловать</div>
         </div>
         <div class="splash-loader"><div class="splash-loader-bar"></div></div>
     </div>
 
+    <!-- ПРИЛОЖЕНИЕ -->
     <div id="appContainer">
         <div class="app-header">
             <div class="logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+                <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M 25 75 L 50 50 L 85 15 M 75 75 L 50 50 L 15 15" fill="none" stroke="var(--gold)" stroke-width="8" stroke-linecap="round"/></svg>
                 MENS<span>FIRE</span>
             </div>
             <div style="font-size: 13px; color: var(--gold); font-weight: 600; cursor: pointer;" onclick="openAuth()" id="headerAuthBtn">Войти</div>
         </div>
 
-        <div id="viewBook" class="view active">
+        <!-- ГЛАВНЫЙ ЭКРАН -->
+        <div id="viewHome" class="view active">
+            <div class="home-greeting">
+                <h1 id="homeGreetingText">Привет!</h1>
+                <p>Добро пожаловать в премиальный барбершоп</p>
+            </div>
+
+            <div id="homeNextVisit"></div>
+
+            <div class="promo-banner">
+                <h3>Приведи друга — получи скидку</h3>
+                <p>Приводите друзей и получайте 500 ₽ на следующий визит.</p>
+            </div>
+
+            <div class="home-quick-actions">
+                <div class="qa-btn" onclick="switchView('viewBook', 1)">
+                    <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                    <span>Записаться</span>
+                </div>
+                <div class="qa-btn" onclick="switchView('viewProfile', 2)">
+                    <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    <span>Мой профиль</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ЭКРАН ЗАПИСИ -->
+        <div id="viewBook" class="view">
             <h2 style="margin-bottom: 15px; font-size: 20px;">Записаться</h2>
             <div class="category-tabs">
                 <button class="tab-btn active" onclick="filterServices('top', this)">ТОП-БАРБЕР</button>
@@ -406,6 +375,7 @@
             <div class="masters-grid" id="mastersGrid"></div>
         </div>
 
+        <!-- ЛИЧНЫЙ КАБИНЕТ -->
         <div id="viewProfile" class="view">
             <div class="profile-header" id="profileHeader">
                 <div class="profile-avatar">👤</div>
@@ -427,32 +397,32 @@
                 </div>
             </div>
 
-            <button class="logout-btn" id="logoutBtn" style="display: none;" onclick="logout()">Выйти из аккаунта</button>
+            <h3 class="history-title" id="historyTitle" style="display: none; margin-bottom: 15px; color: #888;">История визитов</h3>
+            <div class="booking-list" id="historyContainer"></div>
+
+            <button class="logout-btn" id="logoutBtn" style="display: none; width: 100%; background: transparent; border: 1px solid rgba(255, 77, 77, 0.5); color: #ff4d4d; padding: 16px; border-radius: 14px; font-weight: bold; font-size: 15px; margin-top: 20px;" onclick="logout()">Выйти из аккаунта</button>
             <button class="checkout-btn" id="loginBtnProfile" onclick="openAuth()" style="margin-top: 15px;">Войти / Зарегистрироваться</button>
         </div>
 
-        <div id="viewBookings" class="view">
-            <h2 style="margin-bottom: 20px; font-size: 20px;">Мои записи</h2>
-            <div id="activeBookingContainer"></div>
-            <h3 class="history-title" id="historyTitle" style="display: none;">История визитов</h3>
-            <div class="booking-list" id="historyContainer"></div>
-        </div>
-
+        <!-- НИЖНЕЕ МЕНЮ -->
         <div class="bottom-nav">
-            <div class="nav-item" onclick="switchView('viewProfile', this)" id="navProfile">
-                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                Профиль
+            <div class="nav-slider" id="navSlider"></div>
+            <div class="nav-item active" onclick="switchView('viewHome', 0)">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                Главная
             </div>
-            <div class="nav-item nav-item-center" onclick="switchView('viewBook', this)" id="navBook">
+            <div class="nav-item" onclick="switchView('viewBook', 1)">
                 <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                Запись
             </div>
-            <div class="nav-item" onclick="switchView('viewBookings', this)" id="navBookings">
-                <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
-                Записи
+            <div class="nav-item" onclick="switchView('viewProfile', 2)">
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                Кабинет
             </div>
         </div>
     </div>
 
+    <!-- КОРЗИНА -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
     <div class="drawer" id="drawer">
         <div class="drawer-header">
@@ -460,18 +430,9 @@
             <button class="close-btn" onclick="closeDrawer()">&times;</button>
         </div>
         <div class="drawer-body">
-            <div class="drawer-section">
-                <h3>Выбранные услуги</h3>
-                <div id="selectedServicesList"></div>
-            </div>
-            <div class="drawer-section">
-                <h3>Дата</h3>
-                <div class="date-grid" id="dateOptions"></div>
-            </div>
-            <div class="drawer-section">
-                <h3>Время</h3>
-                <div class="time-grid" id="timeOptions"></div>
-            </div>
+            <div class="drawer-section"><h3>Выбранные услуги</h3><div id="selectedServicesList"></div></div>
+            <div class="drawer-section"><h3>Дата</h3><div class="date-grid" id="dateOptions"></div></div>
+            <div class="drawer-section"><h3>Время</h3><div class="time-grid" id="timeOptions"></div></div>
         </div>
         <div class="drawer-footer">
             <div class="total-price"><span>Итого:</span> <span id="totalPrice">0 ₽</span></div>
@@ -479,6 +440,7 @@
         </div>
     </div>
 
+    <!-- МОДАЛКИ -->
     <div class="modal" id="authModal">
         <div class="modal-content">
             <h2 style="margin-bottom: 15px; font-size: 22px;">Вход / Регистрация</h2>
@@ -494,14 +456,14 @@
         <div class="modal-content">
             <h2 style="margin-bottom: 10px; font-size: 22px;">Введите код</h2>
             <p style="font-size: 13px; margin-bottom: 20px; color: #888;">Демо-код: <b>1234</b></p>
-            <input type="text" id="smsCode" style="width: 100%; padding: 15px; background: rgba(0, 0, 0, 0.3); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-size: 24px; text-align: center; letter-spacing: 10px; margin-bottom: 20px; outline: none;" placeholder="0000" maxlength="4">
+            <input type="text" id="smsCode" style="width: 100%; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-size: 24px; text-align: center; letter-spacing: 10px; margin-bottom: 20px;" placeholder="0000" maxlength="4">
             <button class="checkout-btn" onclick="verifySms()">Подтвердить</button>
         </div>
     </div>
 
     <div class="modal" id="successModal">
         <div class="modal-content">
-            <div style="width: 70px; height: 70px; background: rgba(212,175,55,0.1); border-radius: 50%; margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; border: 2px solid var(--gold); animation: popIn 0.6s var(--spring);">
+            <div style="width: 70px; height: 70px; background: rgba(212,175,55,0.1); border-radius: 50%; margin: 0 auto 20px; display: flex; justify-content: center; align-items: center; border: 2px solid var(--gold);">
                 <svg viewBox="0 0 24 24" style="width: 35px; height: 35px; stroke: var(--gold); stroke-width: 3; fill: none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
             </div>
             <h2 style="margin-bottom: 15px; font-size: 22px;">Вы записаны!</h2>
@@ -514,12 +476,13 @@
         <div class="modal-content">
             <h2 style="margin-bottom: 20px; font-size: 20px;">Управление</h2>
             <button class="checkout-btn" style="margin-bottom: 10px;" onclick="rescheduleBooking()">Перенести</button>
-            <button class="logout-btn" style="margin-bottom: 15px;" onclick="confirmCancel()">Отменить</button>
+            <button style="width:100%; background:transparent; border:1px solid #ff4d4d; color:#ff4d4d; padding:15px; border-radius:12px; font-weight:bold;" onclick="confirmCancel()">Отменить</button>
             <button class="btn-cancel" onclick="closeActionModal()">Закрыть</button>
         </div>
     </div>
 
     <script>
+        // Данные
         const servicesData = {
             top: [
                 { id: 't1', title: 'Мужская стрижка', time: '45 мин', price: 1500, type: 'top' },
@@ -561,6 +524,11 @@
 
         const allTimeSlots = ['10:30', '11:00', '11:30', '12:00', '13:00', '13:30', '14:00', '15:00', '16:00', '17:30', '18:00', '19:00'];
         let mockBookedTimes = {};
+        let cart = [], selectedBarber = null, selectedDate = null, selectedTime = null;
+        let currentUser = JSON.parse(localStorage.getItem('menfire_user')) || null;
+        let rawBookings = JSON.parse(localStorage.getItem('menfire_bookings')) || [];
+        let bookings = rawBookings.filter(b => b && b.barber && b.appointmentDate && b.time);
+        let bookingToEdit = null;
 
         function initMockData() {
             const today = new Date().toLocaleDateString('ru-RU');
@@ -572,24 +540,13 @@
             };
         }
 
-        let cart = [];
-        let selectedBarber = null;
-        let selectedDate = null;
-        let selectedTime = null;
-        let currentUser = JSON.parse(localStorage.getItem('menfire_user')) || null;
-        let rawBookings = JSON.parse(localStorage.getItem('menfire_bookings')) || [];
-        let bookings = rawBookings.filter(b => b && b.barber && b.appointmentDate && b.time);
-        let bookingToEdit = null;
-
         window.addEventListener('DOMContentLoaded', () => {
             initMockData();
             
+            // Приветствие на сплэше
             const splashGreeting = document.getElementById('splashGreeting');
-            if (currentUser) {
-                splashGreeting.innerHTML = `Здравствуйте, <span>${currentUser.name}</span>!`;
-            } else {
-                splashGreeting.innerHTML = `Добро пожаловать в <span>MENSFIRE</span>`;
-            }
+            if (currentUser) splashGreeting.innerHTML = `Здравствуйте, <span>${currentUser.name}</span>!`;
+            else splashGreeting.innerHTML = `Добро пожаловать в <span>MENSFIRE</span>`;
             
             setTimeout(() => {
                 document.getElementById('preSplash').style.display = 'none';
@@ -603,17 +560,96 @@
                     renderServices('top');
                     renderMasters();
                     renderBookings();
+                    updateHomeUI(); 
                     
                     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
                 }, 3000);
-            }, 1500);
+            }, 1800);
         });
 
-        function switchView(viewId, navElement) {
+        // --- НАВИГАЦИЯ С ПЛАВНЫМ ПОЛЗУНКОМ ---
+        function switchView(viewId, index) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(navElement) navElement.classList.add('active');
+            
+            // Двигаем ползунок
+            const slider = document.getElementById('navSlider');
+            slider.style.transform = `translateX(${index * 100}%)`;
+            
+            // Меняем цвет иконок
+            document.querySelectorAll('.nav-item').forEach((n, i) => {
+                if (i === index) n.classList.add('active');
+                else n.classList.remove('active');
+            });
+
+            // Обновляем данные на главной при возврате
+            if (viewId === 'viewHome') updateHomeUI();
+            if (viewId === 'viewProfile') renderBookings();
+        }
+
+        function updateHomeUI() {
+            const greetingText = document.getElementById('homeGreetingText');
+            const nextVisitContainer = document.getElementById('homeNextVisit');
+            
+            // Приветствие
+            if (currentUser) {
+                const hour = new Date().getHours();
+                let timeGreet = "Добрый день";
+                if (hour < 12) timeGreet = "Доброе утро";
+                if (hour > 18) timeGreet = "Добрый вечер";
+                greetingText.innerHTML = `${timeGreet}, <span style="color:var(--gold)">${currentUser.name}</span>!`;
+            } else {
+                greetingText.innerText = "Добро пожаловать!";
+            }
+
+            // Ближайшая запись
+            if (!currentUser || bookings.length === 0) {
+                nextVisitContainer.innerHTML = `
+                    <div class="promo-banner" style="border-style:solid; border-color:var(--gold);">
+                        <h3>У вас пока нет записей</h3>
+                        <p>Самое время выбрать услугу и записаться.</p>
+                        <button class="checkout-btn" style="margin-top:15px;" onclick="switchView('viewBook', 1)">Записаться</button>
+                    </div>
+                `;
+                return;
+            }
+
+            const sorted = [...bookings].sort((a,b) => parseDate(a) - parseDate(b));
+            const next = sorted[0];
+            
+            // Вычисляем разницу во времени
+            const [d, m, y] = next.appointmentDate.split('.');
+            const [h, min] = next.time.split(':');
+            const bookingDate = new Date(y, m-1, d, h, min);
+            const now = new Date();
+            const diffMs = bookingDate - now;
+            
+            let timeText = "";
+            if (diffMs < 0) {
+                timeText = "Завершено";
+            } else {
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                const diffDays = Math.floor(diffHours / 24);
+                
+                if (diffDays === 0) {
+                    timeText = `Сегодня в ${next.time}`;
+                } else if (diffDays === 1) {
+                    timeText = `Завтра в ${next.time}`;
+                } else {
+                    timeText = `Через ${diffDays} дн.`;
+                }
+            }
+
+            nextVisitContainer.innerHTML = `
+                <div class="countdown-card">
+                    <div class="countdown-time">${timeText}</div>
+                    <div class="countdown-details">
+                        <b>${next.barber.name}</b> (${next.barber.role})
+                        <span>${next.services.map(s=>s.title).join(', ')}</span>
+                    </div>
+                    <button class="btn-cancel" onclick="openActionModal(${next.id})">Управление записью</button>
+                </div>
+            `;
         }
 
         function showToast(message, type = 'info') {
@@ -622,11 +658,7 @@
             toast.className = `toast ${type}`;
             toast.innerHTML = `<span>${type==='error'?'⚠️':type==='success'?'✅':'ℹ️'}</span><span>${message}</span>`;
             container.appendChild(toast);
-            setTimeout(() => { 
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(-10px)';
-                setTimeout(() => toast.remove(), 300); 
-            }, 3000);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
         function renderServices(category) {
@@ -700,9 +732,8 @@
             selectedBarber = barber;
             renderMasters();
             
-            if (cart.length > 0) {
-                openDrawer();
-            } else {
+            if (cart.length > 0) openDrawer();
+            else {
                 showToast(`Выберите услуги для ${barber.name}`, 'info');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
@@ -725,7 +756,6 @@
             document.getElementById('drawer').classList.add('active');
             document.getElementById('drawerOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
-            
             updateCartUI();
             renderDates();
             updateTimeOptions();
@@ -809,19 +839,17 @@
 
         function goToCabinetFromSuccess() {
             document.getElementById('successModal').classList.remove('active');
-            switchView('viewProfile', document.getElementById('navProfile'));
+            switchView('viewProfile', 2);
             updateAuthUI();
             renderBookings();
         }
         function closeSuccessAndGoHome() {
             document.getElementById('successModal').classList.remove('active');
-            switchView('viewBook', document.getElementById('navBook'));
+            switchView('viewHome', 0);
+            updateHomeUI();
         }
 
-        function openAuth() { 
-            document.getElementById('authModal').classList.add('active'); 
-            document.body.style.overflow = 'hidden';
-        }
+        function openAuth() { document.getElementById('authModal').classList.add('active'); document.body.style.overflow = 'hidden'; }
         function handleAuth(event) {
             event.preventDefault();
             document.getElementById('authModal').classList.remove('active');
@@ -850,11 +878,12 @@
             } else {
                 document.getElementById('profileHeader').innerHTML = `<div class="profile-avatar">👤</div><h1>Гость</h1><p>Войдите, чтобы видеть записи</p>`;
             }
+            updateHomeUI(); // Обновляем главную при смене пользователя
         }
         function logout() {
             localStorage.removeItem('menfire_user'); currentUser = null;
             updateAuthUI(); renderBookings();
-            switchView('viewBook', document.getElementById('navBook'));
+            switchView('viewHome', 0);
             showToast('Вы вышли', 'info');
         }
 
@@ -880,37 +909,21 @@
         }
 
         function renderBookings() {
-            const activeContainer = document.getElementById('activeBookingContainer');
             const historyContainer = document.getElementById('historyContainer');
             const historyTitle = document.getElementById('historyTitle');
             
             if (!currentUser || bookings.length === 0) {
-                activeContainer.innerHTML = `<div style="text-align:center; color:#888; padding:25px; background:#1E1E1E; border-radius:16px; border: 1px dashed #333;">У вас пока нет записей</div>`;
                 historyContainer.innerHTML = ''; historyTitle.style.display = 'none';
                 return;
             }
 
-            const sorted = [...bookings].sort((a,b) => parseDate(a) - parseDate(b));
-            const next = sorted[0];
-
-            activeContainer.innerHTML = `
-                <div class="next-visit-card">
-                    <div class="next-visit-info">
-                        <div class="nvi-block"><p>Дата и время</p><h3 style="color:var(--gold);">${next.appointmentDate} в ${next.time}</h3></div>
-                        <div class="nvi-block"><p>Мастер</p><h3>${next.barber.name}</h3></div>
-                        <div class="nvi-block"><p>Услуги</p><h3 style="font-size:14px; font-weight:400;">${next.services.map(s=>s.title).join(', ')}</h3></div>
-                    </div>
-                    <button class="btn-cancel" style="margin-top:15px;" onclick="openActionModal(${next.id})">Отменить или перенести</button>
-                </div>
-            `;
-
             historyTitle.style.display = 'block';
-            historyContainer.innerHTML = bookings.slice(1).reverse().map(b => `
+            historyContainer.innerHTML = bookings.reverse().map(b => `
                 <div class="booking-card">
                     <div class="bc-header"><div><h3>${b.barber.name}</h3><p>${b.barber.role}</p></div></div>
                     <div class="bc-services">${b.services.map(s => s.title).join(', ')}</div>
                     <div class="bc-footer"><span>${b.appointmentDate} • ${b.time}</span><b class="bc-price">${b.total} ₽</b></div>
-                    <button class="btn-cancel" onclick="openActionModal(${b.id})">Отменить</button>
+                    <button class="btn-cancel" onclick="openActionModal(${b.id})">Управление</button>
                 </div>
             `).join('');
         }
@@ -935,16 +948,45 @@
             cart = [...bookingToEdit.services]; selectedBarber = bookingToEdit.barber;
             bookings = bookings.filter(b => b.id !== bookingToEdit.id);
             localStorage.setItem('menfire_bookings', JSON.stringify(bookings));
-            closeActionModal(); renderBookings(); updateAuthUI();
-            switchView('viewBook', document.getElementById('navBook'));
+            closeActionModal(); renderBookings(); updateAuthUI(); updateHomeUI();
+            switchView('viewBook', 1);
             setTimeout(openDrawer, 300);
         }
         function confirmCancel() {
             if (!bookingToEdit) return;
             bookings = bookings.filter(b => b.id !== bookingToEdit.id);
             localStorage.setItem('menfire_bookings', JSON.stringify(bookings));
-            closeActionModal(); renderBookings(); updateAuthUI();
+            closeActionModal(); renderBookings(); updateAuthUI(); updateHomeUI();
             showToast('Запись отменена', 'success');
+        }
+
+        // --- УСТАНОВКА ПРИЛОЖЕНИЯ (PWA) ---
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Показываем плашку для Android
+            document.getElementById('installPWA').style.display = 'flex';
+        });
+
+        function installApp() {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    document.getElementById('installPWA').style.display = 'none';
+                }
+                deferredPrompt = null;
+            });
+        }
+
+        // Подсказка для iOS (Safari)
+        if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+            if (!window.navigator.standalone) {
+                setTimeout(() => {
+                    document.getElementById('iosInstallHint').style.display = 'flex';
+                }, 4000); // Показываем через 4 секунды
+            }
         }
     </script>
 </body>
