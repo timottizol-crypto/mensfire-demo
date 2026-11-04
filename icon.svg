@@ -1,29 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
-  <rect width="100" height="100" fill="#0a0a0a"/>
-  <defs>
-    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#F3E5AB"/>
-      <stop offset="50%" stop-color="#D4AF37"/>
-      <stop offset="100%" stop-color="#B5952F"/>
-    </linearGradient>
-    <filter id="glow">
-        <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
-        <feMerge>
-            <feMergeNode in="coloredBlur"/>
-            <feMergeNode in="SourceGraphic"/>
-        </feMerge>
-    </filter>
-  </defs>
-  <g transform="translate(5, 5)">
-    <!-- Левое кольцо -->
-    <path d="M 25 75 C 22 82, 15 88, 8 85 C 1 82, 0 72, 8 68 C 15 64, 22 70, 25 75 Z" fill="none" stroke="url(#goldGrad)" stroke-width="5" filter="url(#glow)"/>
-    <!-- Правое кольцо -->
-    <path d="M 75 75 C 78 82, 85 88, 92 85 C 99 82, 100 72, 92 68 C 85 64, 78 70, 75 75 Z" fill="none" stroke="url(#goldGrad)" stroke-width="5" filter="url(#glow)"/>
-    <!-- Левое лезвие -->
-    <path d="M 25 75 L 50 50 L 85 12 C 87 10, 90 12, 88 15 L 55 55 L 30 80 Z" fill="url(#goldGrad)" filter="url(#glow)"/>
-    <!-- Правое лезвие -->
-    <path d="M 75 75 L 50 50 L 15 12 C 13 10, 10 12, 12 15 L 45 55 L 70 80 Z" fill="url(#goldGrad)" filter="url(#glow)"/>
-    <!-- Ось -->
-    <circle cx="50" cy="50" r="6" fill="#0a0a0a" stroke="url(#goldGrad)" stroke-width="3" filter="url(#glow)"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#0a0a0a"/>
+  <g fill="none" stroke="#D4AF37" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="140" cy="140" r="60"/>
+    <circle cx="140" cy="372" r="60"/>
+    <line x1="460" y1="80" x2="180" y2="360"/>
+    <line x1="340" y1="340" x2="460" y2="460"/>
+    <line x1="180" y1="180" x2="280" y2="280"/>
   </g>
 </svg>
