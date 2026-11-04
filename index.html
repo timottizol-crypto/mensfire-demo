@@ -3,14 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#121212">
+    <meta name="theme-color" content="#0a0a0a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
     <title>MENSFIRE | Приложение</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-dark: #121212;
+            --bg-dark: #0a0a0a;
             --bg-card: #1E1E1E;
             --gold: #D4AF37;
             --gold-hover: #b5952f;
@@ -19,70 +20,59 @@
             --font-main: 'Montserrat', sans-serif;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-dark); color: var(--text-main); line-height: 1.6; overflow-x: hidden; overflow-y: hidden; /* Скрываем скролл body, скроллить будем внутри экранов */ height: 100vh; width: 100vw; }
-        
-        /* --- SPLASH SCREEN (Загрузочный экран) --- */
+        body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; width: 100vw; overflow: hidden; }
+
+        /* --- SPLASH SCREEN --- */
         #splashScreen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: #0a0a0a; z-index: 99999;
+            position: fixed; inset: 0; background: #050505; z-index: 99999;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-            transition: opacity 0.5s ease, visibility 0.5s;
+            transition: opacity 0.6s ease, visibility 0.6s;
         }
         #splashScreen.hidden { opacity: 0; visibility: hidden; }
-        
-        .splash-logo-container {
-            position: relative; display: flex; flex-direction: column; align-items: center;
-            animation: logoAppear 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        
-        .splash-svg { width: 60px; height: 60px; margin-bottom: 15px; }
-        .splash-title { font-size: 28px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; }
+        .splash-lasers { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+        .splash-line { position: absolute; height: 2px; background: #fff; box-shadow: 0 0 15px 3px var(--gold); opacity: 0; width: 300px; }
+        .splash-line::after { content: ''; position: absolute; right: -8px; top: -5px; border: 6px solid transparent; border-left-color: #fff; }
+        @keyframes shootLeft { 0% { top: 50%; left: 50%; transform: rotate(135deg) scale(0.1); opacity: 0; } 20% { opacity: 1; } 100% { top: 120%; left: -50%; transform: rotate(135deg) scale(1.5); opacity: 0; } }
+        @keyframes shootRight { 0% { top: 50%; left: 50%; transform: rotate(45deg) scale(0.1); opacity: 0; } 20% { opacity: 1; } 100% { top: 120%; left: 150%; transform: rotate(45deg) scale(1.5); opacity: 0; } }
+        .sl-1 { animation: shootLeft 1.5s ease-out 0.2s forwards; }
+        .sl-2 { animation: shootRight 1.8s ease-out 0.2s forwards; }
+        .sl-3 { animation: shootLeft 1.2s ease-out 0.5s forwards; }
+
+        .splash-content { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; animation: logoScaleIn 1s ease forwards; }
+        .splash-svg { width: 60px; height: 60px; margin-bottom: 15px; filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5)); }
+        .splash-title { font-size: 28px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #fff; }
         .splash-title span { color: var(--gold); }
-        
-        .splash-greeting {
-            margin-top: 15px; font-size: 14px; color: var(--text-muted); text-align: center; padding: 0 20px;
-            opacity: 0; animation: fadeIn 1s ease 0.8s forwards;
-        }
+        .splash-greeting { margin-top: 15px; font-size: 14px; color: var(--text-muted); text-align: center; padding: 0 20px; opacity: 0; transform: translateY(10px); animation: fadeUp 1s ease 0.8s forwards; }
         .splash-greeting span { color: var(--gold); font-weight: 800; }
+        .splash-loader { position: absolute; bottom: 60px; width: 120px; height: 2px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+        .splash-loader-bar { width: 0%; height: 100%; background: var(--gold); box-shadow: 0 0 10px var(--gold); animation: loadBar 2.5s ease-in-out forwards; }
+        @keyframes logoScaleIn { 0% { opacity: 0; transform: scale(0.7); } 100% { opacity: 1; transform: scale(1); } }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes loadBar { 0% { width: 0%; } 50% { width: 60%; } 100% { width: 100%; } }
 
-        .splash-loader {
-            position: absolute; bottom: -60px; width: 150px; height: 3px; background: #222; border-radius: 3px; overflow: hidden;
-        }
-        .splash-loader-bar {
-            width: 0%; height: 100%; background: var(--gold);
-            animation: loadBar 2.5s ease-in-out forwards;
-        }
-
-        @keyframes logoAppear { 0% { opacity: 0; transform: scale(0.8) translateY(20px); } 100% { opacity: 1; transform: scale(1) translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes loadBar { 0% { width: 0%; } 100% { width: 100%; } }
-
-        /* --- ОСНОВНОЙ ИНТЕРФЕЙС ПРИЛОЖЕНИЯ --- */
-        #appContainer {
-            height: 100vh; width: 100vw; display: flex; flex-direction: column; position: relative;
-        }
-
-        /* Верхняя шапка (мини) */
+        /* --- ОСНОВНОЕ ПРИЛОЖЕНИЕ --- */
+        #appContainer { height: 100vh; display: flex; flex-direction: column; position: relative; }
+        
         .app-header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px; background: rgba(18, 18, 18, 0.95); border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 15px 20px; background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px);
             position: absolute; top: 0; left: 0; width: 100%; z-index: 100;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
         .app-header .logo { font-size: 18px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
         .app-header .logo svg { width: 20px; height: 20px; }
         .app-header .logo span { color: var(--gold); }
 
-        /* Контейнеры экранов */
         .view {
             display: none; flex-direction: column; flex-grow: 1;
-            padding: 70px 20px 80px 20px; /* Отступы под шапку и нижнее меню */
+            padding: 75px 20px 90px 20px;
             overflow-y: auto; -webkit-overflow-scrolling: touch;
-            animation: viewFadeIn 0.3s ease forwards;
+            background: var(--bg-dark);
         }
-        .view.active { display: flex; }
+        .view.active { display: flex; animation: viewFadeIn 0.3s ease; }
         @keyframes viewFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- НИЖНЕЕ МЕНЮ (Bottom Navigation) --- */
+        /* --- НИЖНЕЕ МЕНЮ --- */
         .bottom-nav {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 70px;
             background: #151515; border-top: 1px solid rgba(255,255,255,0.05);
@@ -94,184 +84,196 @@
             color: var(--text-muted); font-size: 10px; font-weight: 600; cursor: pointer;
             transition: all 0.3s; width: 33%; height: 100%;
         }
-        .nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; fill: currentColor; }
+        .nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; fill: currentColor; }
         .nav-item.active { color: var(--gold); }
         
-        /* Центральная кнопка "Записаться" */
         .nav-item-center {
             position: relative; top: -15px; width: 60px; height: 60px;
             background: var(--gold); border-radius: 50%; color: #000;
             display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            transition: transform 0.2s;
         }
+        .nav-item-center:active { transform: scale(0.9); }
         .nav-item-center svg { width: 28px; height: 28px; margin-bottom: 0; }
-        .nav-item-center-text { position: absolute; bottom: 8px; font-size: 9px; font-weight: 800; color: var(--text-muted); }
 
-        /* --- ЭКРАН: ЗАПИСЬ --- */
+        /* --- УСЛУГИ И МАСТЕРА --- */
         .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
         .tab-btn { flex: 1; background: var(--bg-card); border: 1px solid #333; color: var(--text-main); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 600; transition: all 0.3s; }
         .tab-btn.active { background: var(--gold); border-color: var(--gold); color: #000; }
 
-        .services-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
-        .service-card { background: var(--bg-card); border-radius: 12px; padding: 15px; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+        .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .service-card { background: var(--bg-card); border-radius: 12px; padding: 12px; border: 1px solid #333; display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s; position: relative; }
         .service-card.selected { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); }
-        .service-card-info h3 { font-size: 14px; margin-bottom: 4px; }
-        .service-card-info .time { font-size: 11px; color: var(--text-muted); }
-        .service-card-price { font-size: 16px; font-weight: 800; color: var(--gold); }
-        .service-card .checkbox { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--text-muted); display: flex; justify-content: center; align-items: center; }
+        .service-card h3 { font-size: 12px; margin-bottom: 5px; padding-right: 20px; line-height: 1.3; }
+        .service-card .time { font-size: 10px; color: var(--text-muted); margin-bottom: 10px; }
+        .service-card .price { font-size: 14px; font-weight: 800; color: var(--gold); }
+        .service-card .checkbox { position: absolute; top: 12px; right: 12px; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--text-muted); display: flex; justify-content: center; align-items: center; }
         .service-card.selected .checkbox { border-color: var(--gold); background: var(--gold); }
-        .service-card.selected .checkbox::after { content: '✓'; color: #000; font-weight: bold; font-size: 10px; }
+        .service-card.selected .checkbox::after { content: '✓'; color: #000; font-weight: bold; font-size: 9px; }
 
-        .masters-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; }
-        .master-card { background: var(--bg-card); border-radius: 12px; padding: 15px; border: 1px solid #333; text-align: center; transition: all 0.2s; }
+        .masters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-top: 15px; }
+        .master-card { background: var(--bg-card); border-radius: 12px; padding: 10px; border: 1px solid #333; text-align: center; transition: all 0.2s; }
         .master-card.selected { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); }
-        .master-card .icon { font-size: 30px; margin-bottom: 10px; }
-        .master-card h3 { font-size: 14px; margin-bottom: 3px; }
-        .master-card p { font-size: 10px; color: var(--gold); text-transform: uppercase; }
+        .master-img { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 10px; background: #333; border: 2px solid transparent; display: flex; align-items: center; justify-content: center; font-size: 25px; }
+        .master-card.selected .master-img { border-color: var(--gold); }
+        .master-card h3 { font-size: 12px; margin-bottom: 2px; }
+        .master-card p { font-size: 9px; color: var(--gold); text-transform: uppercase; }
 
-        /* Выбор даты и времени (упрощенно для мобилки) */
-        .date-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; }
-        .date-item { min-width: 60px; padding: 10px; background: var(--bg-card); border-radius: 10px; border: 1px solid #333; text-align: center; }
-        .date-item.selected { border-color: var(--gold); background: var(--gold); color: #000; }
-        .date-item .day { font-size: 10px; opacity: 0.8; }
-        .date-item .num { font-size: 16px; font-weight: bold; }
+        /* --- КОРЗИНА (ВЫЕЗЖАЕТ СНИЗУ) --- */
+        .drawer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 1500; opacity: 0; visibility: hidden; transition: all 0.3s; }
+        .drawer-overlay.active { opacity: 1; visibility: visible; }
+        .drawer { 
+            position: fixed; bottom: -100%; left: 0; width: 100%; height: 85vh; 
+            background: var(--bg-card); z-index: 1600; 
+            transition: bottom 0.4s cubic-bezier(0.77, 0, 0.175, 1); 
+            border-radius: 24px 24px 0 0; display: flex; flex-direction: column; 
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
+        }
+        .drawer.active { bottom: 0; }
+        .drawer-header { padding: 20px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .drawer-header h2 { font-size: 18px; }
+        .close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 28px; cursor: pointer; line-height: 1; }
+        .drawer-body { padding: 20px; flex-grow: 1; overflow-y: auto; }
+        .drawer-section { margin-bottom: 20px; }
+        .drawer-section h3 { font-size: 14px; margin-bottom: 10px; color: var(--gold); }
+        
+        .selected-item { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; }
+        .date-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
+        .date-opt { min-width: 60px; padding: 8px; background: #121212; border: 1px solid #333; border-radius: 10px; text-align: center; }
+        .date-opt.selected { border-color: var(--gold); background: var(--gold); color: #000; }
+        .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .time-opt { padding: 10px; text-align: center; background: #121212; border: 1px solid #333; border-radius: 8px; font-size: 13px; }
+        .time-opt.selected { border-color: var(--gold); background: var(--gold); color: #000; }
+        .time-opt.disabled { opacity: 0.3; text-decoration: line-through; }
+        
+        .drawer-footer { padding: 20px; border-top: 1px solid #333; background: #151515; border-radius: 0 0 24px 24px; }
+        .total-price { display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; margin-bottom: 15px; }
+        .total-price span { color: var(--gold); }
+        .checkout-btn { width: 100%; padding: 15px; background: var(--gold); color: #000; border: none; border-radius: 12px; font-size: 15px; font-weight: 800; }
 
-        .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px; }
-        .time-item { padding: 8px; text-align: center; background: var(--bg-card); border-radius: 8px; border: 1px solid #333; font-size: 12px; }
-        .time-item.selected { border-color: var(--gold); background: var(--gold); color: #000; font-weight: bold; }
-        .time-item.disabled { opacity: 0.3; text-decoration: line-through; }
-
-        .checkout-bar { position: fixed; bottom: 70px; left: 0; width: 100%; background: #151515; padding: 15px 20px; border-top: 1px solid #333; display: flex; justify-content: space-between; align-items: center; z-index: 90; }
-        .checkout-total { font-size: 16px; font-weight: bold; }
-        .checkout-total span { color: var(--gold); }
-        .checkout-btn { background: var(--gold); color: #000; border: none; padding: 12px 20px; border-radius: 10px; font-weight: 800; font-size: 14px; }
-
-        /* --- ЭКРАН: ПРОФИЛЬ --- */
-        .profile-header { text-align: center; margin-bottom: 30px; }
+        /* --- ЛИЧНЫЙ КАБИНЕТ --- */
+        .profile-header { text-align: center; margin-bottom: 20px; }
         .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: rgba(212, 175, 55, 0.1); border: 2px solid var(--gold); margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-size: 30px; }
         .profile-header h1 { font-size: 22px; }
         .profile-header p { color: var(--text-muted); font-size: 14px; }
+        
+        .status-block { background: #1E1E1E; border: 1px solid #333; border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
+        .status-circle-container { position: relative; width: 70px; height: 70px; }
+        .status-circle-container svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+        .status-circle-bg { fill: none; stroke: #333; stroke-width: 6; }
+        .status-circle-progress { fill: none; stroke: var(--gold); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+        .status-text-inner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 14px; font-weight: 800; color: var(--gold); }
+        .status-level-name { font-size: 16px; font-weight: 800; margin-bottom: 4px; }
+        .status-hint { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
 
-        .loyalty-card { background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, #1E1E1E 100%); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 20px; padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden; }
-        .loyalty-card h2 { font-size: 14px; color: var(--gold); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
-        .loyalty-level { font-size: 24px; font-weight: 800; margin-bottom: 15px; }
-        .progress-bar-bg { height: 8px; background: rgba(0,0,0,0.5); border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
-        .progress-bar-fill { height: 100%; background: var(--gold); width: 0%; transition: width 1s ease; }
-        .loyalty-hint { font-size: 12px; color: var(--text-muted); }
+        .logout-btn { width: 100%; background: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 14px; margin-top: 20px; }
 
-        .qr-btn { width: 100%; background: var(--bg-card); border: 1px solid var(--gold); color: var(--gold); padding: 15px; border-radius: 12px; font-weight: bold; font-size: 14px; display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 20px; }
-        .logout-btn { width: 100%; background: transparent; border: 1px solid #ff4d4d; color: #ff4d4d; padding: 15px; border-radius: 12px; font-weight: bold; font-size: 14px; }
-
-        /* --- ЭКРАН: МОИ ЗАПИСИ --- */
-        .active-booking-card { background: #1E1E1E; border: 1px solid var(--gold); border-radius: 16px; padding: 20px; margin-bottom: 25px; position: relative; }
-        .active-booking-card::before { content: 'Ближайший визит'; position: absolute; top: -10px; left: 20px; background: var(--gold); color: #000; font-size: 10px; font-weight: bold; padding: 2px 10px; border-radius: 10px; text-transform: uppercase; }
-        .ab-date { font-size: 20px; font-weight: 800; color: var(--gold); margin-bottom: 10px; }
-        .ab-master { font-size: 14px; margin-bottom: 15px; }
-        .ab-services { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; }
-        .ab-actions { display: flex; gap: 10px; }
-        .ab-btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: bold; text-align: center; border: none; }
-        .ab-btn.cancel { background: rgba(255, 77, 77, 0.1); color: #ff4d4d; border: 1px solid #ff4d4d; }
-        .ab-btn.reschedule { background: var(--gold); color: #000; }
-
+        /* --- МОИ ЗАПИСИ --- */
+        .next-visit-card { background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, #1E1E1E 100%); border: 1px solid var(--gold); border-radius: 16px; padding: 20px; margin-bottom: 25px; position: relative; }
+        .next-visit-card::before { content: 'Ближайший визит'; position: absolute; top: -10px; left: 20px; background: var(--gold); color: #000; font-size: 10px; font-weight: bold; padding: 2px 10px; border-radius: 10px; text-transform: uppercase; }
+        .next-visit-info { display: flex; flex-direction: column; gap: 10px; margin-top: 5px; }
+        .nvi-block p { color: var(--text-muted); font-size: 11px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; }
+        .nvi-block h3 { font-size: 16px; }
+        
+        .booking-list { display: flex; flex-direction: column; gap: 15px; }
         .history-title { font-size: 16px; margin-bottom: 15px; color: var(--text-muted); }
-        .history-card { background: var(--bg-card); border-radius: 12px; padding: 15px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 3px solid #333; }
-        .history-info h3 { font-size: 14px; }
-        .history-info p { font-size: 12px; color: var(--text-muted); }
-        .history-price { font-weight: bold; color: var(--gold); font-size: 14px; }
+        .booking-card { background: var(--bg-card); padding: 15px; border-radius: 12px; border-left: 3px solid #333; }
+        .bc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+        .bc-header h3 { font-size: 14px; }
+        .bc-header p { font-size: 11px; color: var(--text-muted); }
+        .bc-services { font-size: 12px; color: #ddd; margin-bottom: 10px; }
+        .bc-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); }
+        .bc-price { font-size: 16px; font-weight: bold; color: var(--gold); }
+        .btn-cancel { background: transparent; border: 1px solid #555; color: #aaa; padding: 6px 10px; border-radius: 6px; font-size: 11px; width: 100%; margin-top: 10px; }
 
-        /* Модалки (упрощенные) */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; justify-content: center; align-items: center; }
+        /* --- МОДАЛКИ --- */
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 2000; display: none; justify-content: center; align-items: center; }
         .modal.active { display: flex; }
         .modal-content { background: var(--bg-card); padding: 30px 20px; border-radius: 20px; width: 90%; text-align: center; border: 1px solid var(--gold); }
-        .modal-content input { width: 100%; padding: 15px; background: #121212; border: 1px solid #333; border-radius: 10px; color: #fff; margin-bottom: 15px; text-align: center; font-size: 16px; }
-        .modal-btn { width: 100%; padding: 15px; background: var(--gold); color: #000; border: none; border-radius: 10px; font-weight: bold; font-size: 16px; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-size: 12px; color: var(--text-muted); }
+        .form-group input { width: 100%; padding: 12px; background: #121212; border: 1px solid #333; border-radius: 10px; color: #fff; font-size: 14px; }
+        
+        .toast-container { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; align-items: center; width: 100%; }
+        .toast { background: var(--bg-card); padding: 12px 20px; border-radius: 10px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--gold); color: var(--text-main); font-weight: 600; font-size: 13px; pointer-events: auto; animation: toastSlideDown 0.3s ease; }
+        @keyframes toastSlideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
+    <div class="toast-container" id="toastContainer"></div>
 
-    <!-- ЗАГРУЗОЧНЫЙ ЭКРАН (SPLASH) -->
+    <!-- SPLASH SCREEN -->
     <div id="splashScreen">
-        <div class="splash-logo-container">
-            <svg class="splash-svg" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
-            <div class="splash-title">MEN<span>FIRE</span></div>
-            <div class="splash-greeting" id="splashGreeting">Добро пожаловать в премиальный барбершоп</div>
-            <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+        <div class="splash-lasers">
+            <div class="splash-line sl-1"></div>
+            <div class="splash-line sl-2"></div>
+            <div class="splash-line sl-3"></div>
         </div>
+        <div class="splash-content">
+            <svg class="splash-svg" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+            <div class="splash-title">MENS<span>FIRE</span></div>
+            <div class="splash-greeting" id="splashGreeting">Добро пожаловать в премиальный барбершоп</div>
+        </div>
+        <div class="splash-loader"><div class="splash-loader-bar"></div></div>
     </div>
 
-    <!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
+    <!-- APP -->
     <div id="appContainer">
-        
-        <!-- Мини-шапка -->
         <div class="app-header">
             <div class="logo">
                 <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
                 MENS<span>FIRE</span>
             </div>
-            <div style="font-size: 12px; color: var(--gold); cursor: pointer;" onclick="openAuth()" id="headerAuthBtn">Войти</div>
+            <div style="font-size: 13px; color: var(--gold); font-weight: 600; cursor: pointer;" onclick="openAuth()" id="headerAuthBtn">Войти</div>
         </div>
 
-        <!-- ЭКРАН 1: ЗАПИСЬ (Открывается по умолчанию или по кнопке) -->
+        <!-- ЭКРАН 1: ЗАПИСЬ -->
         <div id="viewBook" class="view active">
             <h2 style="margin-bottom: 15px; font-size: 20px;">Записаться</h2>
-            
             <div class="category-tabs">
                 <button class="tab-btn active" onclick="filterServices('top', this)">ТОП-БАРБЕР</button>
                 <button class="tab-btn" onclick="filterServices('barber', this)">БАРБЕР</button>
             </div>
-            
-            <div class="services-grid" id="servicesGrid">
-                <!-- Услуги рендерятся через JS -->
-            </div>
+            <div class="services-grid" id="servicesGrid"></div>
 
-            <h3 style="margin: 25px 0 10px; font-size: 16px; color: var(--gold);">Выберите мастера</h3>
-            <div class="masters-grid" id="mastersGrid">
-                <!-- Мастера рендерятся через JS -->
-            </div>
-
-            <div id="dateTimeSection" style="display: none; margin-top: 25px;">
-                <h3 style="margin-bottom: 10px; font-size: 16px; color: var(--gold);">Дата и время</h3>
-                <div class="date-scroll" id="dateScroll"></div>
-                <div class="time-grid" id="timeGrid"></div>
-            </div>
+            <h3 style="margin: 25px 0 10px; font-size: 16px; color: var(--gold);">Наши мастера</h3>
+            <p class="masters-hint" style="font-size: 11px; color: #888; margin-bottom: 10px;">Нажмите на карточку, чтобы выбрать мастера</p>
+            <div class="masters-grid" id="mastersGrid"></div>
         </div>
 
-        <!-- ЭКРАН 2: МОИ ЗАПИСИ -->
-        <div id="viewBookings" class="view">
-            <h2 style="margin-bottom: 20px; font-size: 20px;">Мои записи</h2>
-            
-            <div id="activeBookingContainer">
-                <!-- Активная запись рендерится через JS -->
-            </div>
-
-            <h3 class="history-title">История визитов</h3>
-            <div id="historyContainer">
-                <!-- История рендерится через JS -->
-            </div>
-        </div>
-
-        <!-- ЭКРАН 3: ЛИЧНЫЙ КАБИНЕТ -->
+        <!-- ЭКРАН 2: ПРОФИЛЬ -->
         <div id="viewProfile" class="view">
             <div class="profile-header" id="profileHeader">
-                <!-- Рендерится через JS -->
+                <div class="profile-avatar">👤</div>
+                <h1>Гость</h1>
+                <p>Войдите, чтобы видеть записи</p>
             </div>
 
-            <div class="loyalty-card" id="loyaltyCard" style="display: none;">
-                <h2>Ваш статус</h2>
-                <div class="loyalty-level" id="loyaltyLevelName">Новичок</div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="loyaltyProgress"></div>
+            <div class="status-block" id="loyaltyBlock" style="display: none;">
+                <div class="status-circle-container">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="status-circle-bg" cx="50" cy="50" r="42"></circle>
+                        <circle class="status-circle-progress" id="progressCircle" cx="50" cy="50" r="42"></circle>
+                    </svg>
+                    <div class="status-text-inner" id="progressText">0/3</div>
                 </div>
-                <div class="loyalty-hint" id="loyaltyHint">До следующего уровня осталось 3 визита</div>
+                <div>
+                    <div class="status-level-name" id="statStatusText">Новичок</div>
+                    <div class="status-hint" id="statStatusSub">До статуса "Постоянный" осталось 3 визита</div>
+                </div>
             </div>
-
-            <button class="qr-btn" id="qrBtn" style="display: none;" onclick="alert('Здесь будет ваш QR-код для отметки в барбершопе.')">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                Мой QR-код
-            </button>
 
             <button class="logout-btn" id="logoutBtn" style="display: none;" onclick="logout()">Выйти из аккаунта</button>
-            <button class="modal-btn" id="loginBtnProfile" onclick="openAuth()">Войти / Зарегистрироваться</button>
+            <button class="checkout-btn" id="loginBtnProfile" onclick="openAuth()" style="margin-top: 10px;">Войти / Зарегистрироваться</button>
+        </div>
+
+        <!-- ЭКРАН 3: МОИ ЗАПИСИ -->
+        <div id="viewBookings" class="view">
+            <h2 style="margin-bottom: 20px; font-size: 20px;">Мои записи</h2>
+            <div id="activeBookingContainer"></div>
+            <h3 class="history-title" id="historyTitle" style="display: none;">История визитов</h3>
+            <div class="booking-list" id="historyContainer"></div>
         </div>
 
         <!-- НИЖНЕЕ МЕНЮ -->
@@ -288,196 +290,208 @@
                 Записи
             </div>
         </div>
+    </div>
 
-        <!-- ПАНЕЛЬ ОФОРМЛЕНИЯ (Появляется, если выбраны услуги) -->
-        <div class="checkout-bar" id="checkoutBar" style="display: none;">
-            <div class="checkout-total">Итого: <span id="totalPrice">0</span> ₽</div>
-            <button class="checkout-btn" onclick="submitBooking()">Записаться</button>
+    <!-- МОДАЛКИ И КОРЗИНА -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <h2>Ваша запись</h2>
+            <button class="close-btn" onclick="closeDrawer()">&times;</button>
+        </div>
+        <div class="drawer-body">
+            <div class="drawer-section">
+                <h3>Выбранные услуги</h3>
+                <div id="selectedServicesList"></div>
+            </div>
+            <div class="drawer-section">
+                <h3>Дата</h3>
+                <div class="date-grid" id="dateOptions"></div>
+            </div>
+            <div class="drawer-section">
+                <h3>Время</h3>
+                <div class="time-grid" id="timeOptions"></div>
+            </div>
+        </div>
+        <div class="drawer-footer">
+            <div class="total-price"><span>Итого:</span> <span id="totalPrice">0 ₽</span></div>
+            <button class="checkout-btn" onclick="startCheckout()">Записаться</button>
         </div>
     </div>
 
-    <!-- МОДАЛКА АВТОРИЗАЦИИ -->
     <div class="modal" id="authModal">
         <div class="modal-content">
-            <h2 style="margin-bottom: 15px;">Вход</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Введите номер телефона</p>
-            <input type="tel" id="phoneInput" placeholder="+7 (999) 000-00-00">
-            <button class="modal-btn" onclick="sendCode()">Получить код</button>
+            <h2 style="margin-bottom: 10px; font-size: 20px;">Вход / Регистрация</h2>
+            <form id="authForm" onsubmit="handleAuth(event)">
+                <div class="form-group"><label>Ваше имя</label><input type="text" id="regName" placeholder="Иван" required></div>
+                <div class="form-group"><label>Телефон</label><input type="tel" id="regPhone" placeholder="+7 (999) 000-00-00" required></div>
+                <button type="submit" class="checkout-btn">Получить код</button>
+            </form>
         </div>
     </div>
 
-    <!-- МОДАЛКА КОДА -->
-    <div class="modal" id="codeModal">
+    <div class="modal" id="smsModal">
         <div class="modal-content">
-            <h2 style="margin-bottom: 15px;">Введите код</h2>
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">Демо-код: <b>1234</b></p>
-            <input type="text" id="codeInput" placeholder="0000" maxlength="4" style="letter-spacing: 10px; font-size: 24px;">
-            <button class="modal-btn" onclick="verifyCode()">Подтвердить</button>
+            <h2 style="margin-bottom: 10px; font-size: 20px;">Введите код</h2>
+            <p style="font-size: 13px; margin-bottom: 15px;">Демо-код: <b>1234</b></p>
+            <input type="text" id="smsCode" style="width: 100%; padding: 15px; background: #121212; border: 1px solid #333; border-radius: 10px; color: #fff; font-size: 20px; text-align: center; letter-spacing: 10px; margin-bottom: 15px;" placeholder="0000" maxlength="4">
+            <button class="checkout-btn" onclick="verifySms()">Подтвердить</button>
+        </div>
+    </div>
+
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div style="width: 60px; height: 60px; background: rgba(212,175,55,0.1); border-radius: 50%; margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; border: 2px solid var(--gold);">
+                <svg viewBox="0 0 24 24" style="width: 30px; height: 30px; stroke: var(--gold); stroke-width: 3; fill: none;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <h2 style="margin-bottom: 10px; font-size: 20px;">Вы записаны!</h2>
+            <button class="checkout-btn" onclick="goToCabinetFromSuccess()">В личный кабинет</button>
+            <button class="btn-cancel" onclick="closeSuccessAndGoHome()" style="margin-top: 10px;">На главную</button>
+        </div>
+    </div>
+
+    <div class="modal" id="actionModal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 15px; font-size: 20px;">Управление</h2>
+            <button class="checkout-btn" style="margin-bottom: 10px;" onclick="rescheduleBooking()">Перенести</button>
+            <button class="logout-btn" style="margin-bottom: 10px;" onclick="confirmCancel()">Отменить</button>
+            <button class="btn-cancel" onclick="closeActionModal()">Закрыть</button>
         </div>
     </div>
 
     <script>
-        // --- ДАННЫЕ ---
+        // --- ВОЗВРАЩАЕМ ВСЕ ДАННЫЕ ---
         const servicesData = {
             top: [
                 { id: 't1', title: 'Мужская стрижка', time: '45 мин', price: 1500, type: 'top' },
-                { id: 't2', title: 'Стрижка + борода', time: '1 ч', price: 2500, type: 'top' },
-                { id: 't3', title: 'Оформление бороды', time: '30 мин', price: 1200, type: 'top' }
+                { id: 't2', title: 'Детская стрижка до 10 лет', time: '30 мин', price: 1200, type: 'top' },
+                { id: 't3', title: 'Оформление бороды', time: '30 мин', price: 1200, type: 'top' },
+                { id: 't4', title: 'Мужская стрижка + борода', time: '1 ч', price: 2500, type: 'top' },
+                { id: 't5', title: 'Камуфляж бороды', time: '1 ч', price: 1200, type: 'top' },
+                { id: 't6', title: 'Коррекция воском', time: '15 мин', price: 300, type: 'top' },
+                { id: 't7', title: 'Укладка', time: '30 мин', price: 500, type: 'top' },
+                { id: 't8', title: 'Друг+Друг', time: '1 ч', price: 2800, type: 'top' },
+                { id: 't9', title: 'Папа+Сын', time: '1 ч', price: 2500, type: 'top' },
+                { id: 't10', title: 'Тонирующий шампунь NISHMAN', time: '30 мин', price: 800, type: 'top' },
+                { id: 't11', title: 'Уход за кожей лица', time: '15 мин', price: 800, type: 'top' }
             ],
             barber: [
-                { id: 'b1', title: 'Мужская стрижка', time: '45 мин', price: 1000, type: 'barber' },
-                { id: 'b2', title: 'Стрижка машинкой', time: '30 мин', price: 800, type: 'barber' },
-                { id: 'b3', title: 'Бритье', time: '30 мин', price: 1000, type: 'barber' }
+                { id: 'b1', title: 'Коррекция воском', time: '15 мин', price: 300, type: 'barber' },
+                { id: 'b2', title: 'Королевское бритьё', time: '45 мин', price: 1200, type: 'barber' },
+                { id: 'b3', title: 'Детская стрижка', time: '30 мин', price: 1000, type: 'barber' },
+                { id: 'b4', title: 'Оформление бороды', time: '30 мин', price: 1000, type: 'barber' },
+                { id: 'b5', title: 'Камуфляж бороды', time: '1 ч', price: 1200, type: 'barber' },
+                { id: 'b6', title: 'Друг+Друг', time: '1 ч', price: 2400, type: 'barber' },
+                { id: 'b7', title: 'Папа+Сын', time: '1 ч', price: 2100, type: 'barber' },
+                { id: 'b8', title: 'Уход за кожей лица', time: '15 мин', price: 800, type: 'barber' },
+                { id: 'b9', title: 'Стрижка Ножницами', time: '1 ч', price: 1500, type: 'barber' },
+                { id: 'b10', title: 'Стрижка машинкой', time: '30 мин', price: 1000, type: 'barber' },
+                { id: 'b11', title: 'Стрижка бороды и усов', time: '30 мин', price: 800, type: 'barber' },
+                { id: 'b12', title: 'Бритье начисто шейвером', time: '30 мин', price: 1000, type: 'barber' },
+                { id: 'b13', title: 'Укладка', time: '15 мин', price: 500, type: 'barber' },
+                { id: 'b14', title: 'Студенческая стрижка', time: '45 мин', price: 1000, type: 'barber' },
+                { id: 'b15', title: 'Стрижка "счастливые Часы"', time: '45 мин', price: 1100, type: 'barber' }
             ]
         };
 
         const barbersData = [
-            { id: 'b_al', name: 'Али', role: 'ТОП', icon: '👨‍🦱', type: 'top' },
+            { id: 'b_al', name: 'Али', role: 'ТОП-БАРБЕР', icon: '👨‍🦱', type: 'top' },
             { id: 'b_ben', name: 'Бенджо', role: 'Барбер', icon: '👨‍🦰', type: 'barber' },
             { id: 'b_ism', name: 'Исмаил', role: 'Барбер', icon: '👨‍🦲', type: 'barber' }
         ];
 
-        // Состояние
+        const allTimeSlots = ['10:30', '11:00', '11:30', '12:00', '13:00', '13:30', '14:00', '15:00', '16:00', '17:30', '18:00', '19:00'];
+        let mockBookedTimes = {};
+
+        function initMockData() {
+            const today = new Date().toLocaleDateString('ru-RU');
+            const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('ru-RU');
+            mockBookedTimes = {
+                'b_al': { [today]: ['10:30', '12:00', '16:00'], [tomorrow]: ['13:00'] },
+                'b_ben': { [today]: ['11:00', '15:00'] },
+                'b_ism': { [today]: ['13:00', '18:00'] }
+            };
+        }
+
         let cart = [];
         let selectedBarber = null;
         let selectedDate = null;
         let selectedTime = null;
         let currentUser = JSON.parse(localStorage.getItem('menfire_user')) || null;
-        let bookings = JSON.parse(localStorage.getItem('menfire_bookings')) || [];
+        let rawBookings = JSON.parse(localStorage.getItem('menfire_bookings')) || [];
+        let bookings = rawBookings.filter(b => b && b.barber && b.appointmentDate && b.time);
+        let bookingToEdit = null;
 
-        // --- ЛОГИКА SPALSH SCREEN ---
+        // --- SPLASH & INIT ---
         window.addEventListener('DOMContentLoaded', () => {
-            // Приветствие на сплэше
+            initMockData();
             const splashGreeting = document.getElementById('splashGreeting');
             if (currentUser) {
                 splashGreeting.innerHTML = `Здравствуйте, <span>${currentUser.name}</span>!<br>Пора обновить стрижку?`;
             }
-
-            // Скрываем сплэш через 2.5 секунды
+            
             setTimeout(() => {
                 document.getElementById('splashScreen').classList.add('hidden');
                 updateAuthUI();
                 renderServices('top');
                 renderMasters();
                 renderBookings();
+                if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
             }, 2500);
         });
 
-        // --- НАВИГАЦИЯ (Переключение экранов) ---
+        // --- НАВИГАЦИЯ ---
         function switchView(viewId, navElement) {
-            // Скрываем все экраны
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            // Показываем нужный
             document.getElementById(viewId).classList.add('active');
-            
-            // Меняем активную иконку в меню
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             if(navElement) navElement.classList.add('active');
-
-            // Скрываем панель оформления, если ушли с экрана записи
-            if (viewId !== 'viewBook') {
-                document.getElementById('checkoutBar').style.display = 'none';
-            } else if (cart.length > 0) {
-                document.getElementById('checkoutBar').style.display = 'flex';
-            }
         }
 
-        // --- АВТОРИЗАЦИЯ ---
-        function openAuth() { document.getElementById('authModal').classList.add('active'); }
-        function sendCode() {
-            const phone = document.getElementById('phoneInput').value;
-            if(!phone) return alert("Введите телефон");
-            document.getElementById('authModal').classList.remove('active');
-            document.getElementById('codeModal').classList.add('active');
-        }
-        function verifyCode() {
-            const code = document.getElementById('codeInput').value;
-            if(code === '1234') {
-                currentUser = { name: 'Тимофей', phone: '+7 (999) 123-45-67' }; // Имитация
-                localStorage.setItem('menfire_user', JSON.stringify(currentUser));
-                document.getElementById('codeModal').classList.remove('active');
-                updateAuthUI();
-                renderBookings();
-                alert('Успешный вход!');
-            } else {
-                alert('Неверный код (1234)');
-            }
-        }
-        function logout() {
-            localStorage.removeItem('menfire_user');
-            currentUser = null;
-            updateAuthUI();
-            renderBookings();
-            switchView('viewBook', document.getElementById('navBook'));
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${type==='error'?'⚠️':type==='success'?'✅':'ℹ️'}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
         }
 
-        function updateAuthUI() {
-            if(currentUser) {
-                document.getElementById('headerAuthBtn').style.display = 'none';
-                document.getElementById('loginBtnProfile').style.display = 'none';
-                document.getElementById('logoutBtn').style.display = 'block';
-                document.getElementById('qrBtn').style.display = 'flex';
-                document.getElementById('loyaltyCard').style.display = 'block';
-                document.getElementById('profileHeader').innerHTML = `
-                    <div class="profile-avatar">👤</div>
-                    <h1>${currentUser.name}</h1>
-                    <p>${currentUser.phone}</p>
-                `;
-                // Обновляем уровень
-                const count = bookings.length;
-                document.getElementById('loyaltyLevelName').innerText = count < 3 ? 'Новичок' : 'Постоянный';
-                document.getElementById('loyaltyProgress').style.width = `${(count%3)*33.3}%`;
-            } else {
-                document.getElementById('headerAuthBtn').style.display = 'block';
-                document.getElementById('loginBtnProfile').style.display = 'block';
-                document.getElementById('logoutBtn').style.display = 'none';
-                document.getElementById('qrBtn').style.display = 'none';
-                document.getElementById('loyaltyCard').style.display = 'none';
-                document.getElementById('profileHeader').innerHTML = `
-                    <div class="profile-avatar">👤</div>
-                    <h1>Гость</h1>
-                    <p>Войдите, чтобы видеть записи</p>
-                `;
-            }
-        }
-
-        // --- РЕНДЕР УСЛУГ ---
+        // --- УСЛУГИ И МАСТЕРА ---
         function renderServices(category) {
             const grid = document.getElementById('servicesGrid');
             grid.innerHTML = '';
             servicesData[category].forEach(service => {
                 const isSelected = cart.some(item => item.id === service.id);
-                const div = document.createElement('div');
-                div.className = `service-card ${isSelected ? 'selected' : ''}`;
-                div.innerHTML = `
-                    <div class="service-card-info">
+                const card = document.createElement('div');
+                card.className = `service-card ${isSelected ? 'selected' : ''}`;
+                card.innerHTML = `
+                    <div class="checkbox"></div>
+                    <div>
                         <h3>${service.title}</h3>
                         <div class="time">${service.time}</div>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 15px;">
-                        <div class="service-card-price">${service.price} ₽</div>
-                        <div class="checkbox"></div>
-                    </div>
+                    <div class="price">${service.price} ₽</div>
                 `;
-                div.onclick = () => toggleService(service);
-                grid.appendChild(div);
+                card.onclick = () => toggleService(service);
+                grid.appendChild(card);
             });
-            updateTotal();
         }
 
-        function filterServices(cat, btn) {
+        function filterServices(category, btn) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            renderServices(cat);
+            renderServices(category);
             checkMasterAvailability();
         }
 
         function toggleService(service) {
             const index = cart.findIndex(item => item.id === service.id);
             if (index === -1) {
-                if(cart.length > 0 && cart[0].type !== service.type) {
-                    cart = []; // Сброс при смене категории
+                if (cart.length > 0 && cart[0].type !== service.type) {
+                    cart = [];
                     selectedBarber = null;
+                    showToast("Выбранные услуги сброшены", "info");
                 }
                 cart.push(service);
             } else {
@@ -487,173 +501,269 @@
             checkMasterAvailability();
         }
 
-        function updateTotal() {
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
-            document.getElementById('totalPrice').innerText = total;
-            if(cart.length > 0) {
-                document.getElementById('checkoutBar').style.display = 'flex';
-            } else {
-                document.getElementById('checkoutBar').style.display = 'none';
-            }
-        }
-
-        // --- РЕНДЕР МАСТЕРОВ ---
         function renderMasters() {
             const grid = document.getElementById('mastersGrid');
             grid.innerHTML = '';
-            const hasTop = cart.some(i => i.type === 'top');
-            
-            barbersData.forEach(barber => {
-                if(hasTop && barber.type !== 'top') return;
-                if(!hasTop && cart.length > 0 && barber.type === 'top') return; // Если обычные услуги, скрываем ТОПа
+            const hasTopService = cart.some(item => item.type === 'top');
+            const hasBarberService = cart.some(item => item.type === 'barber');
 
-                const div = document.createElement('div');
-                div.className = `master-card ${selectedBarber?.id === barber.id ? 'selected' : ''}`;
-                div.innerHTML = `
-                    <div class="icon">${barber.icon}</div>
+            barbersData.forEach(barber => {
+                if (hasTopService && !hasBarberService && barber.type !== 'top') return;
+                if (hasBarberService && !hasTopService && barber.id === 'b_al') return;
+                if (hasTopService && hasBarberService && barber.type !== 'top') return;
+
+                const card = document.createElement('div');
+                card.className = `master-card ${selectedBarber?.id === barber.id ? 'selected' : ''}`;
+                card.innerHTML = `
+                    <div class="master-img">${barber.icon}</div>
                     <h3>${barber.name}</h3>
                     <p>${barber.role}</p>
                 `;
-                div.onclick = () => {
-                    selectedBarber = barber;
-                    renderMasters();
-                    document.getElementById('dateTimeSection').style.display = 'block';
-                    renderDates();
-                };
-                grid.appendChild(div);
+                card.onclick = () => selectBarber(barber);
+                grid.appendChild(card);
             });
+        }
+
+        function selectBarber(barber) {
+            if (selectedBarber?.id !== barber.id) selectedTime = null;
+            selectedBarber = barber;
+            renderMasters();
+            
+            if (cart.length > 0) {
+                openDrawer(); // Открываем корзину, если услуги выбраны
+            } else {
+                showToast(`Выберите услуги для ${barber.name}`, 'info');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
         function checkMasterAvailability() {
-            if(cart.length === 0) {
-                selectedBarber = null;
-                document.getElementById('dateTimeSection').style.display = 'none';
+            const hasTop = cart.some(item => item.type === 'top');
+            if (hasTop) {
+                const ali = barbersData.find(b => b.id === 'b_al');
+                if (selectedBarber?.id !== 'b_al') { selectedBarber = ali; selectedTime = null; }
+            } else if (selectedBarber?.id === 'b_al' && cart.length > 0) {
+                selectedBarber = null; selectedTime = null;
             }
             renderMasters();
+            updateCartUI();
         }
 
-        // --- ДАТА И ВРЕМЯ ---
+        // --- КОРЗИНА ---
+        function openDrawer() {
+            if (cart.length === 0) return showToast("Выберите хотя бы одну услугу", "error");
+            document.getElementById('drawer').classList.add('active');
+            document.getElementById('drawerOverlay').classList.add('active');
+            updateCartUI();
+            renderDates();
+            updateTimeOptions();
+        }
+
+        function closeDrawer() {
+            document.getElementById('drawer').classList.remove('active');
+            document.getElementById('drawerOverlay').classList.remove('active');
+        }
+
+        function updateCartUI() {
+            const list = document.getElementById('selectedServicesList');
+            list.innerHTML = cart.map(item => `<div class="selected-item"><span>${item.title}</span><b>${item.price} ₽</b></div>`).join('');
+            const sum = cart.reduce((acc, item) => acc + item.price, 0);
+            document.getElementById('totalPrice').innerText = `${sum} ₽`;
+        }
+
         function renderDates() {
-            const container = document.getElementById('dateScroll');
+            const container = document.getElementById('dateOptions');
             container.innerHTML = '';
             const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
             
-            for(let i=0; i<5; i++) {
+            for (let i = 0; i < 7; i++) {
                 const d = new Date();
                 d.setDate(d.getDate() + i);
                 const dateStr = d.toLocaleDateString('ru-RU');
+                const dayName = i === 0 ? 'Сегодня' : i === 1 ? 'Завтра' : days[d.getDay()];
                 
                 const div = document.createElement('div');
-                div.className = `date-item ${selectedDate === dateStr ? 'selected' : ''}`;
-                div.innerHTML = `<div class="day">${i===0?'Сегодня':days[d.getDay()]}</div><div class="num">${d.getDate()}</div>`;
-                div.onclick = () => {
-                    selectedDate = dateStr;
-                    selectedTime = null;
-                    renderDates();
-                    renderTimes();
-                };
+                div.className = `date-opt ${selectedDate === dateStr ? 'selected' : ''}`;
+                div.innerHTML = `<div style="font-size:10px; opacity:0.7;">${dayName}</div><div style="font-size:14px; font-weight:bold;">${d.getDate()}</div>`;
+                div.onclick = () => { selectedDate = dateStr; selectedTime = null; renderDates(); updateTimeOptions(); };
                 container.appendChild(div);
             }
+            if (!selectedDate) selectedDate = new Date().toLocaleDateString('ru-RU');
         }
 
-        function renderTimes() {
-            const container = document.getElementById('timeGrid');
+        function updateTimeOptions() {
+            const container = document.getElementById('timeOptions');
             container.innerHTML = '';
-            const times = ['10:00', '11:30', '13:00', '14:30', '16:00', '17:30', '19:00'];
-            
-            times.forEach(time => {
-                // Имитация занятого времени (для примера)
-                const isBooked = time === '13:00'; 
+            if (!selectedBarber) return container.innerHTML = '<div style="font-size:12px; color:#888;">Сначала выберите мастера</div>';
+
+            const booked = (mockBookedTimes[selectedBarber.id] && mockBookedTimes[selectedBarber.id][selectedDate]) || [];
+            allTimeSlots.forEach(time => {
+                const isBooked = booked.includes(time);
                 const div = document.createElement('div');
-                div.className = `time-item ${selectedTime === time ? 'selected' : ''} ${isBooked ? 'disabled' : ''}`;
+                div.className = `time-opt ${selectedTime === time ? 'selected' : ''} ${isBooked ? 'disabled' : ''}`;
                 div.innerText = time;
-                if(!isBooked) {
-                    div.onclick = () => {
-                        selectedTime = time;
-                        renderTimes();
-                    };
-                }
+                if (!isBooked) div.onclick = () => { selectedTime = time; updateTimeOptions(); };
                 container.appendChild(div);
             });
         }
 
-        // --- ОФОРМЛЕНИЕ ---
-        function submitBooking() {
-            if(cart.length === 0) return alert("Выберите услуги");
-            if(!selectedBarber) return alert("Выберите мастера");
-            if(!selectedDate || !selectedTime) return alert("Выберите дату и время");
-            if(!currentUser) return openAuth();
+        // --- БРОНИРОВАНИЕ ---
+        function startCheckout() {
+            if (!selectedBarber) return showToast("Выберите мастера", "error");
+            if (!selectedDate || !selectedTime) return showToast("Выберите дату и время", "error");
+            if (!currentUser) { closeDrawer(); openAuth(); return; }
+            completeBooking();
+        }
 
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
+        function completeBooking() {
+            const total = cart.reduce((acc, item) => acc + item.price, 0);
+            if (!mockBookedTimes[selectedBarber.id]) mockBookedTimes[selectedBarber.id] = {};
+            if (!mockBookedTimes[selectedBarber.id][selectedDate]) mockBookedTimes[selectedBarber.id][selectedDate] = [];
+            mockBookedTimes[selectedBarber.id][selectedDate].push(selectedTime);
+
             const newBooking = {
-                id: Date.now(),
-                services: [...cart],
-                barber: selectedBarber,
-                date: selectedDate,
-                time: selectedTime,
-                total: total
+                id: Date.now(), services: [...cart], barber: selectedBarber,
+                time: selectedTime, appointmentDate: selectedDate, total: total,
+                date: new Date().toLocaleDateString('ru-RU')
             };
 
             bookings.push(newBooking);
             localStorage.setItem('menfire_bookings', JSON.stringify(bookings));
+            cart = []; selectedBarber = null; selectedTime = null; selectedDate = null;
             
-            cart = [];
-            selectedBarber = null;
-            selectedDate = null;
-            selectedTime = null;
-
-            renderServices('top');
-            checkMasterAvailability();
-            updateTotal();
-            updateAuthUI(); // Обновить прогресс уровня
-            
-            alert('Вы успешно записаны!');
-            switchView('viewBookings', document.getElementById('navBookings'));
+            renderServices('top'); checkMasterAvailability(); closeDrawer();
+            document.getElementById('successModal').classList.add('active');
         }
 
-        // --- РЕНДЕР ЗАПИСЕЙ ---
+        function goToCabinetFromSuccess() {
+            document.getElementById('successModal').classList.remove('active');
+            switchView('viewProfile', document.getElementById('navProfile'));
+            updateAuthUI();
+            renderBookings();
+        }
+        function closeSuccessAndGoHome() {
+            document.getElementById('successModal').classList.remove('active');
+            switchView('viewBook', document.getElementById('navBook'));
+        }
+
+        // --- АВТОРИЗАЦИЯ ---
+        function openAuth() { document.getElementById('authModal').classList.add('active'); }
+        function handleAuth(event) {
+            event.preventDefault();
+            document.getElementById('authModal').classList.remove('active');
+            document.getElementById('smsModal').classList.add('active');
+        }
+        function verifySms() {
+            if (document.getElementById('smsCode').value === '1234') {
+                currentUser = { name: document.getElementById('regName').value, phone: document.getElementById('regPhone').value };
+                localStorage.setItem('menfire_user', JSON.stringify(currentUser));
+                document.getElementById('smsModal').classList.remove('active');
+                updateAuthUI();
+                if (cart.length > 0) completeBooking();
+                else showToast('Вы вошли!', 'success');
+            } else showToast("Неверный код", "error");
+        }
+        function updateAuthUI() {
+            document.getElementById('headerAuthBtn').style.display = currentUser ? 'none' : 'block';
+            document.getElementById('loginBtnProfile').style.display = currentUser ? 'none' : 'block';
+            document.getElementById('logoutBtn').style.display = currentUser ? 'block' : 'none';
+            document.getElementById('loyaltyBlock').style.display = currentUser ? 'flex' : 'none';
+            
+            if (currentUser) {
+                document.getElementById('profileHeader').innerHTML = `<div class="profile-avatar">👤</div><h1>${currentUser.name}</h1><p>${currentUser.phone}</p>`;
+                updateStatusUI(bookings.length);
+            } else {
+                document.getElementById('profileHeader').innerHTML = `<div class="profile-avatar">👤</div><h1>Гость</h1><p>Войдите, чтобы видеть записи</p>`;
+            }
+        }
+        function logout() {
+            localStorage.removeItem('menfire_user'); currentUser = null;
+            updateAuthUI(); renderBookings();
+            switchView('viewBook', document.getElementById('navBook'));
+        }
+
+        // --- ЛК И УРОВНИ ---
+        function updateStatusUI(count) {
+            const circle = document.getElementById('progressCircle');
+            const circleText = document.getElementById('progressText');
+            const statusText = document.getElementById('statStatusText');
+            const statusSub = document.getElementById('statStatusSub');
+            
+            let level = 0, nextLevel = 1, levelName = "", nextLevelName = "";
+            if (count < 3) { levelName = "Новичок"; nextLevelName = "Постоянный"; level = count; nextLevel = 3; }
+            else if (count < 6) { levelName = "Постоянный"; nextLevelName = "Любимчик"; level = count - 3; nextLevel = 3; }
+            else if (count < 10) { levelName = "Любимчик"; nextLevelName = "VIP"; level = count - 6; nextLevel = 4; }
+            else { levelName = "VIP"; nextLevelName = "Максимум"; level = 1; nextLevel = 1; }
+            
+            statusText.innerText = levelName;
+            statusSub.innerText = levelName === "VIP" ? "Вы лучший!" : `До "${nextLevelName}" осталось ${nextLevel - level} виз.`;
+            
+            const radius = 42, circumference = 2 * Math.PI * radius;
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            circle.style.strokeDashoffset = circumference - (level / nextLevel) * circumference;
+            circleText.innerText = `${level}/${nextLevel}`;
+        }
+
+        // --- МОИ ЗАПИСИ ---
         function renderBookings() {
             const activeContainer = document.getElementById('activeBookingContainer');
             const historyContainer = document.getElementById('historyContainer');
+            const historyTitle = document.getElementById('historyTitle');
             
-            if(!currentUser || bookings.length === 0) {
-                activeContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 20px 0;">У вас пока нет записей</div>`;
-                historyContainer.innerHTML = '';
+            if (!currentUser || bookings.length === 0) {
+                activeContainer.innerHTML = `<div style="text-align:center; color:#888; padding:20px; background:#1E1E1E; border-radius:12px;">У вас пока нет записей</div>`;
+                historyContainer.innerHTML = ''; historyTitle.style.display = 'none';
                 return;
             }
 
-            // Ближайшая запись (для простоты берем последнюю созданную)
-            const next = bookings[bookings.length - 1];
+            const sorted = [...bookings].sort((a,b) => parseDate(a) - parseDate(b));
+            const next = sorted[0];
+
             activeContainer.innerHTML = `
-                <div class="active-booking-card">
-                    <div class="ab-date">${next.date} в ${next.time}</div>
-                    <div class="ab-master">Мастер: <b>${next.barber.name}</b></div>
-                    <div class="ab-services">${next.services.map(s => s.title).join(', ')}</div>
-                    <div class="ab-actions">
-                        <button class="ab-btn cancel" onclick="cancelBooking(${next.id})">Отменить</button>
-                        <button class="ab-btn reschedule" onclick="alert('Логика переноса в разработке')">Перенести</button>
+                <div class="next-visit-card">
+                    <div class="next-visit-info">
+                        <div class="nvi-block"><p>Дата и время</p><h3 style="color:var(--gold);">${next.appointmentDate} в ${next.time}</h3></div>
+                        <div class="nvi-block"><p>Мастер</p><h3>${next.barber.name}</h3></div>
+                        <div class="nvi-block"><p>Услуги</p><h3 style="font-size:14px; font-weight:400;">${next.services.map(s=>s.title).join(', ')}</h3></div>
                     </div>
+                    <button class="btn-cancel" style="margin-top:15px;" onclick="openActionModal(${next.id})">Отменить или перенести</button>
                 </div>
             `;
 
-            historyContainer.innerHTML = bookings.slice(0, -1).reverse().map(b => `
-                <div class="history-card">
-                    <div class="history-info">
-                        <h3>${b.date} • ${b.time}</h3>
-                        <p>${b.barber.name} — ${b.services.map(s => s.title).join(', ')}</p>
-                    </div>
-                    <div class="history-price">${b.total} ₽</div>
+            historyTitle.style.display = 'block';
+            historyContainer.innerHTML = bookings.slice(1).reverse().map(b => `
+                <div class="booking-card">
+                    <div class="bc-header"><div><h3>${b.barber.name}</h3><p>${b.barber.role}</p></div></div>
+                    <div class="bc-services">${b.services.map(s => s.title).join(', ')}</div>
+                    <div class="bc-footer"><span>${b.appointmentDate} • ${b.time}</span><b class="bc-price">${b.total} ₽</b></div>
+                    <button class="btn-cancel" onclick="openActionModal(${b.id})">Отменить</button>
                 </div>
             `).join('');
         }
 
-        function cancelBooking(id) {
-            if(confirm('Точно отменить запись?')) {
-                bookings = bookings.filter(b => b.id !== id);
-                localStorage.setItem('menfire_bookings', JSON.stringify(bookings));
-                renderBookings();
-                updateAuthUI();
-            }
+        function parseDate(b) {
+            if (!b.appointmentDate) return Infinity;
+            const [d,m,y] = b.appointmentDate.split('.'); const [h,min] = b.time.split(':');
+            return new Date(y, m-1, d, h, min).getTime();
+        }
+
+        function openActionModal(id) { bookingToEdit = bookings.find(b => b.id === id); document.getElementById('actionModal').classList.add('active'); }
+        function closeActionModal() { document.getElementById('actionModal').classList.remove('active'); }
+        function rescheduleBooking() {
+            if (!bookingToEdit) return;
+            cart = [...bookingToEdit.services]; selectedBarber = bookingToEdit.barber;
+            bookings = bookings.filter(b => b.id !== bookingToEdit.id);
+            localStorage.setItem('menfire_bookings', JSON.stringify(bookings));
+            closeActionModal(); renderBookings(); updateAuthUI();
+            switchView('viewBook', document.getElementById('navBook'));
+            setTimeout(openDrawer, 300);
+        }
+        function confirmCancel() {
+            if (!bookingToEdit) return;
+            bookings = bookings.filter(b => b.id !== bookingToEdit.id);
+            localStorage.setItem('menfire_bookings', JSON.stringify(bookings));
+            closeActionModal(); renderBookings(); updateAuthUI();
+            showToast('Запись отменена', 'success');
         }
     </script>
 </body>
