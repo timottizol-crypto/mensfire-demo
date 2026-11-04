@@ -22,295 +22,878 @@
             --font-main: 'Montserrat', sans-serif;
             --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
             --smooth: cubic-bezier(0.25, 0.8, 0.25, 1);
-            --ios-smooth: cubic-bezier(0.32, 0.72, 0, 1);
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-main); -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg-dark); color: var(--text-main); height: 100vh; width: 100vw; overflow: hidden; }
-
-        /* PWA ВИДЖЕТ */
-        #pwaInstallWidget {
-            position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%) translateY(20px);
-            background: rgba(30, 30, 30, 0.85); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--gold); border-radius: 16px; padding: 12px 18px;
-            display: none; justify-content: space-between; align-items: center; gap: 15px;
-            z-index: 999; box-shadow: 0 10px 30px rgba(0,0,0,0.5); opacity: 0;
-            transition: all 0.4s var(--spring); width: 90%; max-width: 350px;
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: var(--font-main); 
+            -webkit-tap-highlight-color: transparent; 
         }
-        #pwaInstallWidget.show { display: flex; opacity: 1; transform: translateX(-50%) translateY(0); }
-        .pwa-text h4 { font-size: 13px; margin-bottom: 2px; }
-        .pwa-text p { font-size: 10px; color: var(--text-muted); }
-        .pwa-btn { background: var(--gold); color: #000; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 12px; cursor: pointer; white-space: nowrap; }
-        .pwa-close { background: transparent; border: none; color: #888; font-size: 20px; cursor: pointer; padding: 0 5px; }
+        body { 
+            background-color: var(--bg-dark); 
+            color: var(--text-main); 
+            height: 100vh; 
+            width: 100vw; 
+            overflow: hidden; 
+        }
 
-        /* ЭТАП 1: ПРОЛЕТ СКВОЗЬ НОЖНИЦЫ */
+        /* ==========================
+           ЭТАП 1: РАСКРЫТИЕ НОЖНИЦ
+           ========================== */
         #preSplash {
-            position: fixed; inset: 0; background: #000; z-index: 100000;
-            display: flex; justify-content: center; align-items: center;
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 100000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             animation: hidePreSplash 0.4s ease 0.9s forwards;
         }
         .pre-splash-icon {
-            width: 140px; height: 140px; color: var(--gold);
+            width: 140px;
+            height: 140px;
+            color: var(--gold);
             animation: zoomThroughIcon 0.9s cubic-bezier(0.7, 0, 0.3, 1) forwards;
             filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.5));
         }
-        /* Анимация строго в центр без вращения */
         @keyframes zoomThroughIcon {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(25); opacity: 0; }
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: scale(12) rotate(45deg); opacity: 0; }
         }
-        @keyframes hidePreSplash { to { opacity: 0; visibility: hidden; } }
+        @keyframes hidePreSplash {
+            to { opacity: 0; visibility: hidden; }
+        }
 
-        /* ЭТАП 2: ЭКРАН ЗАГРУЗКИ */
+        /* ==========================
+           ЭТАП 2: ЭКРАН ЗАГРУЗКИ
+           ========================== */
         #splashScreen {
-            position: fixed; inset: 0; background: #050505; z-index: 99999;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            opacity: 1; visibility: visible;
+            position: fixed;
+            inset: 0;
+            background: #050505;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            visibility: visible;
             transition: opacity 0.4s var(--smooth), visibility 0.4s;
         }
-        #splashScreen.hidden { opacity: 0; visibility: hidden; }
-        .splash-content {
-            position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; width: 100%;
-            opacity: 0; transform: scale(0.7); animation: splashAppear 0.7s var(--spring) 0.5s forwards;
+        #splashScreen.hidden {
+            opacity: 0;
+            visibility: hidden;
         }
-        @keyframes splashAppear { 0% { opacity: 0; transform: scale(0.7); } 100% { opacity: 1; transform: scale(1); } }
 
-        .splash-title-wrapper { position: relative; display: inline-block; margin-bottom: 25px; }
-        .splash-title {
-            font-size: 52px; font-weight: 800; letter-spacing: 8px; text-transform: uppercase; color: #fff;
-            text-align: center; line-height: 1; margin-right: -8px; text-shadow: 0 0 30px rgba(255,255,255,0.25);
+        .splash-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            opacity: 0;
+            transform: scale(0.7);
+            animation: splashAppear 0.7s var(--spring) 0.5s forwards;
         }
-        .splash-title span { color: var(--gold); text-shadow: 0 0 30px rgba(212, 175, 55, 0.7); }
+        @keyframes splashAppear {
+            0% { opacity: 0; transform: scale(0.7); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        .splash-title-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 25px;
+        }
+        .splash-title {
+            font-size: 52px;
+            font-weight: 800;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            color: #fff;
+            text-align: center;
+            line-height: 1;
+            margin-right: -8px;
+            text-shadow: 0 0 30px rgba(255,255,255,0.25);
+        }
+        .splash-title span {
+            color: var(--gold);
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
+        }
 
         .splash-line {
-            position: absolute; height: 2px; background: #fff; box-shadow: 0 0 15px 3px var(--gold);
-            opacity: 0; width: 250px; top: 50%; left: 50%; transform-origin: center center;
+            position: absolute;
+            height: 2px;
+            background: #fff;
+            box-shadow: 0 0 15px 3px var(--gold);
+            opacity: 0;
+            width: 250px;
+            top: 50%;
+            left: 50%;
+            transform-origin: center center;
         }
-        .splash-line::after { content: ''; position: absolute; right: -8px; top: -5px; border: 6px solid transparent; border-left-color: #fff; }
-        @keyframes shootLeft { 0% { transform: translate(-50%, -50%) rotate(135deg) scale(0.1); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(-50%, -50%) rotate(135deg) translateX(400px) scale(1.2); opacity: 0; } }
-        @keyframes shootRight { 0% { transform: translate(-50%, -50%) rotate(45deg) scale(0.1); opacity: 0; } 20% { opacity: 1; } 100% { transform: translate(-50%, -50%) rotate(45deg) translateX(400px) scale(1.2); opacity: 0; } }
+        .splash-line::after {
+            content: '';
+            position: absolute;
+            right: -8px;
+            top: -5px;
+            border: 6px solid transparent;
+            border-left-color: #fff;
+        }
+        @keyframes shootLeft {
+            0% { transform: translate(-50%, -50%) rotate(135deg) scale(0.1); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translate(-50%, -50%) rotate(135deg) translateX(400px) scale(1.2); opacity: 0; }
+        }
+        @keyframes shootRight {
+            0% { transform: translate(-50%, -50%) rotate(45deg) scale(0.1); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translate(-50%, -50%) rotate(45deg) translateX(400px) scale(1.2); opacity: 0; }
+        }
         .sl-1 { animation: shootLeft 1.2s var(--smooth) 1.2s forwards; }
         .sl-2 { animation: shootRight 1.4s var(--smooth) 1.3s forwards; }
         .sl-3 { animation: shootLeft 1s var(--smooth) 1.5s forwards; }
 
         .splash-greeting-oval {
-            border: 1px solid rgba(212, 175, 55, 0.5); background: rgba(212, 175, 55, 0.05);
-            padding: 12px 30px; border-radius: 50px; font-size: 15px; color: var(--text-main); text-align: center;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1); opacity: 0; transform: translateY(15px) scale(0.9);
+            border: 1px solid rgba(212, 175, 55, 0.5);
+            background: rgba(212, 175, 55, 0.05);
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 15px;
+            color: var(--text-main);
+            text-align: center;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+            opacity: 0;
+            transform: translateY(15px) scale(0.9);
             animation: ovalAppear 0.6s var(--spring) 1.3s forwards;
         }
-        .splash-greeting-oval span { color: var(--gold); font-weight: 800; font-size: 17px; }
-        @keyframes ovalAppear { to { opacity: 1; transform: translateY(0) scale(1); } }
+        .splash-greeting-oval span {
+            color: var(--gold);
+            font-weight: 800;
+            font-size: 17px;
+        }
+        @keyframes ovalAppear {
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
 
         .splash-loader {
-            position: absolute; bottom: 60px; width: 140px; height: 3px; background: rgba(255,255,255,0.1);
-            border-radius: 3px; overflow: hidden; opacity: 0; animation: fadeIn 0.4s ease 1s forwards;
+            position: absolute;
+            bottom: 60px;
+            width: 140px;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 0.4s ease 1s forwards;
         }
-        .splash-loader-bar { width: 0%; height: 100%; background: var(--gold); box-shadow: 0 0 10px var(--gold); animation: loadBar 2s var(--smooth) 1s forwards; }
+        .splash-loader-bar {
+            width: 0%;
+            height: 100%;
+            background: var(--gold);
+            box-shadow: 0 0 10px var(--gold);
+            animation: loadBar 2s var(--smooth) 1s forwards;
+        }
         @keyframes fadeIn { to { opacity: 1; } }
-        @keyframes loadBar { 0% { width: 0%; } 50% { width: 60%; } 100% { width: 100%; } }
+        @keyframes loadBar {
+            0% { width: 0%; }
+            50% { width: 60%; }
+            100% { width: 100%; }
+        }
 
-        /* ОСНОВНОЕ ПРИЛОЖЕНИЕ */
-        #appContainer { height: 100vh; display: flex; flex-direction: column; position: relative; opacity: 0; transition: opacity 0.4s var(--smooth); }
+        /* ==========================
+           ОСНОВНОЕ ПРИЛОЖЕНИЕ
+           ========================== */
+        #appContainer {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            opacity: 0;
+            transition: opacity 0.4s var(--smooth);
+        }
         #appContainer.visible { opacity: 1; }
 
-        /* СТЕКЛО: ШАПКА */
+        /* Стеклянная шапка (iOS-style) */
         .app-header {
-            display: flex; justify-content: space-between; align-items: center; padding: 15px 20px;
-            background: rgba(15, 15, 15, 0.55); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
-            position: absolute; top: 0; left: 0; width: 100%; z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(15, 15, 15, 0.65);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
         }
-        .app-header .logo { font-size: 18px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
+        .app-header .logo {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
         .app-header .logo svg { width: 20px; height: 20px; }
         .app-header .logo span { color: var(--gold); }
 
-        .view { display: none; flex-direction: column; flex-grow: 1; padding: 85px 20px 90px 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--bg-dark); }
-        .view.active { display: flex; animation: viewSlideIn 0.4s var(--spring); }
-        @keyframes viewSlideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+        .view {
+            display: none;
+            flex-direction: column;
+            flex-grow: 1;
+            padding: 85px 20px 90px 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            background: var(--bg-dark);
+        }
+        .view.active {
+            display: flex;
+            animation: viewSlideIn 0.4s var(--spring);
+        }
+        @keyframes viewSlideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
 
-        /* СТЕКЛО: НИЖНЕЕ МЕНЮ */
+        /* Стеклянное нижнее меню */
         .bottom-nav {
-            position: absolute; bottom: 0; left: 0; width: 100%; height: 70px;
-            background: rgba(18, 18, 18, 0.6); backdrop-filter: blur(40px) saturate(200%); -webkit-backdrop-filter: blur(40px) saturate(200%);
-            border-top: 1px solid rgba(255, 255, 255, 0.15); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            display: flex; justify-content: space-around; align-items: center; z-index: 100; padding-bottom: env(safe-area-inset-bottom);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: rgba(18, 18, 18, 0.7);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 100;
+            padding-bottom: env(safe-area-inset-bottom);
         }
         .nav-item {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--text-muted); font-size: 10px; font-weight: 600; cursor: pointer;
-            transition: all 0.3s var(--smooth); width: 33%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s var(--smooth);
+            width: 33%;
+            height: 100%;
         }
-        .nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; fill: currentColor; transition: transform 0.3s var(--spring); }
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            margin-bottom: 4px;
+            fill: currentColor;
+            transition: transform 0.3s var(--spring);
+        }
         .nav-item.active { color: var(--gold); }
         .nav-item.active svg { transform: translateY(-3px) scale(1.1); }
+
         .nav-item-center {
-            position: relative; top: -15px; width: 60px; height: 60px;
-            background: var(--gold); border-radius: 50%; color: #000;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4); transition: all 0.2s var(--spring);
+            position: relative;
+            top: -15px;
+            width: 60px;
+            height: 60px;
+            background: var(--gold);
+            border-radius: 50%;
+            color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
+            transition: all 0.2s var(--spring);
         }
         .nav-item-center:active { transform: scale(0.85); }
         .nav-item-center svg { width: 28px; height: 28px; margin-bottom: 0; }
 
-        /* ВКЛАДКИ (БЕЗ УВЕЛИЧЕНИЯ) */
-        .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn {
-            flex: 1; background: var(--bg-card); border: 1px solid #333; color: var(--text-main);
-            padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; transition: all 0.3s var(--smooth); outline: none;
+        /* Вкладки */
+        .category-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
         }
-        /* Убрал .tab-btn:active { transform: scale(0.95); } */
-        .tab-btn.active { background: var(--gold); border-color: var(--gold); color: #000; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
+        .tab-btn {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid #333;
+            color: var(--text-main);
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s var(--smooth);
+        }
+        .tab-btn:active { transform: scale(0.95); }
+        .tab-btn.active {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: #000;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
 
-        .services-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        /* Услуги */
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
         .service-card {
-            background: var(--bg-card); border-radius: 14px; padding: 15px; border: 1px solid #333;
-            display: flex; flex-direction: column; justify-content: space-between; transition: all 0.2s var(--smooth); position: relative;
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 15px;
+            border: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.2s var(--smooth);
+            position: relative;
         }
         .service-card:active { transform: scale(0.96); }
-        .service-card.selected { border-color: var(--gold); background: rgba(212, 175, 55, 0.08); box-shadow: 0 0 15px rgba(212, 175, 55, 0.1); }
-        .service-card h3 { font-size: 13px; margin-bottom: 5px; padding-right: 20px; line-height: 1.3; }
-        .service-card .time { font-size: 11px; color: var(--text-muted); margin-bottom: 12px; }
-        .service-card .price { font-size: 15px; font-weight: 800; color: var(--gold); }
-        .service-card .checkbox {
-            position: absolute; top: 15px; right: 15px; width: 18px; height: 18px;
-            border-radius: 50%; border: 2px solid var(--text-muted); display: flex; justify-content: center; align-items: center; transition: all 0.3s var(--spring);
+        .service-card.selected {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.08);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
         }
-        .service-card.selected .checkbox { border-color: var(--gold); background: var(--gold); transform: scale(1.1); }
-        .service-card.selected .checkbox::after { content: '✓'; color: #000; font-weight: bold; font-size: 10px; }
+        .service-card h3 {
+            font-size: 13px;
+            margin-bottom: 5px;
+            padding-right: 20px;
+            line-height: 1.3;
+        }
+        .service-card .time {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        .service-card .price {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--gold);
+        }
+        .service-card .checkbox {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--text-muted);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s var(--spring);
+        }
+        .service-card.selected .checkbox {
+            border-color: var(--gold);
+            background: var(--gold);
+            transform: scale(1.1);
+        }
+        .service-card.selected .checkbox::after {
+            content: '✓';
+            color: #000;
+            font-weight: bold;
+            font-size: 10px;
+        }
 
-        .masters-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; margin-top: 15px; }
-        .master-card { background: var(--bg-card); border-radius: 14px; padding: 12px; border: 1px solid #333; text-align: center; transition: all 0.2s var(--smooth); }
+        /* Мастера */
+        .masters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .master-card {
+            background: var(--bg-card);
+            border-radius: 14px;
+            padding: 12px;
+            border: 1px solid #333;
+            text-align: center;
+            transition: all 0.2s var(--smooth);
+        }
         .master-card:active { transform: scale(0.95); }
-        .master-card.selected { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.15); }
-        .master-img { width: 65px; height: 65px; border-radius: 50%; margin: 0 auto 10px; background: #333; border: 2px solid transparent; display: flex; align-items: center; justify-content: center; font-size: 28px; transition: all 0.3s var(--spring); }
-        .master-card.selected .master-img { border-color: var(--gold); transform: scale(1.05); }
+        .master-card.selected {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.15);
+        }
+        .master-img {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            background: #333;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            transition: all 0.3s var(--spring);
+        }
+        .master-card.selected .master-img {
+            border-color: var(--gold);
+            transform: scale(1.05);
+        }
         .master-card h3 { font-size: 13px; margin-bottom: 2px; }
-        .master-card p { font-size: 9px; color: var(--gold); text-transform: uppercase; letter-spacing: 0.5px; }
+        .master-card p {
+            font-size: 9px;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
-        /* СТЕКЛО: КОРЗИНА */
-        .drawer-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 1500; opacity: 0; visibility: hidden; transition: all 0.4s var(--smooth); }
+        /* ==========================
+           СТЕКЛЯННАЯ КОРЗИНА (iOS-style)
+           ========================== */
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s var(--smooth);
+        }
         .drawer-overlay.active { opacity: 1; visibility: visible; }
+
         .drawer {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 85vh;
-            background: rgba(28, 28, 30, 0.65); backdrop-filter: blur(50px) saturate(200%); -webkit-backdrop-filter: blur(50px) saturate(200%);
-            border-top: 1px solid rgba(255, 255, 255, 0.2); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 -10px 40px rgba(0, 0, 0, 0.5);
-            z-index: 1600; transform: translateY(100%); transition: transform 0.5s var(--ios-smooth);
-            border-radius: 24px 24px 0 0; display: flex; flex-direction: column;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 85vh;
+            background: rgba(28, 28, 30, 0.72);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.12),
+                0 -10px 40px rgba(0, 0, 0, 0.5);
+            z-index: 1600;
+            transform: translateY(100%);
+            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+            border-radius: 24px 24px 0 0;
+            display: flex;
+            flex-direction: column;
         }
         .drawer.active { transform: translateY(0); }
-        .drawer-header { padding: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.08); display: flex; justify-content: space-between; align-items: center; }
+        .drawer-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
         .drawer-header h2 { font-size: 18px; }
-        .close-btn { background: transparent; border: none; color: var(--text-muted); font-size: 28px; cursor: pointer; line-height: 1; transition: transform 0.2s var(--spring); }
+        .close-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 28px;
+            cursor: pointer;
+            line-height: 1;
+            transition: transform 0.2s var(--spring);
+        }
         .close-btn:active { transform: scale(0.8); }
         .drawer-body { padding: 20px; flex-grow: 1; overflow-y: auto; }
         .drawer-section { margin-bottom: 25px; }
-        .drawer-section h3 { font-size: 15px; margin-bottom: 12px; color: var(--gold); }
-        .selected-item { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
-
-        .date-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; }
-        .date-opt { min-width: 65px; padding: 10px; background: rgba(18, 18, 18, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; text-align: center; transition: all 0.2s var(--smooth); }
+        .drawer-section h3 {
+            font-size: 15px;
+            margin-bottom: 12px;
+            color: var(--gold);
+        }
+        .selected-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        .date-grid {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+        .date-opt {
+            min-width: 65px;
+            padding: 10px;
+            background: rgba(18, 18, 18, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.2s var(--smooth);
+        }
         .date-opt:active { transform: scale(0.9); }
-        .date-opt.selected { border-color: var(--gold); background: var(--gold); color: #000; }
-
-        .time-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .time-opt { padding: 12px; text-align: center; background: rgba(18, 18, 18, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 10px; font-size: 13px; transition: all 0.2s var(--smooth); }
+        .date-opt.selected {
+            border-color: var(--gold);
+            background: var(--gold);
+            color: #000;
+        }
+        .time-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+        .time-opt {
+            padding: 12px;
+            text-align: center;
+            background: rgba(18, 18, 18, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            font-size: 13px;
+            transition: all 0.2s var(--smooth);
+        }
         .time-opt:active { transform: scale(0.9); }
-        .time-opt.selected { border-color: var(--gold); background: var(--gold); color: #000; font-weight: bold; }
+        .time-opt.selected {
+            border-color: var(--gold);
+            background: var(--gold);
+            color: #000;
+            font-weight: bold;
+        }
         .time-opt.disabled { opacity: 0.3; text-decoration: line-through; }
-
-        .drawer-footer { padding: 20px; border-top: 1px solid rgba(255, 255, 255, 0.08); background: rgba(15, 15, 15, 0.5); border-radius: 0 0 24px 24px; }
-        .total-price { display: flex; justify-content: space-between; font-size: 16px; font-weight: 800; margin-bottom: 15px; }
+        .drawer-footer {
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(15, 15, 15, 0.5);
+            border-radius: 0 0 24px 24px;
+        }
+        .total-price {
+            display: flex;
+            justify-content: space-between;
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 15px;
+        }
         .total-price span { color: var(--gold); }
-        .checkout-btn { width: 100%; padding: 16px; background: var(--gold); color: #000; border: none; border-radius: 14px; font-size: 16px; font-weight: 800; transition: all 0.2s var(--smooth); }
-        .checkout-btn:active { transform: scale(0.96); background: var(--gold-hover); }
+        .checkout-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--gold);
+            color: #000;
+            border: none;
+            border-radius: 14px;
+            font-size: 16px;
+            font-weight: 800;
+            transition: all 0.2s var(--smooth);
+        }
+        .checkout-btn:active {
+            transform: scale(0.96);
+            background: var(--gold-hover);
+        }
 
-        /* ПРОФИЛЬ */
+        /* ==========================
+           ЛИЧНЫЙ КАБИНЕТ
+           ========================== */
         .profile-header { text-align: center; margin-bottom: 25px; }
-        .profile-avatar { width: 85px; height: 85px; border-radius: 50%; background: rgba(212, 175, 55, 0.1); border: 2px solid var(--gold); margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; font-size: 35px; box-shadow: 0 0 20px rgba(212, 175, 55, 0.2); }
+        .profile-avatar {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.1);
+            border: 2px solid var(--gold);
+            margin: 0 auto 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 35px;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+        }
         .profile-header h1 { font-size: 24px; }
         .profile-header p { color: var(--text-muted); font-size: 14px; }
 
-        /* СТЕКЛО: БЛОК СТАТУСА */
         .status-block {
-            background: rgba(30, 30, 30, 0.5); backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%);
-            border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 20px; padding: 20px;
-            display: flex; align-items: center; gap: 20px; margin-bottom: 25px;
-            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 10px 25px rgba(0, 0, 0, 0.3);
+            background: rgba(30, 30, 30, 0.55);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.08),
+                0 10px 25px rgba(0, 0, 0, 0.3);
         }
-        .status-circle-container { position: relative; width: 75px; height: 75px; }
-        .status-circle-container svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-        .status-circle-bg { fill: none; stroke: #333; stroke-width: 6; }
-        .status-circle-progress { fill: none; stroke: var(--gold); stroke-width: 6; stroke-linecap: round; transition: stroke-dashoffset 1s var(--smooth); }
-        .status-text-inner { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 15px; font-weight: 800; color: var(--gold); }
-        .status-level-name { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
-        .status-hint { font-size: 12px; color: var(--text-muted); line-height: 1.3; }
+        .status-circle-container {
+            position: relative;
+            width: 75px;
+            height: 75px;
+        }
+        .status-circle-container svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        .status-circle-bg {
+            fill: none;
+            stroke: #333;
+            stroke-width: 6;
+        }
+        .status-circle-progress {
+            fill: none;
+            stroke: var(--gold);
+            stroke-width: 6;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s var(--smooth);
+        }
+        .status-text-inner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--gold);
+        }
+        .status-level-name {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .status-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
 
-        .logout-btn { width: 100%; background: transparent; border: 1px solid rgba(255, 77, 77, 0.5); color: #ff4d4d; padding: 16px; border-radius: 14px; font-weight: bold; font-size: 15px; margin-top: 15px; transition: all 0.2s var(--smooth); }
-        .logout-btn:active { transform: scale(0.96); background: rgba(255, 77, 77, 0.1); }
+        .logout-btn {
+            width: 100%;
+            background: transparent;
+            border: 1px solid rgba(255, 77, 77, 0.5);
+            color: #ff4d4d;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: bold;
+            font-size: 15px;
+            margin-top: 15px;
+            transition: all 0.2s var(--smooth);
+        }
+        .logout-btn:active {
+            transform: scale(0.96);
+            background: rgba(255, 77, 77, 0.1);
+        }
 
-        /* СТЕКЛО: БЛИЖАЙШИЙ ВИЗИТ */
         .next-visit-card {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(30, 30, 30, 0.6) 100%);
-            backdrop-filter: blur(30px) saturate(200%); -webkit-backdrop-filter: blur(30px) saturate(200%);
-            border: 1px solid var(--gold); border-radius: 20px; padding: 25px 20px 20px;
-            margin-bottom: 25px; position: relative; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 10px 30px rgba(212, 175, 55, 0.1);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(30, 30, 30, 0.7) 100%);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            padding: 25px 20px 20px;
+            margin-bottom: 25px;
+            position: relative;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 10px 30px rgba(212, 175, 55, 0.1);
         }
-        .next-visit-card::before { content: 'Ближайший визит'; position: absolute; top: -10px; left: 20px; background: var(--gold); color: #000; font-size: 10px; font-weight: 800; padding: 3px 12px; border-radius: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .next-visit-card::before {
+            content: 'Ближайший визит';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--gold);
+            color: #000;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 3px 12px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
         .next-visit-info { display: flex; flex-direction: column; gap: 12px; }
-        .nvi-block p { color: var(--text-muted); font-size: 11px; margin-bottom: 2px; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+        .nvi-block p {
+            color: var(--text-muted);
+            font-size: 11px;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
         .nvi-block h3 { font-size: 17px; }
 
-        .history-title { font-size: 16px; margin-bottom: 15px; color: var(--text-muted); font-weight: 600; }
-        .booking-list { display: flex; flex-direction: column; gap: 15px; }
-        .booking-card { background: var(--bg-card); padding: 18px; border-radius: 16px; border-left: 4px solid #333; transition: all 0.2s var(--smooth); }
+        .history-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+        .booking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .booking-card {
+            background: var(--bg-card);
+            padding: 18px;
+            border-radius: 16px;
+            border-left: 4px solid #333;
+            transition: all 0.2s var(--smooth);
+        }
         .booking-card:hover { border-left-color: var(--gold); }
-        .bc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .bc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
         .bc-header h3 { font-size: 15px; }
         .bc-header p { font-size: 11px; color: var(--text-muted); }
-        .bc-services { font-size: 13px; color: #ddd; margin-bottom: 12px; line-height: 1.4; }
-        .bc-footer { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-muted); }
-        .bc-price { font-size: 18px; font-weight: bold; color: var(--gold); }
-        .btn-cancel { background: transparent; border: 1px solid #555; color: #aaa; padding: 10px; border-radius: 10px; font-size: 12px; font-weight: 600; width: 100%; margin-top: 12px; transition: all 0.2s var(--smooth); }
-        .btn-cancel:active { transform: scale(0.97); background: rgba(255, 255, 255, 0.05); }
+        .bc-services {
+            font-size: 13px;
+            color: #ddd;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        .bc-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .bc-price {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--gold);
+        }
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid #555;
+            color: #aaa;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            width: 100%;
+            margin-top: 12px;
+            transition: all 0.2s var(--smooth);
+        }
+        .btn-cancel:active {
+            transform: scale(0.97);
+            background: rgba(255, 255, 255, 0.05);
+        }
 
-        /* СТЕКЛО: МОДАЛКИ */
+        /* ==========================
+           СТЕКЛЯННЫЕ МОДАЛКИ (как на iPhone)
+           ========================== */
         .modal {
-            position: fixed; inset: 0; background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            z-index: 2000; display: flex; justify-content: center; align-items: center;
-            opacity: 0; visibility: hidden; transition: all 0.3s var(--smooth);
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s var(--smooth);
         }
         .modal.active { opacity: 1; visibility: visible; }
+
         .modal-content {
-            background: rgba(35, 35, 37, 0.65); backdrop-filter: blur(50px) saturate(200%); -webkit-backdrop-filter: blur(50px) saturate(200%);
-            padding: 30px 25px; border-radius: 24px; width: 90%; max-width: 350px; text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 20px 50px rgba(0, 0, 0, 0.6);
-            transform: scale(0.85) translateY(20px); opacity: 0; transition: all 0.4s var(--spring);
+            background: rgba(35, 35, 37, 0.72);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            padding: 30px 25px;
+            border-radius: 24px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 20px 50px rgba(0, 0, 0, 0.6);
+            transform: scale(0.85) translateY(20px);
+            opacity: 0;
+            transition: all 0.4s var(--spring);
         }
-        .modal.active .modal-content { transform: scale(1) translateY(0); opacity: 1; }
+        .modal.active .modal-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
 
         .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 6px; font-size: 12px; color: var(--text-muted); }
-        .form-group input { width: 100%; padding: 15px; background: rgba(18, 18, 18, 0.5); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; color: #fff; font-size: 15px; outline: none; transition: border 0.3s var(--smooth); }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            background: rgba(18, 18, 18, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 15px;
+            outline: none;
+            transition: border 0.3s var(--smooth);
+        }
         .form-group input:focus { border-color: var(--gold); }
 
-        .toast-container { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; align-items: center; width: 100%; }
-        .toast { background: rgba(30, 30, 30, 0.78); backdrop-filter: blur(20px) saturate(180%); -webkit-backdrop-filter: blur(20px) saturate(180%); padding: 14px 22px; border-radius: 12px; display: flex; align-items: center; gap: 10px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 10px 30px rgba(0, 0, 0, 0.5); border: 1px solid var(--gold); color: var(--text-main); font-weight: 600; font-size: 13px; pointer-events: auto; animation: toastSlideDown 0.4s var(--spring); }
-        @keyframes toastSlideDown { from { transform: translateY(-20px) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        /* Уведомления */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+            align-items: center;
+            width: 100%;
+        }
+        .toast {
+            background: rgba(30, 30, 30, 0.78);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 14px 22px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--gold);
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 13px;
+            pointer-events: auto;
+            animation: toastSlideDown 0.4s var(--spring);
+        }
+        @keyframes toastSlideDown {
+            from { transform: translateY(-20px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
     </style>
 </head>
 <body>
-    <!-- Виджет скачивания PWA -->
-    <div id="pwaInstallWidget">
-        <div class="pwa-text">
-            <h4>Установить MENSFIRE</h4>
-            <p>На главный экран телефона</p>
-        </div>
-        <button class="pwa-btn" id="installBtn">Установить</button>
-        <button class="pwa-close" id="closePwaBtn">&times;</button>
-    </div>
-
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- ЭТАП 1: ПРОЛЕТ СКВОЗЬ НОЖНИЦЫ -->
     <div id="preSplash">
         <svg class="pre-splash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="6" cy="6" r="3"></circle>
@@ -321,6 +904,7 @@
         </svg>
     </div>
 
+    <!-- ЭТАП 2: ЗАГРУЗОЧНЫЙ ЭКРАН -->
     <div id="splashScreen">
         <div class="splash-content">
             <div class="splash-title-wrapper">
@@ -336,15 +920,23 @@
         <div class="splash-loader"><div class="splash-loader-bar"></div></div>
     </div>
 
+    <!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
     <div id="appContainer">
         <div class="app-header">
             <div class="logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
+                    <circle cx="6" cy="6" r="3"></circle>
+                    <circle cx="6" cy="18" r="3"></circle>
+                    <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+                    <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+                    <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+                </svg>
                 MENS<span>FIRE</span>
             </div>
             <div style="font-size: 13px; color: var(--gold); font-weight: 600; cursor: pointer;" onclick="openAuth()" id="headerAuthBtn">Войти</div>
         </div>
 
+        <!-- ЭКРАН ЗАПИСИ -->
         <div id="viewBook" class="view active">
             <h2 style="margin-bottom: 15px; font-size: 20px;">Записаться</h2>
             <div class="category-tabs">
@@ -352,17 +944,20 @@
                 <button class="tab-btn" onclick="filterServices('barber', this)">БАРБЕР</button>
             </div>
             <div class="services-grid" id="servicesGrid"></div>
+
             <h3 style="margin: 25px 0 10px; font-size: 16px; color: var(--gold);">Наши мастера</h3>
             <p style="font-size: 11px; color: #888; margin-bottom: 10px;">Нажмите на карточку, чтобы выбрать мастера</p>
             <div class="masters-grid" id="mastersGrid"></div>
         </div>
 
+        <!-- ЭКРАН ПРОФИЛЯ -->
         <div id="viewProfile" class="view">
             <div class="profile-header" id="profileHeader">
                 <div class="profile-avatar">👤</div>
                 <h1>Гость</h1>
                 <p>Войдите, чтобы видеть записи</p>
             </div>
+
             <div class="status-block" id="loyaltyBlock" style="display: none;">
                 <div class="status-circle-container">
                     <svg viewBox="0 0 100 100">
@@ -376,10 +971,12 @@
                     <div class="status-hint" id="statStatusSub">До статуса "Постоянный" осталось 3 визита</div>
                 </div>
             </div>
+
             <button class="logout-btn" id="logoutBtn" style="display: none;" onclick="logout()">Выйти из аккаунта</button>
             <button class="checkout-btn" id="loginBtnProfile" onclick="openAuth()" style="margin-top: 15px;">Войти / Зарегистрироваться</button>
         </div>
 
+        <!-- ЭКРАН МОИХ ЗАПИСЕЙ -->
         <div id="viewBookings" class="view">
             <h2 style="margin-bottom: 20px; font-size: 20px;">Мои записи</h2>
             <div id="activeBookingContainer"></div>
@@ -387,26 +984,42 @@
             <div class="booking-list" id="historyContainer"></div>
         </div>
 
+        <!-- НИЖНЕЕ МЕНЮ -->
         <div class="bottom-nav">
             <div class="nav-item" onclick="switchView('viewProfile', this)" id="navProfile">
-                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>Профиль
+                <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                Профиль
             </div>
             <div class="nav-item nav-item-center" onclick="switchView('viewBook', this)" id="navBook">
                 <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
             </div>
             <div class="nav-item" onclick="switchView('viewBookings', this)" id="navBookings">
-                <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>Записи
+                <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
+                Записи
             </div>
         </div>
     </div>
 
+    <!-- КОРЗИНА -->
     <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
     <div class="drawer" id="drawer">
-        <div class="drawer-header"><h2>Ваша запись</h2><button class="close-btn" onclick="closeDrawer()">&times;</button></div>
+        <div class="drawer-header">
+            <h2>Ваша запись</h2>
+            <button class="close-btn" onclick="closeDrawer()">&times;</button>
+        </div>
         <div class="drawer-body">
-            <div class="drawer-section"><h3>Выбранные услуги</h3><div id="selectedServicesList"></div></div>
-            <div class="drawer-section"><h3>Дата</h3><div class="date-grid" id="dateOptions"></div></div>
-            <div class="drawer-section"><h3>Время</h3><div class="time-grid" id="timeOptions"></div></div>
+            <div class="drawer-section">
+                <h3>Выбранные услуги</h3>
+                <div id="selectedServicesList"></div>
+            </div>
+            <div class="drawer-section">
+                <h3>Дата</h3>
+                <div class="date-grid" id="dateOptions"></div>
+            </div>
+            <div class="drawer-section">
+                <h3>Время</h3>
+                <div class="time-grid" id="timeOptions"></div>
+            </div>
         </div>
         <div class="drawer-footer">
             <div class="total-price"><span>Итого:</span> <span id="totalPrice">0 ₽</span></div>
@@ -414,6 +1027,7 @@
         </div>
     </div>
 
+    <!-- МОДАЛКИ -->
     <div class="modal" id="authModal">
         <div class="modal-content">
             <h2 style="margin-bottom: 15px; font-size: 22px;">Вход / Регистрация</h2>
@@ -455,29 +1069,6 @@
     </div>
 
     <script>
-        // PWA Логика
-        let deferredPrompt;
-        const pwaWidget = document.getElementById('pwaInstallWidget');
-        const installBtn = document.getElementById('installBtn');
-        const closePwaBtn = document.getElementById('closePwaBtn');
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            setTimeout(() => { pwaWidget.classList.add('show'); }, 4000);
-        });
-
-        installBtn.addEventListener('click', async () => {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') { pwaWidget.classList.remove('show'); }
-                deferredPrompt = null;
-            }
-        });
-
-        closePwaBtn.addEventListener('click', () => { pwaWidget.classList.remove('show'); });
-
         const servicesData = {
             top: [
                 { id: 't1', title: 'Мужская стрижка', time: '45 мин', price: 1500, type: 'top' },
@@ -539,18 +1130,28 @@
         let bookings = rawBookings.filter(b => b && b.barber && b.appointmentDate && b.time);
         let bookingToEdit = null;
 
+        // Рандомные приветствия на разных языках
         const greetingsList = [
-            (name) => `Здравствуйте, ${name}!`, (name) => `Hello, ${name}!`, (name) => `Bonjour, ${name}!`,
-            (name) => `Hola, ${name}!`, (name) => `Ciao, ${name}!`, (name) => `Hallo, ${name}!`,
-            (name) => `Приветствую, ${name}!`, (name) => `Salve, ${name}!`, (name) => `Olá, ${name}!`, (name) => `Hej, ${name}!`
+            (name) => `Здравствуйте, ${name}!`,
+            (name) => `Hello, ${name}!`,
+            (name) => `Bonjour, ${name}!`,
+            (name) => `Hola, ${name}!`,
+            (name) => `Ciao, ${name}!`,
+            (name) => `Hallo, ${name}!`,
+            (name) => `Приветствую, ${name}!`,
+            (name) => `Salve, ${name}!`,
+            (name) => `Olá, ${name}!`,
+            (name) => `Hej, ${name}!`
         ];
 
         window.addEventListener('DOMContentLoaded', () => {
             initMockData();
+
             const splashGreeting = document.getElementById('splashGreeting');
             if (currentUser) {
                 const randomGreetingFunc = greetingsList[Math.floor(Math.random() * greetingsList.length)];
-                splashGreeting.innerHTML = randomGreetingFunc(currentUser.name).replace(currentUser.name, `<span>${currentUser.name}</span>`);
+                const text = randomGreetingFunc(currentUser.name);
+                splashGreeting.innerHTML = text.replace(currentUser.name, `<span>${currentUser.name}</span>`);
             } else {
                 splashGreeting.innerHTML = `Добро пожаловать в <span>MENSFIRE</span>`;
             }
@@ -579,7 +1180,11 @@
             toast.className = `toast ${type}`;
             toast.innerHTML = `<span>${type==='error'?'⚠️':type==='success'?'✅':'ℹ️'}</span><span>${message}</span>`;
             container.appendChild(toast);
-            setTimeout(() => { toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)'; setTimeout(() => toast.remove(), 300); }, 3000);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
         function renderServices(category) {
@@ -589,7 +1194,14 @@
                 const isSelected = cart.some(item => item.id === service.id);
                 const card = document.createElement('div');
                 card.className = `service-card ${isSelected ? 'selected' : ''}`;
-                card.innerHTML = `<div class="checkbox"></div><div><h3>${service.title}</h3><div class="time">${service.time}</div></div><div class="price">${service.price} ₽</div>`;
+                card.innerHTML = `
+                    <div class="checkbox"></div>
+                    <div>
+                        <h3>${service.title}</h3>
+                        <div class="time">${service.time}</div>
+                    </div>
+                    <div class="price">${service.price} ₽</div>
+                `;
                 card.onclick = () => toggleService(service);
                 grid.appendChild(card);
             });
@@ -605,9 +1217,15 @@
         function toggleService(service) {
             const index = cart.findIndex(item => item.id === service.id);
             if (index === -1) {
-                if (cart.length > 0 && cart[0].type !== service.type) { cart = []; selectedBarber = null; showToast("Выбранные услуги сброшены", "info"); }
+                if (cart.length > 0 && cart[0].type !== service.type) {
+                    cart = [];
+                    selectedBarber = null;
+                    showToast("Выбранные услуги сброшены", "info");
+                }
                 cart.push(service);
-            } else { cart.splice(index, 1); }
+            } else {
+                cart.splice(index, 1);
+            }
             renderServices(service.type);
             checkMasterAvailability();
         }
@@ -625,7 +1243,11 @@
 
                 const card = document.createElement('div');
                 card.className = `master-card ${selectedBarber?.id === barber.id ? 'selected' : ''}`;
-                card.innerHTML = `<div class="master-img">${barber.icon}</div><h3>${barber.name}</h3><p>${barber.role}</p>`;
+                card.innerHTML = `
+                    <div class="master-img">${barber.icon}</div>
+                    <h3>${barber.name}</h3>
+                    <p>${barber.role}</p>
+                `;
                 card.onclick = () => selectBarber(barber);
                 grid.appendChild(card);
             });
@@ -635,7 +1257,13 @@
             if (selectedBarber?.id !== barber.id) selectedTime = null;
             selectedBarber = barber;
             renderMasters();
-            if (cart.length > 0) { openDrawer(); } else { showToast(`Выберите услуги для ${barber.name}`, 'info'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+
+            if (cart.length > 0) {
+                openDrawer();
+            } else {
+                showToast(`Выберите услуги для ${barber.name}`, 'info');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         }
 
         function checkMasterAvailability() {
@@ -655,6 +1283,7 @@
             document.getElementById('drawer').classList.add('active');
             document.getElementById('drawerOverlay').classList.add('active');
             document.body.style.overflow = 'hidden';
+
             updateCartUI();
             renderDates();
             updateTimeOptions();
@@ -677,11 +1306,13 @@
             const container = document.getElementById('dateOptions');
             container.innerHTML = '';
             const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+
             for (let i = 0; i < 7; i++) {
                 const d = new Date();
                 d.setDate(d.getDate() + i);
                 const dateStr = d.toLocaleDateString('ru-RU');
                 const dayName = i === 0 ? 'Сегодня' : i === 1 ? 'Завтра' : days[d.getDay()];
+
                 const div = document.createElement('div');
                 div.className = `date-opt ${selectedDate === dateStr ? 'selected' : ''}`;
                 div.innerHTML = `<div style="font-size:10px; opacity:0.7;">${dayName}</div><div style="font-size:15px; font-weight:bold;">${d.getDate()}</div>`;
@@ -695,6 +1326,7 @@
             const container = document.getElementById('timeOptions');
             container.innerHTML = '';
             if (!selectedBarber) return container.innerHTML = '<div style="font-size:13px; color:#888; grid-column: 1/-1;">Сначала выберите мастера</div>';
+
             const booked = (mockBookedTimes[selectedBarber.id] && mockBookedTimes[selectedBarber.id][selectedDate]) || [];
             allTimeSlots.forEach(time => {
                 const isBooked = booked.includes(time);
@@ -720,8 +1352,13 @@
             mockBookedTimes[selectedBarber.id][selectedDate].push(selectedTime);
 
             const newBooking = {
-                id: Date.now(), services: [...cart], barber: selectedBarber,
-                time: selectedTime, appointmentDate: selectedDate, total: total, date: new Date().toLocaleDateString('ru-RU')
+                id: Date.now(),
+                services: [...cart],
+                barber: selectedBarber,
+                time: selectedTime,
+                appointmentDate: selectedDate,
+                total: total,
+                date: new Date().toLocaleDateString('ru-RU')
             };
 
             bookings.push(newBooking);
