@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mensfire-v3';
+const CACHE_NAME = 'mensfire-v4';
 const ASSETS = [
   './index.html',
   './manifest.json',

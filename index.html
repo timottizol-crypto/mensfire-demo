@@ -23,7 +23,7 @@
             --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
             --smooth: cubic-bezier(0.25, 0.8, 0.25, 1);
             
-            --glass-bg: rgba(25, 25, 25, 0.65);
+            --glass-bg: rgba(25, 25, 25, 0.7);
             --glass-border: rgba(255, 255, 255, 0.12);
             --glass-blur: blur(30px) saturate(180%);
         }
@@ -37,14 +37,14 @@
         }
         .pre-splash-icon {
             width: 160px; height: 160px;
-            /* Центр открытых лезвий */
-            transform-origin: 50% 30%; 
+            /* Центрируем пролет ровно на открытых лезвиях */
+            transform-origin: 50% 35%; 
             animation: zoomThroughIcon 1.8s cubic-bezier(0.7, 0, 0.3, 1) forwards;
-            filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.7));
+            filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.8));
         }
         @keyframes zoomThroughIcon {
             0% { transform: scale(1); opacity: 1; }
-            20% { transform: scale(1.3); opacity: 1; }
+            20% { transform: scale(1.2); opacity: 1; }
             100% { transform: scale(25); opacity: 0; }
         }
 
@@ -111,31 +111,31 @@
         
         .app-header {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 20px; background: rgba(10, 10, 10, 0.65); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            padding: 15px 20px; background: rgba(10, 10, 10, 0.7); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
             position: absolute; top: 0; left: 0; width: 100%; z-index: 100; border-bottom: 1px solid var(--glass-border);
         }
         .app-header .logo { font-size: 18px; font-weight: 800; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; }
-        .app-header .logo svg { width: 20px; height: 20px; }
+        .app-header .logo svg { width: 22px; height: 22px; }
         .app-header .logo span { color: var(--gold); }
 
         .view {
             display: none; flex-direction: column; flex-grow: 1;
-            padding: 75px 20px 90px 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--bg-dark);
+            padding: 75px 20px 95px 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; background: var(--bg-dark);
         }
         .view.active { display: flex; animation: viewFadeIn 0.3s var(--smooth); }
-        @keyframes viewFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes viewFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* --- ГЛАВНЫЙ ЭКРАН (HOME) --- */
-        .home-greeting h1 { font-size: 28px; margin-bottom: 5px; }
+        .home-greeting h1 { font-size: 28px; margin-bottom: 5px; line-height: 1.2; }
         .home-greeting p { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
         
         .countdown-card { 
             background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(30, 30, 30, 0.8) 100%); 
             backdrop-filter: var(--glass-blur); border: 1px solid var(--gold); border-radius: 24px; padding: 25px;
-            position: relative; overflow: hidden; margin-bottom: 25px;
+            position: relative; overflow: hidden; margin-bottom: 25px; box-shadow: 0 10px 30px rgba(212,175,55,0.1);
         }
         .countdown-card::before {
-            content: 'Ближайшая запись'; position: absolute; top: -10px; left: 20px;
+            content: 'Ваша ближайшая запись'; position: absolute; top: -10px; left: 20px;
             background: var(--gold); color: #000; font-size: 10px; font-weight: 800; padding: 4px 12px; border-radius: 10px; text-transform: uppercase;
         }
         .countdown-time { font-size: 32px; font-weight: 800; color: var(--gold); margin-bottom: 10px; line-height: 1.1; }
@@ -143,11 +143,12 @@
         .countdown-details span { color: var(--text-muted); font-size: 13px; display: block; margin-top: 4px; }
         
         .promo-banner {
-            background: rgba(30, 30, 30, 0.6); border: 1px dashed #555; border-radius: 16px; padding: 20px;
-            text-align: center; margin-bottom: 25px;
+            background: var(--bg-card); border: 1px dashed #555; border-radius: 16px; padding: 20px;
+            text-align: center; margin-bottom: 25px; transition: transform 0.2s;
         }
+        .promo-banner:active { transform: scale(0.98); }
         .promo-banner h3 { color: var(--gold); font-size: 16px; margin-bottom: 5px; }
-        .promo-banner p { font-size: 12px; color: var(--text-muted); }
+        .promo-banner p { font-size: 12px; color: var(--text-muted); margin-bottom: 15px; }
 
         .home-quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .qa-btn {
@@ -158,7 +159,7 @@
         .qa-btn svg { width: 28px; height: 28px; fill: var(--gold); margin-bottom: 10px; }
         .qa-btn span { font-size: 13px; font-weight: 600; }
 
-        /* --- НИЖНЕЕ МЕНЮ (iOS STYLE) --- */
+        /* --- НИЖНЕЕ МЕНЮ (iOS STYLE SLIDER) --- */
         .bottom-nav {
             position: absolute; bottom: 0; left: 0; width: 100%; height: 75px;
             background: rgba(21, 21, 21, 0.7); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
@@ -167,9 +168,9 @@
         }
         
         .nav-slider {
-            position: absolute; width: 33.33%; height: 55px; 
-            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px; top: 10px; left: 0;
+            position: absolute; width: 31%; height: 55px; 
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px; top: 10px; left: 2%;
             transition: transform 0.4s var(--spring); z-index: 1;
             box-shadow: inset 0 0 10px rgba(255,255,255,0.05);
         }
@@ -182,7 +183,7 @@
         .nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; fill: currentColor; transition: fill 0.3s; }
         .nav-item.active { color: var(--gold); }
 
-        /* --- ОСТАЛЬНЫЕ СТИЛИ (Услуги, мастера, корзина) --- */
+        /* --- ОСТАЛЬНЫЕ СТИЛИ --- */
         .category-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
         .tab-btn { flex: 1; background: var(--bg-card); border: 1px solid #333; color: var(--text-main); padding: 12px; border-radius: 12px; font-size: 13px; font-weight: 600; transition: all 0.3s var(--smooth); }
         .tab-btn.active { background: var(--gold); border-color: var(--gold); color: #000; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3); }
@@ -262,7 +263,7 @@
         .form-group input { width: 100%; padding: 15px; background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 12px; color: #fff; font-size: 15px; outline: none; }
         .form-group input:focus { border-color: var(--gold); }
 
-        /* Плашка установки PWA */
+        /* Плашки установки */
         #installPWA {
             position: fixed; bottom: 90px; left: 20px; right: 20px; background: rgba(212, 175, 55, 0.95);
             padding: 15px 20px; border-radius: 16px; display: none; justify-content: space-between; align-items: center;
@@ -270,9 +271,10 @@
         }
         #installPWA button { background: #000; color: #fff; border: none; padding: 8px 15px; border-radius: 8px; font-weight: bold; }
         #iosInstallHint {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 99999;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 99999;
             display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 20px;
         }
+        
         .toast-container { position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 10px; pointer-events: none; align-items: center; width: 100%; }
         .toast { background: var(--glass-bg); backdrop-filter: var(--glass-blur); padding: 14px 22px; border-radius: 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); border: 1px solid var(--gold); color: var(--text-main); font-weight: 600; font-size: 13px; pointer-events: auto; animation: toastSlideDown 0.4s var(--spring); }
         @keyframes toastSlideDown { from { transform: translateY(-20px) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
@@ -292,7 +294,7 @@
         <button class="checkout-btn" onclick="document.getElementById('iosInstallHint').style.display='none'">Понятно</button>
     </div>
 
-    <!-- ЭТАП 1: НОЖНИЦЫ -->
+    <!-- ЭТАП 1: НОЖНИЦЫ (Детализированные) -->
     <div id="preSplash">
         <svg class="pre-splash-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <defs>
@@ -302,11 +304,13 @@
                     <stop offset="100%" stop-color="#B5952F"/>
                 </linearGradient>
             </defs>
-            <!-- Детализированные лезвия -->
+            <!-- Кольца -->
             <path d="M 25 75 C 20 80, 15 85, 10 85 C 5 85, 0 80, 0 75 C 0 70, 5 65, 10 65 C 15 65, 20 70, 25 75 Z" fill="url(#goldGrad)"/>
             <path d="M 75 75 C 80 80, 85 85, 90 85 C 95 85, 100 80, 100 75 C 100 70, 95 65, 90 65 C 85 65, 80 70, 75 75 Z" fill="url(#goldGrad)"/>
+            <!-- Лезвия -->
             <path d="M 25 75 L 50 50 L 85 15 C 90 10, 95 15, 90 20 L 55 55 L 30 80 Z" fill="url(#goldGrad)"/>
             <path d="M 75 75 L 50 50 L 15 15 C 10 10, 5 15, 10 20 L 45 55 L 70 80 Z" fill="url(#goldGrad)"/>
+            <!-- Ось -->
             <circle cx="50" cy="50" r="6" fill="#0a0a0a" stroke="url(#goldGrad)" stroke-width="3"/>
         </svg>
     </div>
@@ -335,18 +339,20 @@
             <div style="font-size: 13px; color: var(--gold); font-weight: 600; cursor: pointer;" onclick="openAuth()" id="headerAuthBtn">Войти</div>
         </div>
 
-        <!-- ГЛАВНЫЙ ЭКРАН -->
+        <!-- 1. ГЛАВНЫЙ ЭКРАН -->
         <div id="viewHome" class="view active">
             <div class="home-greeting">
                 <h1 id="homeGreetingText">Привет!</h1>
                 <p>Добро пожаловать в премиальный барбершоп</p>
             </div>
 
+            <!-- Блок ближайшей записи -->
             <div id="homeNextVisit"></div>
 
             <div class="promo-banner">
                 <h3>Приведи друга — получи скидку</h3>
                 <p>Приводите друзей и получайте 500 ₽ на следующий визит.</p>
+                <button class="checkout-btn" style="padding: 10px; font-size: 13px;" onclick="showToast('Скоро здесь появится реферальная программа', 'info')">Узнать подробнее</button>
             </div>
 
             <div class="home-quick-actions">
@@ -361,7 +367,7 @@
             </div>
         </div>
 
-        <!-- ЭКРАН ЗАПИСИ -->
+        <!-- 2. ЭКРАН ЗАПИСИ -->
         <div id="viewBook" class="view">
             <h2 style="margin-bottom: 15px; font-size: 20px;">Записаться</h2>
             <div class="category-tabs">
@@ -375,7 +381,7 @@
             <div class="masters-grid" id="mastersGrid"></div>
         </div>
 
-        <!-- ЛИЧНЫЙ КАБИНЕТ -->
+        <!-- 3. ЛИЧНЫЙ КАБИНЕТ -->
         <div id="viewProfile" class="view">
             <div class="profile-header" id="profileHeader">
                 <div class="profile-avatar">👤</div>
@@ -404,7 +410,7 @@
             <button class="checkout-btn" id="loginBtnProfile" onclick="openAuth()" style="margin-top: 15px;">Войти / Зарегистрироваться</button>
         </div>
 
-        <!-- НИЖНЕЕ МЕНЮ -->
+        <!-- НИЖНЕЕ МЕНЮ (С ПЛАВНЫМ ПОЛЗУНКОМ) -->
         <div class="bottom-nav">
             <div class="nav-slider" id="navSlider"></div>
             <div class="nav-item active" onclick="switchView('viewHome', 0)">
@@ -482,7 +488,6 @@
     </div>
 
     <script>
-        // Данные
         const servicesData = {
             top: [
                 { id: 't1', title: 'Мужская стрижка', time: '45 мин', price: 1500, type: 'top' },
@@ -543,7 +548,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             initMockData();
             
-            // Приветствие на сплэше
             const splashGreeting = document.getElementById('splashGreeting');
             if (currentUser) splashGreeting.innerHTML = `Здравствуйте, <span>${currentUser.name}</span>!`;
             else splashGreeting.innerHTML = `Добро пожаловать в <span>MENSFIRE</span>`;
@@ -572,17 +576,16 @@
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
             
-            // Двигаем ползунок
+            // Плавно двигаем стеклянный ползунок внизу
             const slider = document.getElementById('navSlider');
             slider.style.transform = `translateX(${index * 100}%)`;
             
-            // Меняем цвет иконок
+            // Меняем цвет активной иконки
             document.querySelectorAll('.nav-item').forEach((n, i) => {
                 if (i === index) n.classList.add('active');
                 else n.classList.remove('active');
             });
 
-            // Обновляем данные на главной при возврате
             if (viewId === 'viewHome') updateHomeUI();
             if (viewId === 'viewProfile') renderBookings();
         }
@@ -591,7 +594,7 @@
             const greetingText = document.getElementById('homeGreetingText');
             const nextVisitContainer = document.getElementById('homeNextVisit');
             
-            // Приветствие
+            // Умное приветствие
             if (currentUser) {
                 const hour = new Date().getHours();
                 let timeGreet = "Добрый день";
@@ -602,22 +605,23 @@
                 greetingText.innerText = "Добро пожаловать!";
             }
 
-            // Ближайшая запись
+            // Блок ближайшей записи
             if (!currentUser || bookings.length === 0) {
                 nextVisitContainer.innerHTML = `
                     <div class="promo-banner" style="border-style:solid; border-color:var(--gold);">
                         <h3>У вас пока нет записей</h3>
                         <p>Самое время выбрать услугу и записаться.</p>
-                        <button class="checkout-btn" style="margin-top:15px;" onclick="switchView('viewBook', 1)">Записаться</button>
+                        <button class="checkout-btn" style="margin-top:15px; padding:10px;" onclick="switchView('viewBook', 1)">Записаться</button>
                     </div>
                 `;
                 return;
             }
 
+            // Ищем ближайшую по дате
             const sorted = [...bookings].sort((a,b) => parseDate(a) - parseDate(b));
             const next = sorted[0];
             
-            // Вычисляем разницу во времени
+            // Вычисляем таймер
             const [d, m, y] = next.appointmentDate.split('.');
             const [h, min] = next.time.split(':');
             const bookingDate = new Date(y, m-1, d, h, min);
@@ -631,13 +635,9 @@
                 const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
                 const diffDays = Math.floor(diffHours / 24);
                 
-                if (diffDays === 0) {
-                    timeText = `Сегодня в ${next.time}`;
-                } else if (diffDays === 1) {
-                    timeText = `Завтра в ${next.time}`;
-                } else {
-                    timeText = `Через ${diffDays} дн.`;
-                }
+                if (diffDays === 0) timeText = `Сегодня в ${next.time}`;
+                else if (diffDays === 1) timeText = `Завтра в ${next.time}`;
+                else timeText = `Через ${diffDays} дн.`;
             }
 
             nextVisitContainer.innerHTML = `
@@ -878,7 +878,7 @@
             } else {
                 document.getElementById('profileHeader').innerHTML = `<div class="profile-avatar">👤</div><h1>Гость</h1><p>Войдите, чтобы видеть записи</p>`;
             }
-            updateHomeUI(); // Обновляем главную при смене пользователя
+            updateHomeUI(); 
         }
         function logout() {
             localStorage.removeItem('menfire_user'); currentUser = null;
@@ -918,7 +918,7 @@
             }
 
             historyTitle.style.display = 'block';
-            historyContainer.innerHTML = bookings.reverse().map(b => `
+            historyContainer.innerHTML = bookings.slice().reverse().map(b => `
                 <div class="booking-card">
                     <div class="bc-header"><div><h3>${b.barber.name}</h3><p>${b.barber.role}</p></div></div>
                     <div class="bc-services">${b.services.map(s => s.title).join(', ')}</div>
@@ -960,13 +960,12 @@
             showToast('Запись отменена', 'success');
         }
 
-        // --- УСТАНОВКА ПРИЛОЖЕНИЯ (PWA) ---
+        // --- АВТОУСТАНОВКА ПРИЛОЖЕНИЯ ---
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // Показываем плашку для Android
-            document.getElementById('installPWA').style.display = 'flex';
+            document.getElementById('installPWA').style.display = 'flex'; // Показываем баннер Android
         });
 
         function installApp() {
@@ -980,12 +979,12 @@
             });
         }
 
-        // Подсказка для iOS (Safari)
+        // Подсказка для iOS
         if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
             if (!window.navigator.standalone) {
                 setTimeout(() => {
                     document.getElementById('iosInstallHint').style.display = 'flex';
-                }, 4000); // Показываем через 4 секунды
+                }, 4000);
             }
         }
     </script>
