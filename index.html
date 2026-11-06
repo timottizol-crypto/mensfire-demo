@@ -7,8 +7,9 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/svg+xml" href="icon.svg">
-    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="icon" type="image/png" href="img/icon-light.png" media="(prefers-color-scheme: light)">
+    <link rel="icon" type="image/png" href="img/icon-dark.png" media="(prefers-color-scheme: dark)">
+    <link rel="apple-touch-icon" href="img/icon-dark.png">
     <title>MENSFIRE | Приложение</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -37,67 +38,9 @@
             width: 100vw; 
             overflow: hidden; 
         }
-
-        /* ==========================
-           ЭТАП 1: РАСКРЫТИЕ НОЖНИЦ
-           ========================== */
-        #preSplash {
-            position: fixed;
-            inset: 0;
-            background: #000;
-            z-index: 100000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            animation: hidePreSplash 0.4s ease 0.9s forwards;
-        }
-        .pre-splash-icon {
-            width: 140px;
-            height: 140px;
-            color: var(--gold);
-            animation: zoomThroughIcon 0.9s cubic-bezier(0.7, 0, 0.3, 1) forwards;
-            filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.5));
-        }
-        @keyframes zoomThroughIcon {
-            0% { transform: scale(1) rotate(0deg); opacity: 1; }
-            100% { transform: scale(12) rotate(45deg); opacity: 0; }
-        }
-        @keyframes hidePreSplash {
-            to { opacity: 0; visibility: hidden; }
-        }
-
         /* ==========================
            ЭТАП 2: ЭКРАН ЗАГРУЗКИ
            ========================== */
-        #splashScreen {
-            position: fixed;
-            inset: 0;
-            background: #050505;
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 1;
-            visibility: visible;
-            transition: opacity 0.4s var(--smooth), visibility 0.4s;
-        }
-        #splashScreen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-
-        .splash-content {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            opacity: 0;
-            transform: scale(0.7);
-            animation: splashAppear 0.7s var(--spring) 0.5s forwards;
-        }
         @keyframes splashAppear {
             0% { opacity: 0; transform: scale(0.7); }
             100% { opacity: 1; transform: scale(1); }
@@ -216,93 +159,321 @@
             transition: opacity 0.4s var(--smooth);
         }
         #appContainer.visible { opacity: 1; }
+               /* ==========================
+           СТЕКЛЯННЫЕ ПИЛЮЛИ В ШАПКЕ
+           ========================== */
+        @property --border-angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
 
-        /* Стеклянная шапка (iOS-style) */
+        /* Контейнер шапки (прозрачный, только для позиционирования) */
         .app-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 15px 20px;
-            background: rgba(15, 15, 15, 0.65);
-            backdrop-filter: blur(30px) saturate(180%);
-            -webkit-backdrop-filter: blur(30px) saturate(180%);
-            position: absolute;
-            top: 0;
+            position: fixed;
+            top: calc(10px + env(safe-area-inset-top, 0px));
             left: 0;
             width: 100%;
+            padding: 0 12px;
             z-index: 100;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.05) inset;
+            pointer-events: none; /* Клики проходят сквозь пустое пространство */
+            gap: 10px;
         }
-        .app-header .logo {
-            font-size: 18px;
-            font-weight: 800;
-            letter-spacing: 1px;
+
+        /* Общие стили для обеих пилюль */
+        .header-pill {
+            pointer-events: auto; /* Возвращаем кликабельность */
+            width: 30vw; /* Овал занимает ровно 30% от ширины экрана */
+            height: 56px;
+            border-radius: 50px;
+            background: rgba(20, 20, 22, 0.55);
+            backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
+            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
+            box-shadow:
+                inset 0 1px 1px rgba(255, 255, 255, 0.28),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.25),
+                0 6px 24px rgba(0, 0, 0, 0.35);
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s var(--spring);
         }
-        .app-header .logo svg { width: 20px; height: 20px; }
-        .app-header .logo span { color: var(--gold); }
+        .header-pill:active {
+            transform: scale(0.95);
+        }
 
+        /* Левая пилюля (стартовая рамка прозрачная) */
+        .left-pill {
+            border: 1.5px solid rgba(212, 175, 55, 0);
+        }
+
+        /* Правая пилюля (статичная золотая рамка) */
+        .right-pill {
+            border: 1.5px solid rgba(212, 175, 55, 0.42);
+        }
+
+        /* Блик-рефракция стекла (для обеих) */
+        .header-pill::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.16) 0%,
+                rgba(255, 255, 255, 0.05) 20%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.18) 100%
+            );
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Жёлтая искра (ТОЛЬКО для левой пилюли) */
+        .left-pill::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1.5px;
+            background: conic-gradient(
+                from var(--border-angle),
+                transparent 0deg,
+                transparent 230deg,
+                rgba(212, 175, 55, 0.15) 270deg,
+                rgba(212, 175, 55, 0.85) 335deg,
+                var(--gold) 355deg,
+                transparent 360deg
+            );
+            -webkit-mask:
+                linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Контент поверх эффектов */
+        .header-pill > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Логотип внутри левой пилюли */
+        .left-pill .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            line-height: 1;
+        }
+        .left-pill .logo svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+        .left-pill .logo-text {
+            display: flex;
+            flex-direction: column;
+            font-size: 13px; /* Увеличили шрифт */
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            white-space: nowrap;
+        }
+        .left-pill .logo-text span {
+            color: var(--gold);
+            font-size: 13px;
+            letter-spacing: 1.8px;
+        }
+
+        /* Иконка профиля в правой пилюле */
+        .right-pill svg {
+            width: 26px;
+            height: 26px;
+        }
+
+        /* Запуск анимации */
+        #appContainer.visible .left-pill::before {
+            animation: borderSpin 2.5s cubic-bezier(0.5, 0, 0.3, 1) forwards;
+        }
+        #appContainer.visible .left-pill {
+            animation: headerBorderIn 0.6s ease 2.4s forwards;
+        }
+
+        @keyframes borderSpin {
+            0%   { --border-angle: 0deg;   opacity: 1; }
+            85%  { --border-angle: 306deg; opacity: 1; }
+            100% { --border-angle: 360deg; opacity: 0; }
+        }
+        @keyframes headerBorderIn {
+            to { border-color: rgba(212, 175, 55, 0.42); }
+        }
         .view {
             display: none;
             flex-direction: column;
             flex-grow: 1;
-            padding: 85px 20px 90px 20px;
+            padding: calc(85px + env(safe-area-inset-top, 0px)) 20px 90px 20px;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             background: var(--bg-dark);
         }
-        .view.active {
+       
+                .view.active {
             display: flex;
-            animation: viewSlideIn 0.4s var(--spring);
         }
-        @keyframes viewSlideIn {
-            from { opacity: 0; transform: translateX(20px); }
+
+        /* Анимация въезда справа (когда листаем вправо) */
+        .view.slide-from-right {
+            animation: slideInRight 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+
+        /* Анимация въезда слева (когда листаем влево) */
+        .view.slide-from-left {
+            animation: slideInLeft 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-40px); }
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* Стеклянное нижнее меню */
+            /* ==========================
+           СТЕКЛЯННОЕ НИЖНЕЕ МЕНЮ (3 ПИЛЮЛИ)
+           ========================== */
         .bottom-nav {
-            position: absolute;
-            bottom: 0;
+            position: fixed;
+            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
             left: 0;
             width: 100%;
-            height: 70px;
-            background: rgba(18, 18, 18, 0.7);
-            backdrop-filter: blur(30px) saturate(180%);
-            -webkit-backdrop-filter: blur(30px) saturate(180%);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            height: auto;
+            background: transparent;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
+            padding: 0 12px;
+            gap: 10px;
             z-index: 100;
-            padding-bottom: env(safe-area-inset-bottom);
+            pointer-events: none; /* Клики проходят сквозь пустоту */
         }
-        .nav-item {
+
+                .nav-item {
+            pointer-events: auto;
+            flex: 1;
+            height: 56px;
+            border-radius: 50px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: var(--text-muted);
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s var(--smooth);
-            width: 33%;
-            height: 100%;
+            transition: all 0.3s var(--spring);
+            
+            /* Стекло для неактивных вкладок */
+            background: rgba(20, 20, 22, 0.55);
+            backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
+            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
+            border: 1.5px solid rgba(212, 175, 55, 0.2);
+            box-shadow:
+                inset 0 1px 1px rgba(255, 255, 255, 0.28),
+                inset 0 -1px 1px rgba(0, 0, 0, 0.25),
+                0 6px 24px rgba(0, 0, 0, 0.35);
+            position: relative;
+            z-index: 1; /* Поверх пузыря */
+            isolation: isolate;
+            overflow: hidden;
         }
+
+        /* Блик-рефракция (только для неактивных) */
+        .nav-item::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.16) 0%,
+                rgba(255, 255, 255, 0.05) 20%,
+                transparent 50%,
+                rgba(0, 0, 0, 0.18) 100%
+            );
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .nav-item > * {
+            position: relative;
+            z-index: 2;
+        }
+
+        .nav-item:active {
+            transform: scale(0.95);
+        }
+
         .nav-item svg {
             width: 22px;
             height: 22px;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             fill: currentColor;
-            transition: transform 0.3s var(--spring);
+            transition: all 0.3s var(--spring);
         }
-        .nav-item.active { color: var(--gold); }
-        .nav-item.active svg { transform: translateY(-3px) scale(1.1); }
 
+        /* Активная вкладка становится прозрачной (виден пузырь) */
+        .nav-item.active {
+            color: var(--gold);
+            background: transparent;
+            border-color: transparent;
+            box-shadow: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+        .nav-item.active::after {
+            opacity: 0;
+        }
+        .nav-item.active svg { 
+            transform: translateY(-2px) scale(1.1); 
+        }
+
+        /* ==========================
+           ПЛАВАЮЩИЙ СТЕКЛЯННЫЙ ПУЗЫРЬ
+           ========================== */
+        .nav-bubble {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-radius: 50px;
+            background: rgba(212, 175, 55, 0.08);
+            backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
+            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
+            border: 1.5px solid rgba(212, 175, 55, 0.75);
+            box-shadow: 
+                inset 0 1px 1px rgba(255, 255, 255, 0.3),
+                0 0 20px rgba(212, 175, 55, 0.25);
+            pointer-events: none;
+            z-index: 0;
+            /* Плавный переезд (0.35 сек) */
+            transition: 
+                left 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+                top 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+                width 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+                height 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+        }
         .nav-item-center {
             position: relative;
             top: -15px;
@@ -888,24 +1059,117 @@
             from { transform: translateY(-20px) scale(0.9); opacity: 0; }
             to { transform: translateY(0) scale(1); opacity: 1; }
         }
+                /* =========================================
+           ЧИСТЫЙ ЭКРАН ЗАГРУЗКИ
+           ========================================= */
+        #splashScreen {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background: transparent !important; /* Убираем фон с контейнера */
+            opacity: 0;
+            visibility: hidden;
+            /* Делаем исчезновение всего экрана более долгим (1.2 сек) */
+            transition: opacity 1.2s ease, visibility 1.2s;
+        }
+
+        #splashScreen.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Создаем фон через псевдоэлемент */
+        #splashScreen::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url('img/background.jpg') center/cover !important;
+            z-index: -1;
+            opacity: 0;
+            /* Фон начинает появляться с 0.5с (как и текст), но длится 2.5 секунды (дольше текста) */
+            animation: bgFadeIn 2.5s ease 0.5s forwards;
+        }
+
+        @keyframes bgFadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        #splashScreen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        /* Текст (слова) */
+        .splash-content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(20px);
+            /* Текст появляется за 1 секунду */
+            animation: splashContentAppear 1s var(--smooth) 0.5s forwards;
+        }
+
+        /* Когда загрузка заканчивается, текст пропадает мгновенно (за 0.3 сек) */
+        #splashScreen.hidden .splash-content {
+            opacity: 0;
+            transform: translateY(-15px);
+            animation: none;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        @keyframes splashContentAppear {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .splash-title-wrapper {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .splash-loader {
+            position: absolute;
+            bottom: 60px;
+            left: 50%; 
+            transform: translateX(-50%);
+            width: 140px;
+            height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeIn 0.4s ease 1s forwards;
+        }
+                /* =========================================
+           ФОН НА ГЛАВНОМ ЭКРАНЕ (ЗАТЕМНЕННЫЙ)
+           ========================================= */
+        #viewHome {
+            /* Накладываем темный градиент (85% и 100% черного) поверх твоей картинки */
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(10,10,10,1)), url('img/background.jpg') center/cover !important;
+        }
+
+        /* Убираем фон с остальных вкладок, чтобы там был просто черный цвет */
+        #viewBook, #viewProfile, #viewBookings {
+            background: var(--bg-dark) !important;
+        }
     </style>
 </head>
 <body>
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- ЭТАП 1: ПРОЛЕТ СКВОЗЬ НОЖНИЦЫ -->
-    <div id="preSplash">
-        <svg class="pre-splash-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="6" cy="6" r="3"></circle>
-            <circle cx="6" cy="18" r="3"></circle>
-            <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
-            <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
-            <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
-        </svg>
-    </div>
-
-    <!-- ЭТАП 2: ЗАГРУЗОЧНЫЙ ЭКРАН -->
-    <div id="splashScreen">
+    <!-- ЭКРАН ЗАГРУЗКИ -->
+    <div id="splashScreen" class="active">
         <div class="splash-content">
             <div class="splash-title-wrapper">
                 <div class="splash-line sl-1"></div>
@@ -923,21 +1187,36 @@
     <!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
     <div id="appContainer">
         <div class="app-header">
-            <div class="logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
-                    <circle cx="6" cy="6" r="3"></circle>
-                    <circle cx="6" cy="18" r="3"></circle>
-                    <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
-                    <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
-                    <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
-                </svg>
-                MENS<span>FIRE</span>
+            <!-- Левая пилюля: Логотип -->
+            <div class="header-pill left-pill" onclick="goHomeFromHeader()">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
+                        <circle cx="6" cy="6" r="3"></circle>
+                        <circle cx="6" cy="18" r="3"></circle>
+                        <line x1="20" y1="4" x2="8.12" y2="15.88"></line>
+                        <line x1="14.47" y1="14.48" x2="20" y2="20"></line>
+                        <line x1="8.12" y1="8.12" x2="12" y2="12"></line>
+                    </svg>
+                    <div class="logo-text">MENS<span>FIRE</span></div>
+                </div>
             </div>
-            <div style="font-size: 13px; color: var(--gold); font-weight: 600; cursor: pointer;" onclick="openAuth()" id="headerAuthBtn">Войти</div>
+
+            <!-- Правая пилюля: Личный кабинет -->
+            <div class="header-pill right-pill" onclick="switchView('viewProfile', document.getElementById('navProfile'))" id="headerProfileBtn">
+                <svg viewBox="0 0 24 24" fill="var(--gold)">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                </svg>
+            </div>
+        </div>
+
+        <!-- ЭКРАН ГЛАВНАЯ -->
+        <div id="viewHome" class="view active">
+            <h2 style="margin-bottom: 15px; font-size: 20px;">Главная</h2>
+            <p style="color: var(--text-muted); font-size: 14px;">Здесь будет главный экран...</p>
         </div>
 
         <!-- ЭКРАН ЗАПИСИ -->
-        <div id="viewBook" class="view active">
+        <div id="viewBook" class="view">
             <h2 style="margin-bottom: 15px; font-size: 20px;">Записаться</h2>
             <div class="category-tabs">
                 <button class="tab-btn active" onclick="filterServices('top', this)">ТОП-БАРБЕР</button>
@@ -985,17 +1264,19 @@
         </div>
 
         <!-- НИЖНЕЕ МЕНЮ -->
-        <div class="bottom-nav">
+        <div class="bottom-nav" id="bottomNav">
+            <div class="nav-bubble" id="navBubble"></div>
+            <div class="nav-item active" onclick="switchView('viewHome', this)" id="navHome">
+                <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+                Главная
+            </div>
+            <div class="nav-item" onclick="switchView('viewBook', this)" id="navBook">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                Записаться
+            </div>
             <div class="nav-item" onclick="switchView('viewProfile', this)" id="navProfile">
                 <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                Профиль
-            </div>
-            <div class="nav-item nav-item-center" onclick="switchView('viewBook', this)" id="navBook">
-                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
-            </div>
-            <div class="nav-item" onclick="switchView('viewBookings', this)" id="navBookings">
-                <svg viewBox="0 0 24 24"><path d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z"/></svg>
-                Записи
+                Личный кабинет
             </div>
         </div>
     </div>
@@ -1144,34 +1425,174 @@
             (name) => `Hej, ${name}!`
         ];
 
-        window.addEventListener('DOMContentLoaded', () => {
-            initMockData();
+                window.addEventListener('DOMContentLoaded', () => {
+            try {
+                initMockData();
 
-            const splashGreeting = document.getElementById('splashGreeting');
-            if (currentUser) {
-                const randomGreetingFunc = greetingsList[Math.floor(Math.random() * greetingsList.length)];
-                const text = randomGreetingFunc(currentUser.name);
-                splashGreeting.innerHTML = text.replace(currentUser.name, `<span>${currentUser.name}</span>`);
-            } else {
-                splashGreeting.innerHTML = `Добро пожаловать в <span>MENSFIRE</span>`;
-            }
+                const splashGreeting = document.getElementById('splashGreeting');
+                if (currentUser) {
+                    const randomGreetingFunc = greetingsList[Math.floor(Math.random() * greetingsList.length)];
+                    const text = randomGreetingFunc(currentUser.name);
+                    splashGreeting.innerHTML = text.replace(currentUser.name, `<span>${currentUser.name}</span>`);
+                } else {
+                    splashGreeting.innerHTML = `Добро пожаловать в <span>MENSFIRE</span>`;
+                }
 
-            setTimeout(() => {
+                // Открываем приложение через 3.5 секунды
+                setTimeout(() => {
+                    document.getElementById('splashScreen').classList.add('hidden');
+                    document.getElementById('appContainer').classList.add('visible');
+                    
+                    updateAuthUI();
+                    renderServices('top');
+                    renderMasters();
+                    renderBookings();
+                    initNavBubble();
+                    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+                }, 3500);
+
+            } catch (error) {
+                // Если случилась ошибка, принудительно открываем приложение
+                console.error("Ошибка при загрузке:", error);
                 document.getElementById('splashScreen').classList.add('hidden');
                 document.getElementById('appContainer').classList.add('visible');
-                updateAuthUI();
-                renderServices('top');
-                renderMasters();
-                renderBookings();
-                if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
-            }, 3200);
+            }
         });
 
+                // Порядок вкладок для свайпов (слева направо)
+        const viewOrder = ['viewHome', 'viewBook', 'viewProfile'];
+
         function switchView(viewId, navElement) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
+            const currentView = document.querySelector('.view.active');
+            if (currentView && currentView.id === viewId) return; // Если мы уже на этой вкладке, ничего не делаем
+
+            let animationClass = 'slide-from-right'; // По умолчанию въезжает справа
+
+            if (currentView) {
+                const currentIndex = viewOrder.indexOf(currentView.id);
+                const targetIndex = viewOrder.indexOf(viewId);
+                // Если переключаемся на вкладку левее (например, с "Личный кабинет" на "Главную"), анимация слева
+                if (currentIndex !== -1 && targetIndex !== -1 && targetIndex < currentIndex) {
+                    animationClass = 'slide-from-left';
+                }
+            }
+
+            // Скрываем все вкладки
+            document.querySelectorAll('.view').forEach(v => {
+                v.classList.remove('active', 'slide-from-right', 'slide-from-left');
+            });
+
+            // Показываем новую с нужной анимацией
+            const newView = document.getElementById(viewId);
+            newView.classList.add('active', animationClass);
+
+            // Убираем класс анимации после её завершения
+            setTimeout(() => {
+                newView.classList.remove('slide-from-right', 'slide-from-left');
+            }, 400);
+
+            // Обновляем нижнее меню
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(navElement) navElement.classList.add('active');
+            
+            let targetNav = navElement;
+            if (!targetNav) {
+                // Если переключились свайпом, ищем нужную кнопку в меню по ID
+                targetNav = document.getElementById('nav' + viewId.replace('view', ''));
+            }
+
+            if (targetNav) {
+                targetNav.classList.add('active');
+                updateNavBubble(targetNav);
+            }
+        }
+
+        /* ==========================
+           ЛОГИКА СВАЙПОВ (ЛИСТАНИЕ)
+           ========================== */
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.addEventListener('touchstart', e => {
+            // Игнорируем свайпы, если открыта корзина, модалка или скроллится выбор даты
+            if (document.querySelector('.modal.active') || document.querySelector('.drawer.active')) return;
+            if (e.target.closest('.date-grid')) return;
+
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            if (document.querySelector('.modal.active') || document.querySelector('.drawer.active')) return;
+            if (e.target.closest('.date-grid')) return;
+
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            
+            handleSwipe(touchStartX, touchStartY, touchEndX, touchEndY);
+        }, { passive: true });
+
+        function handleSwipe(startX, startY, endX, endY) {
+            const deltaX = endX - startX;
+            const deltaY = endY - startY;
+            
+            // Условия свайпа: смещение по X больше 50px, а по Y меньше 60px (чтобы не мешать скроллу)
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaY) < 60) {
+                const currentView = document.querySelector('.view.active');
+                if (!currentView) return;
+                
+                const currentIndex = viewOrder.indexOf(currentView.id);
+                if (currentIndex === -1) return; // Если открыта вкладка "Мои записи" (её нет в меню), свайп не работает
+
+                if (deltaX < 0) {
+                    // Свайп влево -> следующая вкладка
+                    if (currentIndex < viewOrder.length - 1) {
+                        switchView(viewOrder[currentIndex + 1], null);
+                    }
+                } else {
+                    // Свайп вправо -> предыдущая вкладка
+                    if (currentIndex > 0) {
+                        switchView(viewOrder[currentIndex - 1], null);
+                    }
+                }
+            }
+        }
+
+        function updateNavBubble(el) {
+            const bubble = document.getElementById('navBubble');
+            const nav = document.getElementById('bottomNav');
+            if (!bubble || !nav || !el) return;
+            
+            const navRect = nav.getBoundingClientRect();
+            const elRect = el.getBoundingClientRect();
+            
+            // Пузырь на 4px больше по ширине и на 3px по высоте
+            const padX = 4;
+            const padY = 3;
+            
+            bubble.style.width = (elRect.width + padX * 2) + 'px';
+            bubble.style.height = (elRect.height + padY * 2) + 'px';
+            bubble.style.left = (elRect.left - navRect.left - padX) + 'px';
+            bubble.style.top = (elRect.top - navRect.top - padY) + 'px';
+        }
+
+        function initNavBubble() {
+            const bubble = document.getElementById('navBubble');
+            const activeNav = document.querySelector('.nav-item.active');
+            if (!bubble || !activeNav) return;
+            
+            // Отключаем анимацию для самого первого позиционирования
+            bubble.style.transition = 'none';
+            updateNavBubble(activeNav);
+            void bubble.offsetWidth; // Форсируем перерасчёт
+            bubble.style.transition = '';
+        }
+
+        function goHomeFromHeader() {
+            const homeView = document.getElementById('viewHome');
+            // Переключаем только если мы НЕ на главной странице
+            if (!homeView.classList.contains('active')) {
+                switchView('viewHome', document.getElementById('navHome'));
+            }
         }
 
         function showToast(message, type = 'info') {
@@ -1508,6 +1929,11 @@
             closeActionModal(); renderBookings(); updateAuthUI();
             showToast('Запись отменена', 'success');
         }
+
+        window.addEventListener('resize', () => {
+            const activeNav = document.querySelector('.nav-item.active');
+            if (activeNav) updateNavBubble(activeNav);
+        });
     </script>
 </body>
 </html>
