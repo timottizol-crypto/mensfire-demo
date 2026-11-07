@@ -1,10 +1,14 @@
-const CACHE_NAME = 'mensfire-v6'; 
+const CACHE_NAME = 'mensfire-v8'; // <-- Подняли версию
 const ASSETS = [
   './index.html',
+  './style.css',
+  './script.js',
   './manifest.json',
-  './img/icon-light.jpg',
   './img/icon-dark.jpg',
-  './img/background.jpg'
+  './img/background.jpg',
+  './img/Ali.jpg',     
+  './img/Benjo.jpg',   
+  './img/Ismail.jpg'  
 ];
 
 self.addEventListener('install', (event) => {

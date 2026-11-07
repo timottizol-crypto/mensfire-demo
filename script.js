@@ -1,0 +1,1183 @@
+const servicesData = {
+            top: [
+                { id: 't1', title: 'Мужская стрижка', time: '45 мин', price: 1500, type: 'top' },
+                { id: 't2', title: 'Детская стрижка до 10 лет', time: '30 мин', price: 1200, type: 'top' },
+                { id: 't3', title: 'Оформление бороды', time: '30 мин', price: 1200, type: 'top' },
+                { id: 't4', title: 'Мужская стрижка + оформление бороды', time: '1 ч', price: 2500, type: 'top' }, /* Изменили название */
+                { id: 't5', title: 'Камуфляж бороды', time: '1 ч', price: 1200, type: 'top' },
+                { id: 't6', title: 'Коррекция воском', time: '15 мин', price: 300, type: 'top' },
+                { id: 't7', title: 'Укладка', time: '30 мин', price: 500, type: 'top' },
+                { id: 't8', title: 'Друг+Друг', time: '1 ч', price: 2800, type: 'top' },
+                { id: 't9', title: 'Папа+Сын', time: '1 ч', price: 2500, type: 'top' },
+                { id: 't10', title: 'Тонирующий шампунь NISHMAN', time: '30 мин', price: 800, type: 'top' },
+                { id: 't11', title: 'Уход за кожей лица', time: '15 мин', price: 800, type: 'top' }
+            ],
+            barber: [
+                { id: 'b1', title: 'Мужская стрижка', time: '45 мин', price: 1300, type: 'barber' },
+                { id: 'b2', title: 'Мужская стрижка + оформление бороды', time: '1 ч', price: 2300, type: 'barber' },
+                { id: 'b3', title: 'Коррекция воском (от 300р..)', time: '15 мин', price: 300, type: 'barber' },
+                { id: 'b4', title: 'Королевское бритьё - (Опаской)', time: '45 мин', price: 1200, type: 'barber' },
+                { id: 'b5', title: 'Детская стрижка', time: '30 мин', price: 1000, type: 'barber' },
+                { id: 'b6', title: 'Оформление бороды', time: '30 мин', price: 1000, type: 'barber' },
+                { id: 'b7', title: 'Камуфляж бороды', time: '1 ч', price: 1200, type: 'barber' },
+                { id: 'b8', title: 'Друг+Друг', time: '1 ч', price: 2400, type: 'barber' },
+                { id: 'b9', title: 'Папа+Сын', time: '1 ч', price: 2100, type: 'barber' },
+                { id: 'b10', title: 'Уход за кожей лица', time: '15 мин', price: 800, type: 'barber' },
+                { id: 'b11', title: 'Стрижка Ножницами (Удлиненная стрижка)', time: '1 ч', price: 1500, type: 'barber' },
+                { id: 'b12', title: 'Стрижка машинкой (одна/две насадки)', time: '30 мин', price: 1000, type: 'barber' },
+                { id: 'b13', title: 'Стрижка бороды и усов', time: '30 мин', price: 800, type: 'barber' },
+                { id: 'b14', title: 'Бритье начисто шейвером', time: '30 мин', price: 1000, type: 'barber' },
+                { id: 'b15', title: 'Укладка', time: '15 мин', price: 500, type: 'barber' },
+                { id: 'b16', title: 'Укладка', time: '15 мин', price: 500, type: 'barber' },
+                { id: 'b17', title: 'Студенческая стрижка (пн-ср)(с 12-00 до 16-00)', time: '45 мин', price: 1000, type: 'barber' },
+                { id: 'b18', title: 'Стрижка "счастливые Часы" (пн-ср 12:00-16:00)', time: '45 мин', price: 1100, type: 'barber' }
+            ]
+        };
+        const barbersData = [
+            { id: 'b_al', name: 'Али', role: 'ТОП-БАРБЕР', photo: 'img/Ali.jpg', type: 'top' },
+            { id: 'b_ben', name: 'Бенджо', role: 'Барбер', photo: 'img/Benjo.jpg', type: 'barber' },
+            { id: 'b_ism', name: 'Исмаил', role: 'Барбер', photo: 'img/Ismail.jpg', type: 'barber' }
+        ];
+
+        const allTimeSlots = ['10:30', '11:00', '11:30', '12:00', '13:00', '13:30', '14:00', '15:00', '16:00', '17:30', '18:00', '19:00'];
+        let mockBookedTimes = {};
+
+        function initMockData() {
+            const today = new Date().toLocaleDateString('ru-RU');
+            const tomorrow = new Date(Date.now() + 86400000).toLocaleDateString('ru-RU');
+            mockBookedTimes = {
+                'b_al': { [today]: ['10:30', '12:00', '16:00'], [tomorrow]: ['13:00'] },
+                'b_ben': { [today]: ['11:00', '15:00'] },
+                'b_ism': { [today]: ['13:00', '18:00'] }
+            };
+        }
+
+        let cart = [];
+        let selectedBarber = null;
+        let selectedDate = null;
+        let selectedTime = null;
+        let currentUser = JSON.parse(localStorage.getItem('menfire_user')) || null;
+                let rawBookings = JSON.parse(localStorage.getItem('menfire_bookings')) || [];
+        // Добавляем статус, если его нет
+        rawBookings.forEach(b => { if (!b.status) b.status = 'active'; });
+        let bookings = rawBookings.filter(b => b && b.barber && b.appointmentDate && b.time);
+        let isProfileExpanded = false; // Новое состояние для Личного кабинета
+        let bookingToEdit = null;
+        let previousLevelName = null; 
+        let fromPromo = false;
+
+        // Функция для расчета уровней (от 0 до 6)
+        function getLevelInfo(count) {
+            if (count < 3) return { level: "Новичок", nextLevel: "Постоянный", current: count, target: 3, base: 0 };
+            if (count < 6) return { level: "Постоянный", nextLevel: "Любимчик", current: count - 3, target: 3, base: 3 };
+            if (count < 10) return { level: "Любимчик", nextLevel: "VIP", current: count - 6, target: 4, base: 6 };
+            if (count < 15) return { level: "VIP", nextLevel: "Эксклюзив", current: count - 10, target: 5, base: 10 };
+            if (count < 21) return { level: "Эксклюзив", nextLevel: "Легенда", current: count - 15, target: 6, base: 15 };
+            // Максимальный уровень
+            return { level: "Легенда", nextLevel: "Максимум", current: 1, target: 1, base: 21 };
+        }
+
+        // Рандомные приветствия на разных языках
+        const greetingsList = [
+            (name) => `Здравствуйте, ${name}!`,
+            (name) => `Hello, ${name}!`,
+            (name) => `Bonjour, ${name}!`,
+            (name) => `Hola, ${name}!`,
+            (name) => `Ciao, ${name}!`,
+            (name) => `Hallo, ${name}!`,
+            (name) => `Приветствую, ${name}!`,
+            (name) => `Salve, ${name}!`,
+            (name) => `Olá, ${name}!`,
+            (name) => `Hej, ${name}!`
+        ];
+
+        window.addEventListener('DOMContentLoaded', () => {
+            try {
+                initMockData();
+
+                const splashGreeting = document.getElementById('splashGreeting');
+                if (currentUser) {
+                    const randomGreetingFunc = greetingsList[Math.floor(Math.random() * greetingsList.length)];
+                    const text = randomGreetingFunc(currentUser.name);
+                    splashGreeting.innerHTML = text.replace(currentUser.name, `<span>${currentUser.name}</span>`);
+                } else {
+                    splashGreeting.innerHTML = `Добро пожаловать в <span>MENSFIRE</span>`;
+                }
+
+                // Открываем приложение через 3.5 секунды
+                setTimeout(() => {
+                    document.getElementById('splashScreen').classList.add('hidden');
+                    
+                    const appContainer = document.getElementById('appContainer');
+                    appContainer.classList.add('visible');
+                    
+                    // Запускаем анимацию вылета
+                    setTimeout(() => {
+                        appContainer.classList.add('animate-in'); 
+                    }, 50);
+
+                    // ВАЖНО: Удаляем класс через 1.5 секунды, 
+                    // чтобы он не мешал старой логике переключения вкладок (свайпам)
+                    setTimeout(() => {
+                        appContainer.classList.remove('animate-in');
+                    }, 1500);
+                    
+                    updateAuthUI();
+                    renderServices('top');
+                    renderMasters();
+                    initNavBubble();
+                    initPromoCarousel();
+                    if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+                }, 3500);
+
+            } catch (error) {
+                // Если случилась ошибка, принудительно открываем приложение
+                console.error("Ошибка при загрузке:", error);
+                document.getElementById('splashScreen').classList.add('hidden');
+                document.getElementById('appContainer').classList.add('visible');
+            }
+        });
+
+                // Порядок вкладок для свайпов (слева направо)
+        const viewOrder = ['viewHome', 'viewBook', 'viewProfile'];
+
+        function switchView(viewId, navElement) {
+            const currentView = document.querySelector('.view.active');
+            if (currentView && currentView.id === viewId) return; // Если мы уже на этой вкладке, ничего не делаем
+
+            let animationClass = 'slide-from-right'; // По умолчанию въезжает справа
+
+            if (currentView) {
+                const currentIndex = viewOrder.indexOf(currentView.id);
+                const targetIndex = viewOrder.indexOf(viewId);
+                // Если переключаемся на вкладку левее (например, с "Личный кабинет" на "Главную"), анимация слева
+                if (currentIndex !== -1 && targetIndex !== -1 && targetIndex < currentIndex) {
+                    animationClass = 'slide-from-left';
+                }
+            }
+
+            // Скрываем все вкладки
+            document.querySelectorAll('.view').forEach(v => {
+                v.classList.remove('active', 'slide-from-right', 'slide-from-left');
+            });
+
+            // Показываем новую с нужной анимацией
+            const newView = document.getElementById(viewId);
+            newView.classList.add('active', animationClass);
+
+            // Убираем класс анимации после её завершения
+            setTimeout(() => {
+                newView.classList.remove('slide-from-right', 'slide-from-left');
+            }, 400);
+
+            // Обновляем нижнее меню
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            let targetNav = navElement;
+            if (!targetNav) {
+                // Если переключились свайпом, ищем нужную кнопку в меню по ID
+                targetNav = document.getElementById('nav' + viewId.replace('view', ''));
+            }
+
+            if (targetNav) {
+                targetNav.classList.add('active');
+                updateNavBubble(targetNav);
+            }
+
+            const titleEl = document.getElementById('headerTitle');
+            const titles = {
+                'viewHome': 'Главная',
+                'viewBook': 'Записаться',
+                'viewProfile': 'Профиль', // Сократили для красоты
+                'viewBookings': 'Мои записи'
+            };
+            
+            if (titleEl && titles[viewId]) {
+                titleEl.innerText = titles[viewId];
+                // Перезапускаем анимацию подчеркивания
+                titleEl.classList.remove('animate-title');
+                void titleEl.offsetWidth; // Форсируем перерасчет
+                titleEl.classList.add('animate-title');
+            }
+            if (viewId === 'viewHome') {
+                renderHomeScreen();
+            }
+            
+            if (viewId === 'viewProfile') {
+                renderProfileBookings();
+            }
+        }
+
+        /* ==========================
+           ЛОГИКА СВАЙПОВ (ЛИСТАНИЕ)
+           ========================== */
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.addEventListener('touchstart', e => {
+            if (document.querySelector('.modal.active') || document.querySelector('.drawer.active')) return;
+            // ДОБАВЛЯЕМ .promo-carousel-wrapper в исключения
+            if (e.target.closest('.date-grid') || e.target.closest('.booking-scroll-wrapper') || e.target.closest('.promo-carousel-wrapper')) return;
+
+            touchStartX = e.changedTouches[0].screenX;
+            touchStartY = e.changedTouches[0].screenY;
+        }, { passive: true });
+
+        document.addEventListener('touchend', e => {
+            if (document.querySelector('.modal.active') || document.querySelector('.drawer.active')) return;
+            // ДОБАВЬ .promo-carousel-wrapper СЮДА
+            if (e.target.closest('.date-grid') || e.target.closest('.bookings-scroll-wrapper') || e.target.closest('.promo-carousel-wrapper')) return;
+
+            const touchEndX = e.changedTouches[0].screenX;
+            const touchEndY = e.changedTouches[0].screenY;
+            
+            handleSwipe(touchStartX, touchStartY, touchEndX, touchEndY);
+        }, { passive: true });
+
+        function handleSwipe(startX, startY, endX, endY) {
+            const deltaX = endX - startX;
+            const deltaY = endY - startY;
+            
+            // Условия свайпа: смещение по X больше 50px, а по Y меньше 60px (чтобы не мешать скроллу)
+            if (Math.abs(deltaX) > 50 && Math.abs(deltaY) < 60) {
+                const currentView = document.querySelector('.view.active');
+                if (!currentView) return;
+                
+                const currentIndex = viewOrder.indexOf(currentView.id);
+                if (currentIndex === -1) return; // Если открыта вкладка "Мои записи" (её нет в меню), свайп не работает
+
+                if (deltaX < 0) {
+                    // Свайп влево -> следующая вкладка
+                    if (currentIndex < viewOrder.length - 1) {
+                        switchView(viewOrder[currentIndex + 1], null);
+                    }
+                } else {
+                    // Свайп вправо -> предыдущая вкладка
+                    if (currentIndex > 0) {
+                        switchView(viewOrder[currentIndex - 1], null);
+                    }
+                }
+            }
+        }
+
+        function updateNavBubble(el, isInit = false) {
+            const bubble = document.getElementById('navBubble');
+            const nav = document.getElementById('bottomNav');
+            if (!bubble || !nav || !el) return;
+            
+            const navRect = nav.getBoundingClientRect();
+            const elRect = el.getBoundingClientRect();
+            const padX = 0; 
+            const padY = 0;
+            
+            if (isInit) {
+                bubble.style.width = (elRect.width + padX * 2) + 'px';
+                bubble.style.height = (elRect.height + padY * 2) + 'px';
+                bubble.style.left = (elRect.left - navRect.left - padX) + 'px';
+                bubble.style.top = (elRect.top - navRect.top - padY) + 'px';
+                return;
+            }
+
+            // Сбрасываем предыдущие таймеры, чтобы не было багов при быстрых кликах
+            clearTimeout(window.bubbleTimer1);
+            clearTimeout(window.bubbleTimer2);
+
+            // --- ЭТАП 1: Раздуваем пузырь на месте (100мс, было 150мс) ---
+            bubble.classList.remove('squashing');
+            bubble.classList.add('expanding');
+
+            // --- ЭТАП 2: Начинаем движение (через 100мс) ---
+            window.bubbleTimer1 = setTimeout(() => {
+                bubble.style.width = (elRect.width + padX * 2) + 'px';
+                bubble.style.height = (elRect.height + padY * 2) + 'px';
+                bubble.style.left = (elRect.left - navRect.left - padX) + 'px';
+                bubble.style.top = (elRect.top - navRect.top - padY) + 'px';
+
+                // Синхронизируем прыжок иконки
+                const currentActive = document.querySelector('.nav-item.active');
+                if (currentActive) {
+                    const svg = currentActive.querySelector('svg');
+                    if (svg) {
+                        svg.classList.remove('bounce');
+                        void svg.offsetWidth; 
+                        svg.classList.add('bounce');
+                        setTimeout(() => svg.classList.remove('bounce'), 300);
+                    }
+                }
+            }, 100);
+
+            // --- ЭТАП 3: Плюх при приземлении (через 100 + 250 = 350мс) ---
+            window.bubbleTimer2 = setTimeout(() => {
+                bubble.classList.remove('expanding'); // Убираем вертикальное растяжение
+                bubble.classList.add('squashing');    // Включаем "плюх"
+
+                // Убираем плюх через 150мс, чтобы он плавно вернулся в исходные размеры
+                setTimeout(() => {
+                    bubble.classList.remove('squashing');
+                }, 150);
+
+            }, 350); 
+        }
+        
+        function initNavBubble() {
+            const bubble = document.getElementById('navBubble');
+            const activeNav = document.querySelector('.nav-item.active');
+            if (!bubble || !activeNav) return;
+
+             bubble.classList.remove('expanding');
+             bubble.classList.remove('squashing');
+            
+            // Когда пузырь приехал (закончил анимацию left) — возвращаем исходный размер
+            bubble.addEventListener('transitionend', (e) => {
+                if (e.propertyName === 'left') {
+                    bubble.classList.remove('moving'); 
+                }
+            });
+
+            bubble.style.transition = 'none';
+            updateNavBubble(activeNav, true);
+            void bubble.offsetWidth; 
+            bubble.style.transition = '';
+        }
+
+            /* ==========================
+           ЛОГИКА ГЛАВНОГО ЭКРАНА
+           ========================== */
+        function renderHomeScreen() {
+            renderHomeLevel();
+            renderHomeBookings();
+        }
+
+        function renderHomeLevel() {
+            const circle = document.getElementById('homeProgressCircle');
+            const circleText = document.getElementById('homeProgressText');
+            const statusText = document.getElementById('homeStatStatusText');
+            const statusSub = document.getElementById('homeStatStatusSub');
+            const levelCard = document.querySelector('.home-level-card'); 
+
+            if (!currentUser) {
+                statusText.innerText = "Гость";
+                statusSub.innerText = "Войдите, чтобы копить визиты";
+                circle.style.strokeDashoffset = 100; 
+                circleText.innerText = "0/0";
+                levelCard.style.setProperty('--level-color', '#555555'); 
+                return;
+            }
+
+            const validVisitsCount = bookings.filter(b => b.status === 'active' || b.status === 'completed').length;
+            const info = getLevelInfo(validVisitsCount);
+
+            
+            // --- ЛОГИКА АНИМАЦИИ ЛИНИИ ---
+            if (previousLevelName !== info.level) {
+                // 1. Если уровень изменился (или это первый вход) — запускаем анимацию
+                levelCard.classList.remove('animate-border');
+                void levelCard.offsetWidth; // Форсируем перерасчет (сбрасываем анимацию)
+                levelCard.classList.add('animate-border');
+                
+                previousLevelName = info.level; // Запоминаем новый уровень
+
+                // 2. Убираем класс через 3 секунды, чтобы при смене вкладок линия не бежала заново
+                clearTimeout(window.lineAnimTimer);
+                window.lineAnimTimer = setTimeout(() => {
+                    levelCard.classList.remove('animate-border');
+                }, 3000); // 3000 мс = 3 секунды (ровно столько длится линия)
+
+            } else {
+                // 3. Если уровень НЕ изменился (просто переключили вкладку) — жестко убираем класс
+                levelCard.classList.remove('animate-border');
+            }
+            // -----------------------------
+
+            const levelColors = {
+                "Новичок": "#B0B0B0",     
+                "Постоянный": "#CD7F32",  
+                "Любимчик": "#D4AF37",    
+                "VIP": "#E5E4E2",         
+                "Эксклюзив": "#4A90E2",   
+                "Легенда": "#E0115F"      
+            };
+            
+            const currentColor = levelColors[info.level] || "#D4AF37";
+            levelCard.style.setProperty('--level-color', currentColor);
+
+            statusText.innerText = info.level;
+            statusSub.innerText = info.level === "Легенда" ? "Вы лучший!" : `До "${info.nextLevel}" осталось ${info.target - info.current} виз.`;
+
+            const radius = 42, circumference = 2 * Math.PI * radius;
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            
+            const progress = info.current / info.target;
+            circle.style.strokeDashoffset = circumference - (progress * circumference);
+            
+            if (info.level === "Легенда") {
+                circle.style.strokeDashoffset = 0;
+                circleText.innerText = "MAX";
+            } else {
+                circleText.innerText = `${info.current}/${info.target}`;
+            }
+        }
+
+        function renderHomeBookings() {
+            const list = document.getElementById('homeHistoryList');
+            
+            const activeBookings = bookings.filter(b => b.status === 'active').sort((a,b) => parseDate(a) - parseDate(b));
+
+            if (!currentUser || activeBookings.length === 0) {
+                list.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:13px; padding: 20px 0;">${currentUser ? 'У вас пока нет активных записей' : 'Войдите, чтобы видеть записи'}</div>`;
+                return;
+            }
+
+            // Создаем карточку (кнопка справа)
+            const createHTML = (b) => `
+                <div class="home-booking-item" style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                    <div class="hb-info" style="flex-grow: 1; min-width: 0;">
+                        <div class="hb-date">${b.appointmentDate} в ${b.time}</div>
+                        <div class="hb-master">Мастер: ${b.barber.name}</div>
+                        <div class="hb-services">${b.services.map(s => s.title).join(', ')}</div>
+                    </div>
+                    <button class="btn-cancel-small" onclick="openActionModal(${b.id})">Отменить</button>
+                </div>
+            `;
+            
+            list.innerHTML = activeBookings.map(createHTML).join('');
+        }
+
+        
+        function toggleProfileBookings() {
+            isProfileExpanded = !isProfileExpanded;
+            renderProfileBookings();
+        }
+
+        function renderProfileBookings() {
+            const list = document.getElementById('profileHistoryList');
+            const scrollArea = document.getElementById('profileBookingsScroll');
+            const toggleBtn = document.getElementById('profileToggleBtn');
+
+            // Если нет записей
+            if (!currentUser || bookings.length === 0) {
+                list.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:13px; padding: 10px 0;">Нет записей</div>`;
+                toggleBtn.style.display = 'none';
+                scrollArea.classList.remove('expanded');
+                return;
+            }
+
+            // Сортируем (сначала новые)
+            const sorted = [...bookings].sort((a,b) => parseDate(b) - parseDate(a));
+            const total = sorted.length;
+
+            // Определяем, сколько записей показывать
+            // Если раскрыто — все, если нет — максимум 3
+            const displayCount = isProfileExpanded ? total : Math.min(2, total);
+            const displayBookings = sorted.slice(0, displayCount);
+
+            const createHTML = (b) => {
+                // Авто-обновление статуса
+                if (b.status === 'active' && parseDate(b) < Date.now()) {
+                    b.status = 'completed';
+                    localStorage.setItem('menfire_bookings', JSON.stringify(bookings));
+                }
+
+                let badgeHTML = '';
+                let itemClass = '';
+                
+                if (b.status === 'active') badgeHTML = `<div class="status-badge active">Активная</div>`;
+                else if (b.status === 'completed') { badgeHTML = `<div class="status-badge completed">Завершена</div>`; itemClass = 'completed'; }
+                else if (b.status === 'cancelled') { badgeHTML = `<div class="status-badge cancelled">Отменена</div>`; itemClass = 'cancelled'; }
+
+                // Используем тот же класс карточки, что и на главной (без кнопки отмены)
+                return `
+                    <div class="home-booking-item ${itemClass}" style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
+                        <div class="hb-info" style="flex-grow: 1; min-width: 0;">
+                            ${badgeHTML}
+                            <div class="hb-date">${b.appointmentDate} в ${b.time}</div>
+                            <div class="hb-master">Мастер: ${b.barber.name}</div>
+                            <div class="hb-services">${b.services.map(s => s.title).join(', ')}</div>
+                        </div>
+                    </div>
+                `;
+            };
+
+            // Выводим записи
+            list.innerHTML = displayBookings.map(createHTML).join('');
+
+            // Настраиваем высоту и стрелку
+            if (total >= 3) {
+                // Если 4 и больше — показываем стрелку
+                toggleBtn.style.display = 'flex';
+                
+                if (isProfileExpanded) {
+                    // РАСКРЫТО: стрелка вверх, скролл включен, рендерим все
+                    toggleBtn.classList.add('expanded');
+                    scrollArea.classList.add('expanded');
+                } else {
+                    // СВЕРНУТО: стрелка вниз, скролла нет, рендерим 3
+                    toggleBtn.classList.remove('expanded');
+                    scrollArea.classList.remove('expanded');
+                }
+            } else {
+                // Если 1, 2 или 3 записи — стрелку прячем, высота подстраивается автоматически
+                toggleBtn.style.display = 'none';
+                scrollArea.classList.remove('expanded');
+            }
+        }
+
+        function goHomeFromHeader() {
+            const homeView = document.getElementById('viewHome');
+            // Переключаем только если мы НЕ на главной странице
+            if (!homeView.classList.contains('active')) {
+                switchView('viewHome', document.getElementById('navHome'));
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<span>${type==='error'?'⚠️':type==='success'?'✅':'ℹ️'}</span><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        function renderServices(category) {
+            const grid = document.getElementById('servicesGrid');
+            grid.innerHTML = '';
+            servicesData[category].forEach(service => {
+                const isSelected = cart.some(item => item.id === service.id);
+                const card = document.createElement('div');
+                card.className = `service-card ${isSelected ? 'selected' : ''}`;
+                card.innerHTML = `
+                    <div class="checkbox"></div>
+                    <div>
+                        <h3>${service.title}</h3>
+                        <div class="time">${service.time}</div>
+                    </div>
+                    <div class="price">${service.price} ₽</div>
+                `;
+                card.onclick = () => toggleService(service);
+                grid.appendChild(card);
+            });
+        }
+
+        function filterServices(category, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderServices(category);
+            checkMasterAvailability();
+        }
+
+        function toggleService(service) {
+            const index = cart.findIndex(item => item.id === service.id);
+            if (index === -1) {
+                if (cart.length > 0 && cart[0].type !== service.type) {
+                    cart = [];
+                    selectedBarber = null;
+                    showToast("Выбранные услуги сброшены", "info");
+                }
+                cart.push(service);
+            } else {
+                cart.splice(index, 1);
+            }
+            renderServices(service.type);
+            checkMasterAvailability();
+
+            // НОВАЯ ЛОГИКА: Если мастер уже выбран и услуга добавлена, сразу открываем корзину
+            if (selectedBarber && cart.length > 0) {
+                openDrawer();
+            }
+        }
+
+        function renderMasters() {
+            const grid = document.getElementById('mastersGrid');
+            grid.innerHTML = '';
+            const hasTopService = cart.some(item => item.type === 'top');
+            const hasBarberService = cart.some(item => item.type === 'barber');
+
+            barbersData.forEach(barber => {
+                if (hasTopService && !hasBarberService && barber.type !== 'top') return;
+                if (hasBarberService && !hasTopService && barber.id === 'b_al') return;
+                if (hasTopService && hasBarberService && barber.type !== 'top') return;
+
+                const card = document.createElement('div');
+                card.className = `master-card ${selectedBarber?.id === barber.id ? 'selected' : ''}`;
+                card.innerHTML = `
+                    <div class="master-img">
+                        <img src="${barber.photo}" alt="${barber.name}">
+                    </div>
+                    <h3>${barber.name}</h3>
+                    <p>${barber.role}</p>
+                `;
+                card.onclick = () => selectBarber(barber);
+                grid.appendChild(card);
+            });
+        }
+
+        function selectBarber(barber) {
+            if (selectedBarber?.id !== barber.id) selectedTime = null;
+            selectedBarber = barber;
+            renderMasters();
+
+            if (cart.length > 0) {
+                // Если услуги уже выбраны, сразу открываем корзину
+                openDrawer();
+            } else {
+                // Если услуг нет, подсказываем и переключаем вкладку под мастера
+                showToast(`Выберите услуги для ${barber.name}`, 'info');
+                
+                // Находим нужную кнопку вкладки (ТОП или БАРБЕР) и программно нажимаем
+                const targetTab = document.querySelector(`.tab-btn[onclick*="'${barber.type}'"]`);
+                if (targetTab) {
+                    filterServices(barber.type, targetTab);
+                }
+                
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function checkMasterAvailability() {
+            const hasTop = cart.some(item => item.type === 'top');
+            if (hasTop) {
+                const ali = barbersData.find(b => b.id === 'b_al');
+                if (selectedBarber?.id !== 'b_al') { selectedBarber = ali; selectedTime = null; }
+            } else if (selectedBarber?.id === 'b_al' && cart.length > 0) {
+                selectedBarber = null; selectedTime = null;
+            }
+            renderMasters();
+            updateCartUI();
+        }
+
+        function openDrawer() {
+            if (cart.length === 0) return showToast("Выберите хотя бы одну услугу", "error");
+            document.getElementById('drawer').classList.add('active');
+            document.getElementById('drawerOverlay').classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            updateCartUI();
+            renderDates();
+            updateTimeOptions();
+        }
+
+        function closeDrawer() {
+            document.getElementById('drawer').classList.remove('active');
+            document.getElementById('drawerOverlay').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function updateCartUI() {
+            const list = document.getElementById('selectedServicesList');
+            list.innerHTML = cart.map(item => `<div class="selected-item"><span>${item.title}</span><b>${item.price} ₽</b></div>`).join('');
+            const sum = cart.reduce((acc, item) => acc + item.price, 0);
+            document.getElementById('totalPrice').innerText = `${sum} ₽`;
+        }
+
+                // Проверяет, есть ли на выбранный день хотя бы один доступный слот
+        function hasAvailableTimeForDate(dateStr) {
+            const now = new Date();
+            const todayStr = now.toLocaleDateString('ru-RU');
+            
+            // Если это будущий день, считаем, что время есть (занятость конкретного времени проверится позже)
+            if (dateStr !== todayStr) return true;
+
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            
+            for (let time of allTimeSlots) {
+                const [h, min] = time.split(':').map(Number);
+                // Если время еще не прошло
+                if (h > currentHour || (h === currentHour && min > currentMinute)) {
+                    // Если мастер выбран, проверяем, не занято ли это время
+                    if (selectedBarber) {
+                        const booked = (mockBookedTimes[selectedBarber.id] && mockBookedTimes[selectedBarber.id][dateStr]) || [];
+                        if (!booked.includes(time)) return true; // Есть свободное время
+                    } else {
+                        return true; // Если мастер не выбран, считаем время доступным
+                    }
+                }
+            }
+            return false; // Все время прошло или занято
+        }
+
+        function renderDates() {
+            const container = document.getElementById('dateOptions');
+            container.innerHTML = '';
+            const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            const now = new Date();
+            
+            let daysAdded = 0;
+            let offset = 0;
+            
+            // Ищем, пока не наберем 20 доступных дней
+            while (daysAdded < 20) {
+                const d = new Date();
+                d.setDate(now.getDate() + offset);
+                const dateStr = d.toLocaleDateString('ru-RU');
+                
+                // Если на этот день еще есть время — добавляем его
+                if (hasAvailableTimeForDate(dateStr)) {
+                    const dayName = (offset === 0) ? 'Сегодня' : (offset === 1) ? 'Завтра' : days[d.getDay()];
+                    const div = document.createElement('div');
+                    div.className = `date-opt ${selectedDate === dateStr ? 'selected' : ''}`;
+                    div.innerHTML = `<div style="font-size:10px; opacity:0.7;">${dayName}</div><div style="font-size:15px; font-weight:bold;">${d.getDate()}</div>`;
+                    
+                    div.onclick = () => { 
+                        selectedDate = dateStr; 
+                        selectedTime = null; 
+                        renderDates(); 
+                        updateTimeOptions(); 
+                    };
+                    
+                    container.appendChild(div);
+                    daysAdded++;
+                }
+                
+                offset++;
+                
+                // Защита от бесконечного цикла (на случай, если барбер не работает 2 месяца)
+                if (offset > 60) break; 
+            }
+            
+            // Если выбранная ранее дата исчезла (например, сегодня уже 20:00), автоматически выбираем первый день
+            if (!selectedDate || !container.querySelector('.selected')) {
+                const firstOpt = container.querySelector('.date-opt');
+                if (firstOpt) firstOpt.click();
+            }
+        }
+
+        function updateTimeOptions() {
+            const container = document.getElementById('timeOptions');
+            container.innerHTML = '';
+            if (!selectedBarber) return container.innerHTML = '<div style="font-size:13px; color:#888; grid-column: 1/-1;">Сначала выберите мастера</div>';
+
+            const booked = (mockBookedTimes[selectedBarber.id] && mockBookedTimes[selectedBarber.id][selectedDate]) || [];
+            
+            const now = new Date();
+            const todayStr = now.toLocaleDateString('ru-RU');
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+
+            let hasVisibleSlots = false; // Флаг, есть ли хоть одно время
+
+            allTimeSlots.forEach(time => {
+                const isBooked = booked.includes(time);
+                
+                let isPast = false;
+                if (selectedDate === todayStr) {
+                    const [h, min] = time.split(':').map(Number);
+                    if (h < currentHour || (h === currentHour && min <= currentMinute)) {
+                        isPast = true;
+                    }
+                }
+
+                // Если время прошло — просто пропускаем (не рисуем)
+                if (isPast) return;
+
+                hasVisibleSlots = true;
+                const div = document.createElement('div');
+                div.className = `time-opt ${selectedTime === time ? 'selected' : ''} ${isBooked ? 'disabled' : ''}`;
+                div.innerText = time;
+                
+                if (!isBooked) {
+                    div.onclick = () => { selectedTime = time; updateTimeOptions(); };
+                }
+                container.appendChild(div);
+            });
+
+            // Если на этот день свободного времени не осталось (например, всё занято или прошло)
+            if (!hasVisibleSlots) {
+                container.innerHTML = '<div style="font-size:13px; color:#888; grid-column: 1/-1; text-align: center;">Нет доступного времени</div>';
+            }
+        }
+
+        function startCheckout() {
+            if (!selectedBarber) return showToast("Выберите мастера", "error");
+            if (!selectedDate || !selectedTime) return showToast("Выберите дату и время", "error");
+            if (!currentUser) { closeDrawer(); openAuth(); return; }
+            completeBooking();
+        }
+
+        function completeBooking() {
+            const total = cart.reduce((acc, item) => acc + item.price, 0);
+            if (!mockBookedTimes[selectedBarber.id]) mockBookedTimes[selectedBarber.id] = {};
+            if (!mockBookedTimes[selectedBarber.id][selectedDate]) mockBookedTimes[selectedBarber.id][selectedDate] = [];
+            mockBookedTimes[selectedBarber.id][selectedDate].push(selectedTime);
+
+            const newBooking = {
+                id: Date.now(),
+                services: [...cart],
+                barber: selectedBarber,
+                time: selectedTime,
+                appointmentDate: selectedDate,
+                total: total,
+                date: new Date().toLocaleDateString('ru-RU'),
+                status: 'active'
+            };
+
+            bookings.push(newBooking);
+            localStorage.setItem('menfire_bookings', JSON.stringify(bookings));
+            cart = []; selectedBarber = null; selectedTime = null; selectedDate = null;
+
+            renderServices('top'); checkMasterAvailability(); closeDrawer();
+            document.getElementById('successModal').classList.add('active');
+            renderHomeScreen();
+            renderProfileBookings();
+            updateStatusUI();
+        }
+
+        function goToCabinetFromSuccess() {
+            document.getElementById('successModal').classList.remove('active');
+            switchView('viewProfile', document.getElementById('navProfile'));
+            updateAuthUI();
+        }
+        function closeSuccessAndGoHome() {
+            document.getElementById('successModal').classList.remove('active');
+            
+            if (fromPromo) {
+                switchView('viewHome', document.getElementById('navHome'));
+                fromPromo = false; // Сбрасываем флаг
+            } else {
+                switchView('viewBook', document.getElementById('navBook'));
+            }
+        }
+
+        function openAuth() {
+            document.getElementById('authModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function handleAuth(event) {
+            event.preventDefault();
+            document.getElementById('authModal').classList.remove('active');
+            document.getElementById('smsModal').classList.add('active');
+        }
+        function verifySms() {
+            if (document.getElementById('smsCode').value === '1234') {
+                currentUser = { name: document.getElementById('regName').value, phone: document.getElementById('regPhone').value };
+                localStorage.setItem('menfire_user', JSON.stringify(currentUser));
+                document.getElementById('smsModal').classList.remove('active');
+                document.body.style.overflow = '';
+                updateAuthUI();
+                if (cart.length > 0) completeBooking();
+                else showToast('Вы успешно вошли!', 'success');
+            } else showToast("Неверный код", "error");
+        }
+        function updateAuthUI() {
+            document.getElementById('loginBtnProfile').style.display = currentUser ? 'none' : 'block';
+            document.getElementById('logoutBtn').style.display = currentUser ? 'block' : 'none';
+            document.getElementById('loyaltyBlock').style.display = currentUser ? 'flex' : 'none';
+
+            if (currentUser) {
+                document.getElementById('profileHeader').innerHTML = `
+                    <div class="profile-avatar-gold">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="profile-info">
+                        <h1>${currentUser.name}</h1>
+                        <p>${currentUser.phone}</p> <!-- ВОЗВРАЩАЕМ ТЕЛЕФОН -->
+                    </div>
+                `;
+                updateStatusUI(bookings.length);
+            } else {
+                document.getElementById('profileHeader').innerHTML = `
+                    <div class="profile-avatar-gold">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="profile-info">
+                        <h1>Гость</h1>
+                        <p>Войдите, чтобы видеть записи</p>
+                    </div>
+                `;
+            }
+            renderHomeScreen();
+            renderProfileBookings();
+        }
+
+        function logout() {
+            localStorage.removeItem('menfire_user'); currentUser = null;
+            previousLevelName = null; 
+            updateAuthUI();
+            switchView('viewBook', document.getElementById('navBook'));
+            showToast('Вы вышли', 'info');
+        }
+
+        function updateStatusUI() {
+            const statusText = document.getElementById('statStatusText');
+            const statusSub = document.getElementById('statStatusSub');
+
+            if (!currentUser) return;
+
+            // Считаем только валидные визиты
+            const validVisitsCount = bookings.filter(b => b.status === 'active' || b.status === 'completed').length;
+            const info = getLevelInfo(validVisitsCount);
+
+            statusText.innerText = info.level;
+            statusSub.innerText = info.level === "Легенда" ? "Вы лучший!" : `До "${info.nextLevel}" осталось ${info.target - info.current} виз.`;
+        }
+
+
+        function parseDate(b) {
+            if (!b.appointmentDate) return Infinity;
+            const [d,m,y] = b.appointmentDate.split('.'); const [h,min] = b.time.split(':');
+            return new Date(y, m-1, d, h, min).getTime();
+        }
+
+        function openActionModal(id) {
+            bookingToEdit = bookings.find(b => b.id === id);
+            document.getElementById('actionModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeActionModal() {
+            document.getElementById('actionModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        function rescheduleBooking() {
+            if (!bookingToEdit) return;
+            
+            // Переносим услуги и мастера в корзину
+            cart = [...bookingToEdit.services]; 
+            selectedBarber = bookingToEdit.barber;
+            
+            // Удаляем старую запись
+            bookings = bookings.filter(b => b.id !== bookingToEdit.id);
+            localStorage.setItem('menfire_bookings', JSON.stringify(bookings));
+            
+            closeActionModal();
+            
+            // Обновляем экраны (вместо удаленной renderBookings)
+            renderHomeScreen(); 
+            renderProfileBookings(); 
+            updateAuthUI();
+            
+            // Перекидываем на вкладку Записаться и открываем корзину
+            switchView('viewBook', document.getElementById('navBook'));
+            setTimeout(openDrawer, 300);
+        }
+        function confirmCancel() {
+            if (!bookingToEdit) return;
+            
+            // Вместо удаления меняем статус на "Отменена"
+            const index = bookings.findIndex(b => b.id === bookingToEdit.id);
+            if (index !== -1) {
+                bookings[index].status = 'cancelled';
+            }
+            localStorage.setItem('menfire_bookings', JSON.stringify(bookings));
+            
+            closeActionModal();
+            
+            // Очищаем текущую запись, чтобы модалка при следующем открытии работала корректно
+            bookingToEdit = null; 
+            
+            renderHomeScreen(); 
+            renderProfileBookings(); 
+            updateAuthUI();
+            showToast('Запись отменена', 'success');
+        }
+
+        window.addEventListener('resize', () => {
+            const activeNav = document.querySelector('.nav-item.active');
+            if (activeNav) updateNavBubble(activeNav, true);
+        });
+
+        function copyPhoneNumber() {
+            const phone = "+7 927 789-56-21";
+            
+            // Копируем в буфер обмена
+            navigator.clipboard.writeText(phone).then(() => {
+                showToast("Номер скопирован!", "success");
+            }).catch(err => {
+                // Если браузер запретил копировать (редкость для HTTPS)
+                showToast("Не удалось скопировать", "error");
+            });
+        }
+
+            /* =========================================
+           КАРУСЕЛЬ АКЦИЙ (БЕСКОНЕЧНАЯ)
+           ========================================= */
+        const promosData = [
+            // ТОП-БАРБЕР
+            { type: 'top', title: "Папа + Сын", desc: "Скидка 200 ₽", oldPrice: "2700", price: "2500", icon: "👨‍👦", serviceId: "t9", barberId: "b_al" },
+            { type: 'top', title: "Друг + Друг", desc: "Приведи друга", oldPrice: "3000", price: "2800", icon: "🤝", serviceId: "t8", barberId: "b_al" },
+            { type: 'top', title: "Стрижка + Борода", desc: "Комплекс", oldPrice: "2700", price: "2500", icon: "✂️", serviceId: "t4", barberId: "b_al" },
+            
+            // БАРБЕР
+            { type: 'barber', title: "Папа + Сын", desc: "Скидка 200 ₽", oldPrice: "2300", price: "2100", icon: "👨‍👦", serviceId: "b9", barberId: "b_ben" },
+            { type: 'barber', title: "Друг + Друг", desc: "Приведи друга", oldPrice: "2600", price: "2400", icon: "🤝", serviceId: "b8", barberId: "b_ben" },
+            { type: 'barber', title: "Счастливые часы", desc: "Пн-Ср 12:00-16:00", oldPrice: "1300", price: "1100", icon: "⏰", serviceId: "b18", barberId: "b_ben" }
+        ];
+                // --- ЛОГИКА АКЦИЙ (ТАБЫ + БЕСКОНЕЧНАЯ КАРУСЕЛЬ + КОРЗИНА) ---
+        let currentPromoType = 'top';
+
+        function initPromoCarousel() {
+            renderPromos(currentPromoType);
+        }
+
+        function switchPromoTab(type, btn) {
+            document.querySelectorAll('.promo-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentPromoType = type;
+            renderPromos(type);
+        }
+
+        function renderPromos(type) {
+            const track = document.getElementById('promoTrack');
+            if (!track) return;
+
+            const filteredPromos = promosData.filter(p => p.type === type);
+            
+            let cardsHTML = '';
+            // Дублируем 3 раза для бесконечности
+            for(let i=0; i<3; i++) {
+                filteredPromos.forEach((promo) => {
+                    cardsHTML += createPromoHTML(promo);
+                });
+            }
+            
+            track.innerHTML = cardsHTML;
+            const items = track.querySelectorAll('.promo-item');
+
+            // 3D-эффект
+            const update3DEffect = () => {
+                const trackRect = track.getBoundingClientRect();
+                const centerX = trackRect.left + trackRect.width / 2;
+
+                items.forEach(item => {
+                    const itemRect = item.getBoundingClientRect();
+                    const itemCenterX = itemRect.left + itemRect.width / 2;
+                    const distance = Math.abs(centerX - itemCenterX);
+
+                    if (distance < 50) {
+                        item.classList.add('active');
+                        item.classList.remove('inactive');
+                    } else {
+                        item.classList.add('inactive');
+                        item.classList.remove('active');
+                    }
+                });
+            };
+
+            setTimeout(update3DEffect, 50);
+
+            // Логика зацикливания
+            let isScrolling;
+            track.addEventListener('scroll', () => {
+                update3DEffect();
+                window.clearTimeout(isScrolling);
+                isScrolling = setTimeout(() => {
+                    const totalWidth = track.scrollWidth;
+                    const singleSetWidth = totalWidth / 3;
+                    
+                    if (track.scrollLeft >= singleSetWidth * 2 - 20) {
+                        track.scrollTo({ left: singleSetWidth, behavior: 'instant' });
+                    } else if (track.scrollLeft <= 20) {
+                        track.scrollTo({ left: singleSetWidth, behavior: 'instant' });
+                    }
+                }, 150);
+            });
+
+            // Центрируем при старте
+            setTimeout(() => {
+                const singleSetWidth = track.scrollWidth / 3;
+                track.scrollLeft = singleSetWidth;
+                update3DEffect();
+            }, 50);
+        }
+
+        function createPromoHTML(promo) {
+            // ТЕПЕРЬ ПРИ КЛИКЕ ВЫЗЫВАЕТСЯ openPromoCart С ID УСЛУГИ И МАСТЕРА
+            return `
+                <div class="promo-item" onclick="openPromoCart('${promo.serviceId}', '${promo.barberId}')">
+                    <div class="promo-bg-icon">${promo.icon}</div>
+                    <div>
+                        <h4>${promo.title}</h4>
+                        <p>${promo.desc}</p>
+                    </div>
+                    <div class="promo-price">
+                        <span>${promo.oldPrice} ₽</span>${promo.price} ₽
+                    </div>
+                </div>
+            `;
+        }
+
+        // Функция, которая кладет услугу и мастера в корзину и открывает её
+        function openPromoCart(serviceId, barberId) {
+            fromPromo = true; // Запоминаем, что перешли с акции
+            let service = servicesData.top.find(s => s.id === serviceId) || servicesData.barber.find(s => s.id === serviceId);
+            
+            if (service) {
+                cart = [service];
+                selectedDate = null;
+                selectedTime = null;
+                
+                // Принудительно обновляем доступных мастеров (Али для ТОПа, пусто для Барбера)
+                checkMasterAvailability(); 
+                
+                // Переключаем на вкладку Записаться
+                switchView('viewBook', document.getElementById('navBook'));
+                renderServices(service.type);
+                renderMasters();
+                
+                if (selectedBarber) {
+                    // Если это ТОП-акция, Али уже выбран, открываем корзину
+                    openDrawer();
+                } else {
+                    // Если Барбер, просим выбрать мастера (Бенджо или Исмаила)
+                    showToast("Выберите мастера для записи", "info");
+                }
+            }
+        }
+
+            /* =========================================
+           PWA УСТАНОВКА (УМНАЯ ЛОГИКА)
+           ========================================= */
+        let deferredPrompt;
+        const installBtn = document.getElementById('installAppBtn');
+
+        // Проверяем, запущено ли приложение уже как PWA (отдельное окно)
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        
+        // Проверяем устройство
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+        // Если это iOS (Safari) и мы НЕ в установленном приложении — показываем кнопку
+        if (isIOS && isSafari && !isStandalone) {
+            if (installBtn) installBtn.style.display = 'flex';
+        }
+
+        // Ловим событие готовности к установке (Android/PC Chrome)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Показываем кнопку, если приложение еще не установлено
+            if (installBtn && !isStandalone) {
+                installBtn.style.display = 'flex'; 
+            }
+        });
+
+        // Если приложение УСПЕШНО установилось — сразу прячем кнопку
+        window.addEventListener('appinstalled', (evt) => {
+            if (installBtn) installBtn.style.display = 'none';
+            showToast('Приложение успешно установлено!', 'success');
+        });
+
+        function handleInstallClick() {
+            if (isIOS) {
+                // Показываем инструкцию для iPhone
+                document.getElementById('iosInstallModal').classList.add('active');
+            } else if (deferredPrompt) {
+                // Нативная установка для Android/PC
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showToast('Установка началась', 'success');
+                    }
+                    deferredPrompt = null;
+                    // Прячем кнопку после попытки установки
+                    if (installBtn) installBtn.style.display = 'none';
+                });
+            } else {
+                showToast('Приложение уже установлено или недоступно в этом браузере', 'info');
+            }
+        }
