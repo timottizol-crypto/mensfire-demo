@@ -40,11 +40,7 @@
         }
         /* ==========================
            ЭТАП 2: ЭКРАН ЗАГРУЗКИ
-           ========================== */
-        @keyframes splashAppear {
-            0% { opacity: 0; transform: scale(0.7); }
-            100% { opacity: 1; transform: scale(1); }
-        }
+           ========================== */     
 
         .splash-title-wrapper {
             position: relative;
@@ -183,19 +179,75 @@
             gap: 10px;
         }
 
+                /* ==========================
+           ЦЕНТРАЛЬНЫЙ ЗАГОЛОВОК В ШАПКЕ
+           ========================== */
+        .header-title-wrapper {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            pointer-events: none; /* Клики проходят сквозь текст на кнопки */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: max-content;
+            z-index: 2;
+        }
+
+        .header-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0;
+            text-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        /* Красивое подчеркивание */
+        .header-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 2px;
+            background: var(--gold);
+            border-radius: 2px;
+            box-shadow: 0 0 8px var(--gold);
+        }
+
+        /* Анимация, которая запускается при смене вкладки */
+        .header-title.animate-title::after {
+            animation: lineGrow 0.4s var(--spring) forwards;
+        }
+
+        @keyframes lineGrow {
+            0% { width: 0; opacity: 0; }
+            100% { width: 80%; opacity: 1; }
+        }
+
         /* Общие стили для обеих пилюль */
         .header-pill {
-            pointer-events: auto; /* Возвращаем кликабельность */
-            width: 30vw; /* Овал занимает ровно 30% от ширины экрана */
+            pointer-events: auto; 
+            width: 30vw; 
             height: 56px;
             border-radius: 50px;
             background: rgba(20, 20, 22, 0.55);
             backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
             -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
+            
+            /* ДОБАВЛЕНО: Преломление цветов (красный слева, голубой справа) */
             box-shadow:
-                inset 0 1px 1px rgba(255, 255, 255, 0.28),
+                inset 1px 0 1px rgba(255, 100, 100, 0.25),
+                inset -1px 0 1px rgba(100, 200, 255, 0.25),
+                inset 0 1px 1px rgba(255, 255, 255, 0.35),
                 inset 0 -1px 1px rgba(0, 0, 0, 0.25),
                 0 6px 24px rgba(0, 0, 0, 0.35);
+                
             position: relative;
             isolation: isolate;
             overflow: hidden;
@@ -209,14 +261,28 @@
             transform: scale(0.95);
         }
 
-        /* Левая пилюля (стартовая рамка прозрачная) */
+
         .left-pill {
-            border: 1.5px solid rgba(212, 175, 55, 0);
+            /* Легкая белая стеклянная грань вместо золотой */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: calc(30vw * 1.03);
+            flex: none;
         }
 
-        /* Правая пилюля (статичная золотая рамка) */
         .right-pill {
-            border: 1.5px solid rgba(212, 175, 55, 0.42);
+            /* Легкая белая стеклянная грань вместо золотой */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: calc(30vw * 1.03); 
+            flex: none;
+            padding: 0; 
+        }
+
+        .right-pill span {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--gold);
+            white-space: nowrap;
+            letter-spacing: 0.5px;
         }
 
         /* Блик-рефракция стекла (для обеих) */
@@ -294,20 +360,11 @@
             letter-spacing: 1.8px;
         }
 
-        /* Иконка профиля в правой пилюле */
-        .right-pill svg {
-            width: 26px;
-            height: 26px;
-        }
-
         /* Запуск анимации */
         #appContainer.visible .left-pill::before {
             animation: borderSpin 2.5s cubic-bezier(0.5, 0, 0.3, 1) forwards;
         }
-        #appContainer.visible .left-pill {
-            animation: headerBorderIn 0.6s ease 2.4s forwards;
-        }
-
+        
         @keyframes borderSpin {
             0%   { --border-angle: 0deg;   opacity: 1; }
             85%  { --border-angle: 306deg; opacity: 1; }
@@ -316,17 +373,24 @@
         @keyframes headerBorderIn {
             to { border-color: rgba(212, 175, 55, 0.42); }
         }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
         .view {
             display: none;
             flex-direction: column;
             flex-grow: 1;
-            padding: calc(85px + env(safe-area-inset-top, 0px)) 20px 90px 20px;
+            padding: calc(100px + env(safe-area-inset-top, 0px)) 20px 110px 20px;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
             background: var(--bg-dark);
         }
        
-                .view.active {
+        .view.active {
             display: flex;
         }
 
@@ -351,28 +415,59 @@
         }
 
             /* ==========================
-           СТЕКЛЯННОЕ НИЖНЕЕ МЕНЮ (3 ПИЛЮЛИ)
+           СТЕКЛЯННОЕ НИЖНЕЕ МЕНЮ 
            ========================== */
         .bottom-nav {
             position: fixed;
             bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-            left: 0;
-            width: 100%;
-            height: auto;
-            background: transparent;
+            left: 12px;
+            right: 12px;
+            width: auto; 
+            height: 64px; 
+            background: rgba(20, 20, 22, 0.65);
+            backdrop-filter: blur(20px) saturate(200%) brightness(1.1);
+            -webkit-backdrop-filter: blur(20px) saturate(200%) brightness(1.1);
+            border: 1px solid rgba(212, 175, 55, 0.15); 
+            border-radius: 50px; 
+            
+            /* ДОБАВЛЕНО: Преломление цветов для нижнего меню */
+            box-shadow:
+                inset 1px 0 1px rgba(255, 100, 100, 0.2),
+                inset -1px 0 1px rgba(100, 200, 255, 0.2),
+                inset 0 1px 1px rgba(255, 255, 255, 0.15),
+                0 8px 30px rgba(0, 0, 0, 0.4);
+                
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 12px;
-            gap: 10px;
+            padding: 4px; 
             z-index: 100;
-            pointer-events: none; /* Клики проходят сквозь пустоту */
+            overflow: hidden; 
+            isolation: isolate;
         }
 
-                .nav-item {
+        /* Легкий блик для всего меню */
+        .bottom-nav::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(
+                180deg,
+                rgba(255, 255, 255, 0.12) 0%,
+                rgba(255, 255, 255, 0.02) 30%,
+                transparent 60%,
+                rgba(0, 0, 0, 0.15) 100%
+            );
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Кнопки внутри меню (теперь прозрачные) */
+        .nav-item {
             pointer-events: auto;
             flex: 1;
-            height: 56px;
+            height: 100%;
             border-radius: 50px;
             display: flex;
             flex-direction: column;
@@ -383,43 +478,10 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s var(--spring);
-            
-            /* Стекло для неактивных вкладок */
-            background: rgba(20, 20, 22, 0.55);
-            backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
-            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
-            border: 1.5px solid rgba(212, 175, 55, 0.2);
-            box-shadow:
-                inset 0 1px 1px rgba(255, 255, 255, 0.28),
-                inset 0 -1px 1px rgba(0, 0, 0, 0.25),
-                0 6px 24px rgba(0, 0, 0, 0.35);
+            background: transparent; /* Убрали фон */
+            border: none; /* Убрали границы */
             position: relative;
-            z-index: 1; /* Поверх пузыря */
-            isolation: isolate;
-            overflow: hidden;
-        }
-
-        /* Блик-рефракция (только для неактивных) */
-        .nav-item::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.16) 0%,
-                rgba(255, 255, 255, 0.05) 20%,
-                transparent 50%,
-                rgba(0, 0, 0, 0.18) 100%
-            );
-            pointer-events: none;
-            z-index: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .nav-item > * {
-            position: relative;
-            z-index: 2;
+            z-index: 1; /* Поверх блика и пузыря */
         }
 
         .nav-item:active {
@@ -450,7 +512,19 @@
             transform: translateY(-2px) scale(1.1); 
         }
 
-        /* ==========================
+        /* Пружинка для иконки при приземлении */
+                /* Пружинка для иконки при приземлении (очень маленькая) */
+        .nav-item.active svg.bounce {
+            animation: iconBounce 0.3s var(--spring) forwards;
+        }
+
+        @keyframes iconBounce {
+            0% { transform: translateY(-2px) scale(1.1); }
+            50% { transform: translateY(-4px) scale(1.15); } /* Легкий подскок */
+            100% { transform: translateY(-2px) scale(1.1); } /* Возврат */
+        }
+
+            /* ==========================
            ПЛАВАЮЩИЙ СТЕКЛЯННЫЙ ПУЗЫРЬ
            ========================== */
         .nav-bubble {
@@ -461,59 +535,59 @@
             background: rgba(212, 175, 55, 0.08);
             backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
             -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
-            border: 1.5px solid rgba(212, 175, 55, 0.75);
+            border: 1px solid rgba(212, 175, 55, 0.2); 
             box-shadow: 
-                inset 0 1px 1px rgba(255, 255, 255, 0.3),
-                0 0 20px rgba(212, 175, 55, 0.25);
+                inset 1px 0 1px rgba(255, 100, 100, 0.25),
+                inset -1px 0 1px rgba(100, 200, 255, 0.25),
+                inset 0 1px 1px rgba(255, 255, 255, 0.4),
+                0 0 15px rgba(212, 175, 55, 0.15);
             pointer-events: none;
             z-index: 0;
-            /* Плавный переезд (0.35 сек) */
+            transform: scale(1); 
+            
+            /* Разделяем скорости: движение 0.25с, расширение 0.15с */
             transition: 
-                left 0.35s cubic-bezier(0.25, 1, 0.5, 1),
-                top 0.35s cubic-bezier(0.25, 1, 0.5, 1),
-                width 0.35s cubic-bezier(0.25, 1, 0.5, 1),
-                height 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+                left 0.25s cubic-bezier(0.25, 1, 0.5, 1),
+                top 0.25s cubic-bezier(0.25, 1, 0.5, 1),
+                width 0.25s cubic-bezier(0.25, 1, 0.5, 1),
+                height 0.25s cubic-bezier(0.25, 1, 0.5, 1),
+                transform 0.15s ease-out;
         }
-        .nav-item-center {
-            position: relative;
-            top: -15px;
-            width: 60px;
-            height: 60px;
-            background: var(--gold);
-            border-radius: 50%;
-            color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.4);
-            transition: all 0.2s var(--spring);
-        }
-        .nav-item-center:active { transform: scale(0.85); }
-        .nav-item-center svg { width: 28px; height: 28px; margin-bottom: 0; }
 
+        /* Новый класс для этапа "раздувания" */
+        .nav-bubble.expanding {
+            transform: scale(1.2); 
+        }
+
+        
         /* Вкладки */
         .category-tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
         }
+
         .tab-btn {
             flex: 1;
-            background: var(--bg-card);
-            border: 1px solid #333;
-            color: var(--text-main);
+            background: rgba(20, 20, 22, 0.55);
+            backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-muted);
             padding: 12px;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 13px;
             font-weight: 600;
             transition: all 0.3s var(--smooth);
+            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
         }
+        
         .tab-btn:active { transform: scale(0.95); }
         .tab-btn.active {
-            background: var(--gold);
-            border-color: var(--gold);
-            color: #000;
-            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+            background: rgba(212, 175, 55, 0.15);
+            border-color: rgba(212, 175, 55, 0.6);
+            color: var(--gold);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
         }
 
         /* Услуги */
@@ -522,22 +596,30 @@
             grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
+
         .service-card {
-            background: var(--bg-card);
-            border-radius: 14px;
+            background: rgba(20, 20, 22, 0.55);
+            backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+            border-radius: 16px;
             padding: 15px;
-            border: 1px solid #333;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             transition: all 0.2s var(--smooth);
             position: relative;
+            box-shadow: 
+                inset 1px 0 1px rgba(255, 100, 100, 0.1), 
+                inset -1px 0 1px rgba(100, 200, 255, 0.1), 
+                0 4px 15px rgba(0, 0, 0, 0.2);
         }
+        
         .service-card:active { transform: scale(0.96); }
         .service-card.selected {
             border-color: var(--gold);
             background: rgba(212, 175, 55, 0.08);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
         }
         .service-card h3 {
             font-size: 13px;
@@ -588,18 +670,24 @@
             margin-top: 15px;
         }
         .master-card {
-            background: var(--bg-card);
-            border-radius: 14px;
+            background: rgba(20, 20, 22, 0.55);
+            backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+            border-radius: 16px;
             padding: 12px;
-            border: 1px solid #333;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             text-align: center;
             transition: all 0.2s var(--smooth);
+            box-shadow: 
+                inset 1px 0 1px rgba(255, 100, 100, 0.1), 
+                inset -1px 0 1px rgba(100, 200, 255, 0.1), 
+                0 4px 15px rgba(0, 0, 0, 0.2);
         }
         .master-card:active { transform: scale(0.95); }
         .master-card.selected {
             border-color: var(--gold);
-            background: rgba(212, 175, 55, 0.05);
-            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.15);
+            background: rgba(212, 175, 55, 0.1);
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
         }
         .master-img {
             width: 65px;
@@ -767,41 +855,125 @@
             background: var(--gold-hover);
         }
 
-        /* ==========================
-           ЛИЧНЫЙ КАБИНЕТ
-           ========================== */
-        .profile-header { text-align: center; margin-bottom: 25px; }
-        .profile-avatar {
-            width: 85px;
-            height: 85px;
-            border-radius: 50%;
-            background: rgba(212, 175, 55, 0.1);
-            border: 2px solid var(--gold);
-            margin: 0 auto 15px;
+                /* Единый стеклянный блок в профиле */
+        .profile-main-card {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 35px;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+            flex-direction: column;
+            gap: 20px; 
+            margin-bottom: 15px;
+            padding: 25px 20px;
+            border-radius: 24px;
+            width: 100%;
+            
+            /* Более заметное стекло */
+            background: rgba(30, 30, 32, 0.65); 
+            border: 1.5px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 
+                inset 0 1px 2px rgba(255, 255, 255, 0.3),
+                0 10px 30px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(25px) saturate(200%);
+            -webkit-backdrop-filter: blur(25px) saturate(200%);
         }
-        .profile-header h1 { font-size: 24px; }
-        .profile-header p { color: var(--text-muted); font-size: 14px; }
 
-        .status-block {
-            background: rgba(30, 30, 30, 0.55);
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 20px;
+        /* Горизонтальный профиль */
+        .profile-header-horizontal {
             display: flex;
             align-items: center;
             gap: 20px;
-            margin-bottom: 25px;
-            box-shadow: 
-                inset 0 1px 0 rgba(255, 255, 255, 0.08),
-                0 10px 25px rgba(0, 0, 0, 0.3);
+            text-align: left;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
         }
+
+        /* Уровень внутри блока (без фона) */
+        .status-block-inner {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* Кнопка "Отменить" в карточке записи на главной */
+        .btn-cancel-small {
+            background: transparent;
+            border: 1px solid rgba(255, 77, 77, 0.4);
+            color: #ff4d4d;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: all 0.2s var(--smooth);
+            width: fit-content;
+        }
+        .btn-cancel-small:active {
+            background: rgba(255, 77, 77, 0.1);
+            transform: scale(0.95);
+        }
+
+        /* Горизонтальное выравнивание */
+        .profile-header-horizontal {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            text-align: left;
+        }
+
+        /* Желтая аватарка (человечек) */
+        .profile-avatar-gold {
+            width: 90px; /* Увеличили с 70px */
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.15);
+            border: 2px solid var(--gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .profile-avatar-gold svg {
+            width: 45px;
+            height: 45px;
+            fill: var(--gold); /* Желтый человечек */
+        }
+
+        /* Текст справа от аватарки */
+        .profile-info h1 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-info p {
+            font-size: 13px; 
+            color: var(--text-muted); 
+            font-weight: 500;
+        }
+
+        .status-block-simple {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            text-align: center; /* Центрируем текст */
+            align-items: center;
+        }
+
+        .status-block-simple .status-level-name {
+            font-size: 20px;
+            color: var(--gold);
+            font-weight: 800;
+        }
+
+        .status-block-simple .status-hint {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        
         .status-circle-container {
             position: relative;
             width: 75px;
@@ -1163,6 +1335,303 @@
         #viewBook, #viewProfile, #viewBookings {
             background: var(--bg-dark) !important;
         }
+
+            /* ==========================
+           ГЛАВНЫЙ ЭКРАН (СТЕКЛЯННЫЕ БЛОКИ)
+           ========================== */
+
+        .collapsible-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .collapsible-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .collapsible-list::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 4px;
+        }
+
+        /* Показ списка при добавлении класса expanded */
+        .collapsible-list.expanded {
+            display: block;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Карточка уровня (Вертикальная, крупная) */
+        .home-level-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 25px 20px;
+            cursor: pointer;
+            gap: 15px;
+        }
+        .home-level-card:active {
+            transform: scale(0.97);
+        }
+        .home-level-circle {
+            position: relative;
+            width: 110px; /* Увеличили размер диаграммы */
+            height: 110px;
+            flex-shrink: 0;
+        }
+        .home-level-circle .status-text-inner {
+            font-size: 22px; /* Увеличили текст внутри круга */
+        }
+        .home-level-info .status-level-name {
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        .home-level-info .status-hint {
+            font-size: 13px;
+        }
+        .home-arrow-right {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            opacity: 0.3;
+        }
+
+        /* Нижний блок (Кнопка + Акция) */
+        .home-bottom-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 10px;
+            padding-bottom: 20px;
+        }
+
+        /* Кнопка записи */
+        .home-cta-btn {
+            flex: 1.1; /* Чуть шире карточки акции */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--gold) 0%, #b5952f 100%);
+            border: none;
+            border-radius: 20px;
+            padding: 18px 15px;
+            color: #000;
+            cursor: pointer;
+            box-shadow: 
+                0 8px 25px rgba(212, 175, 55, 0.3),
+                inset 0 1px 1px rgba(255, 255, 255, 0.5);
+            transition: all 0.2s var(--spring);
+        }
+        .home-cta-btn:active {
+            transform: scale(0.96);
+        }
+        .cta-text {
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+        .cta-text span {
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .cta-text small {
+            font-size: 10px;
+            font-weight: 600;
+            opacity: 0.7;
+            margin-top: 2px;
+        }
+
+        /* Карточка акции (стеклянная) */
+        .promo-card-side {
+            flex: 0.9;
+            background: rgba(20, 20, 22, 0.55);
+            backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 20px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 
+                inset 1px 0 1px rgba(255, 100, 100, 0.15), 
+                inset -1px 0 1px rgba(100, 200, 255, 0.15), 
+                0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.2s var(--spring);
+        }
+        .promo-card-side:active {
+            transform: scale(0.96);
+        }
+        .promo-card-side .promo-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .promo-card-side h4 {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--gold);
+            margin-bottom: 2px;
+        }
+        .promo-card-side p {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Карточка записей */
+        .home-booking-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 3px solid var(--gold);
+        }
+        .home-booking-item:last-child {
+            margin-bottom: 0;
+        }
+        .hb-date {
+            color: var(--gold);
+            font-weight: 800;
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+        .hb-master {
+            font-size: 13px;
+            color: var(--text-main);
+            margin-bottom: 5px;
+        }
+        .hb-services {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.3;
+        }
+
+        .home-expand-btn {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            margin-top: 15px;
+            padding: 10px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .home-expand-btn:active {
+            color: var(--gold);
+        }
+        .home-expand-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            transition: transform 0.3s var(--spring);
+        }
+        .home-expand-btn.expanded svg {
+            transform: rotate(180deg);
+        }
+
+        /* Тонкий золотой скроллбар */
+        #homeBookingsContainer::-webkit-scrollbar {
+            width: 4px;
+        }
+        #homeBookingsContainer::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #homeBookingsContainer::-webkit-scrollbar-thumb {
+            background: rgba(212, 175, 55, 0.3);
+            border-radius: 4px;
+        }
+
+        /* Стили для кнопок-стрелок */
+        .home-scroll-btn {
+            width: 100%;
+            background: transparent;
+            border: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 0;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+        }
+        .home-scroll-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+        .home-scroll-btn:active {
+            opacity: 0.7;
+        }
+
+                /* Рабочий скролл для истории в профиле */
+        .profile-scroll-area {
+            max-height: 110px; /* Высота ровно под одну карточку */
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .profile-scroll-area.expanded {
+            max-height: 260px; /* При раскрытии */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-right: 5px;
+        }
+
+        /* Скроллбар */
+        .profile-scroll-area::-webkit-scrollbar { width: 4px; }
+        .profile-scroll-area::-webkit-scrollbar-thumb { background: rgba(212, 175, 55, 0.3); border-radius: 4px; }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Бейджи статусов */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .status-badge.active {
+            background: rgba(212, 175, 55, 0.15);
+            color: var(--gold);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        .status-badge.completed {
+            background: rgba(255, 255, 255, 0.05);
+            color: #888;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .status-badge.cancelled {
+            background: rgba(255, 77, 77, 0.1);
+            color: #ff4d4d;
+            border: 1px solid rgba(255, 77, 77, 0.2);
+        }
+        
+        /* Приглушаем отмененные и завершенные */
+        .home-booking-item.cancelled, .home-booking-item.completed {
+            opacity: 0.7;
+            border-left-color: #555;
+        }
     </style>
 </head>
 <body>
@@ -1201,23 +1670,78 @@
                 </div>
             </div>
 
-            <!-- Правая пилюля: Личный кабинет -->
-            <div class="header-pill right-pill" onclick="switchView('viewProfile', document.getElementById('navProfile'))" id="headerProfileBtn">
-                <svg viewBox="0 0 24 24" fill="var(--gold)">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                </svg>
+            <div class="header-title-wrapper">
+                <h1 id="headerTitle" class="header-title">Главная</h1>
+            </div>
+
+            
+            <!-- Правая пилюля: Контактный телефон -->
+            <div class="header-pill right-pill" onclick="copyPhoneNumber()" id="headerPhoneBtn">
+                <span id="phoneText">+7 927 789-56-21</span>
             </div>
         </div>
 
         <!-- ЭКРАН ГЛАВНАЯ -->
         <div id="viewHome" class="view active">
-            <h2 style="margin-bottom: 15px; font-size: 20px;">Главная</h2>
-            <p style="color: var(--text-muted); font-size: 14px;">Здесь будет главный экран...</p>
-        </div>
+            
+            <!-- Блок уровня пользователя (Увеличенный, вертикальный) -->
+            <div class="glass-card home-level-card" onclick="switchView('viewProfile', document.getElementById('navProfile'))">
+                <div class="home-level-circle">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="status-circle-bg" cx="50" cy="50" r="42"></circle>
+                        <circle class="status-circle-progress" id="homeProgressCircle" cx="50" cy="50" r="42"></circle>
+                    </svg>
+                    <div class="status-text-inner" id="homeProgressText">0/3</div>
+                </div>
+                <div class="home-level-info">
+                    <div class="status-level-name" id="homeStatStatusText">Новичок</div>
+                    <div class="status-hint" id="homeStatStatusSub">До статуса "Постоянный" осталось 3 визита</div>
+                </div>
+            </div>
 
+            <!-- Блок записей -->
+            <div class="glass-card home-bookings-card">
+                <h3 style="margin-bottom: 10px; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                    <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: var(--gold);"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+                    Активные записи
+                </h3>
+                
+                <!-- Кнопка "Свернуть" (сверху) -->
+                <button class="home-scroll-btn" id="homeCollapseBtn" onclick="toggleHomeBookings()" style="display: none; margin-bottom: 5px;">
+                    <svg viewBox="0 0 24 24" fill="var(--gold)"><path d="M7 14l5-5 5 5z"/></svg>
+                </button>
+
+                <!-- Сама зона прокрутки (используем тот же класс) -->
+                <div id="homeBookingsScroll" class="profile-scroll-area">
+                    <div id="homeHistoryList"></div>
+                </div>
+
+                <!-- Кнопка "Развернуть" (снизу) -->
+                <button class="home-scroll-btn" id="homeExpandBtn" onclick="toggleHomeBookings()" style="display: none; margin-top: 5px;">
+                    <span id="homeExpandText">Все записи</span>
+                    <svg viewBox="0 0 24 24" fill="var(--gold)"><path d="M7 10l5 5 5-5z"/></svg>
+                </button>
+            </div>
+
+            <!-- Нижний блок: Кнопка + Акция -->
+            <div class="home-bottom-actions">
+                <button class="home-cta-btn" onclick="switchView('viewBook', document.getElementById('navBook'))">
+                    <div class="cta-text">
+                        <span>Записаться</span>
+                        <small>Онлайн 24/7</small>
+                    </div>
+                </button>
+                
+                <div class="promo-card-side" onclick="switchView('viewBook', document.getElementById('navBook'))">
+                    <div class="promo-icon">👨‍👦</div>
+                    <h4>Папа + Сын</h4>
+                    <p>Скидка 200руб.</p>
+                </div>
+            </div>
+
+        </div>
         <!-- ЭКРАН ЗАПИСИ -->
         <div id="viewBook" class="view">
-            <h2 style="margin-bottom: 15px; font-size: 20px;">Записаться</h2>
             <div class="category-tabs">
                 <button class="tab-btn active" onclick="filterServices('top', this)">ТОП-БАРБЕР</button>
                 <button class="tab-btn" onclick="filterServices('barber', this)">БАРБЕР</button>
@@ -1231,36 +1755,44 @@
 
         <!-- ЭКРАН ПРОФИЛЯ -->
         <div id="viewProfile" class="view">
-            <div class="profile-header" id="profileHeader">
-                <div class="profile-avatar">👤</div>
-                <h1>Гость</h1>
-                <p>Войдите, чтобы видеть записи</p>
-            </div>
-
-            <div class="status-block" id="loyaltyBlock" style="display: none;">
-                <div class="status-circle-container">
-                    <svg viewBox="0 0 100 100">
-                        <circle class="status-circle-bg" cx="50" cy="50" r="42"></circle>
-                        <circle class="status-circle-progress" id="progressCircle" cx="50" cy="50" r="42"></circle>
-                    </svg>
-                    <div class="status-text-inner" id="progressText">0/3</div>
-                </div>
-                <div>
+            <!-- ЕДИНЫЙ СТЕКЛЯННЫЙ БЛОК ПРОФИЛЯ И УРОВНЯ -->
+            <div class="glass-card profile-main-card">
+                <!-- Верхняя часть (Аватарка и Имя) -->
+                <div class="profile-header-horizontal" id="profileHeader"></div>
+                
+                <!-- Нижняя часть (Только текст уровня, без диаграммы) -->
+                <div class="status-block-simple" id="loyaltyBlock" style="display: none;">
                     <div class="status-level-name" id="statStatusText">Новичок</div>
                     <div class="status-hint" id="statStatusSub">До статуса "Постоянный" осталось 3 визита</div>
                 </div>
             </div>
 
+            <!-- История записей в профиле -->
+            <div class="glass-card profile-history-card" style="margin-top: 5px;">
+                <h3 style="margin-bottom: 15px; font-size: 16px; display: flex; align-items: center; gap: 8px;">
+                    <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: var(--gold);"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+                    История визитов
+                </h3>
+                
+                <!-- Кнопка "Свернуть" (сверху) -->
+                <button class="home-scroll-btn" id="profileCollapseBtn" onclick="toggleProfileBookings()" style="display: none; margin-bottom: 5px;">
+                    <svg viewBox="0 0 24 24" fill="var(--gold)"><path d="M7 14l5-5 5 5z"/></svg>
+                </button>
+
+                <!-- Сама зона прокрутки -->
+                <div id="profileBookingsScroll" class="profile-scroll-area">
+                    <div id="profileHistoryList"></div>
+                </div>
+
+                <!-- Кнопка "Развернуть" (снизу) -->
+                <button class="home-scroll-btn" id="profileExpandBtn" onclick="toggleProfileBookings()" style="display: none; margin-top: 5px;">
+                    <span id="profileExpandText">Показать всю историю</span>
+                    <svg viewBox="0 0 24 24" fill="var(--gold)"><path d="M7 10l5 5 5-5z"/></svg>
+                </button>
+            </div>
+
             <button class="logout-btn" id="logoutBtn" style="display: none;" onclick="logout()">Выйти из аккаунта</button>
             <button class="checkout-btn" id="loginBtnProfile" onclick="openAuth()" style="margin-top: 15px;">Войти / Зарегистрироваться</button>
-        </div>
-
-        <!-- ЭКРАН МОИХ ЗАПИСЕЙ -->
-        <div id="viewBookings" class="view">
-            <h2 style="margin-bottom: 20px; font-size: 20px;">Мои записи</h2>
-            <div id="activeBookingContainer"></div>
-            <h3 class="history-title" id="historyTitle" style="display: none;">История визитов</h3>
-            <div class="booking-list" id="historyContainer"></div>
         </div>
 
         <!-- НИЖНЕЕ МЕНЮ -->
@@ -1407,8 +1939,12 @@
         let selectedDate = null;
         let selectedTime = null;
         let currentUser = JSON.parse(localStorage.getItem('menfire_user')) || null;
-        let rawBookings = JSON.parse(localStorage.getItem('menfire_bookings')) || [];
+        let isHomeExpanded = false;
+                let rawBookings = JSON.parse(localStorage.getItem('menfire_bookings')) || [];
+        // Добавляем статус, если его нет
+        rawBookings.forEach(b => { if (!b.status) b.status = 'active'; });
         let bookings = rawBookings.filter(b => b && b.barber && b.appointmentDate && b.time);
+        let isProfileExpanded = false; // Новое состояние для Личного кабинета
         let bookingToEdit = null;
 
         // Рандомные приветствия на разных языках
@@ -1425,7 +1961,7 @@
             (name) => `Hej, ${name}!`
         ];
 
-                window.addEventListener('DOMContentLoaded', () => {
+        window.addEventListener('DOMContentLoaded', () => {
             try {
                 initMockData();
 
@@ -1446,7 +1982,6 @@
                     updateAuthUI();
                     renderServices('top');
                     renderMasters();
-                    renderBookings();
                     initNavBubble();
                     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
                 }, 3500);
@@ -1504,6 +2039,29 @@
                 targetNav.classList.add('active');
                 updateNavBubble(targetNav);
             }
+
+            const titleEl = document.getElementById('headerTitle');
+            const titles = {
+                'viewHome': 'Главная',
+                'viewBook': 'Записаться',
+                'viewProfile': 'Профиль', // Сократили для красоты
+                'viewBookings': 'Мои записи'
+            };
+            
+            if (titleEl && titles[viewId]) {
+                titleEl.innerText = titles[viewId];
+                // Перезапускаем анимацию подчеркивания
+                titleEl.classList.remove('animate-title');
+                void titleEl.offsetWidth; // Форсируем перерасчет
+                titleEl.classList.add('animate-title');
+            }
+            if (viewId === 'viewHome') {
+                renderHomeScreen();
+            }
+            
+            if (viewId === 'viewProfile') {
+                renderProfileBookings();
+            }
         }
 
         /* ==========================
@@ -1513,9 +2071,9 @@
         let touchStartY = 0;
 
         document.addEventListener('touchstart', e => {
-            // Игнорируем свайпы, если открыта корзина, модалка или скроллится выбор даты
+            // Игнорируем свайпы в модалках, корзине, датах И В НАШИХ СПИСКАХ ЗАПИСЕЙ
             if (document.querySelector('.modal.active') || document.querySelector('.drawer.active')) return;
-            if (e.target.closest('.date-grid')) return;
+            if (e.target.closest('.date-grid') || e.target.closest('.bookings-scroll-wrapper')) return;
 
             touchStartX = e.changedTouches[0].screenX;
             touchStartY = e.changedTouches[0].screenY;
@@ -1523,7 +2081,7 @@
 
         document.addEventListener('touchend', e => {
             if (document.querySelector('.modal.active') || document.querySelector('.drawer.active')) return;
-            if (e.target.closest('.date-grid')) return;
+            if (e.target.closest('.date-grid') || e.target.closest('.bookings-scroll-wrapper')) return;
 
             const touchEndX = e.changedTouches[0].screenX;
             const touchEndY = e.changedTouches[0].screenY;
@@ -1557,34 +2115,254 @@
             }
         }
 
-        function updateNavBubble(el) {
+        function updateNavBubble(el, isInit = false) {
             const bubble = document.getElementById('navBubble');
             const nav = document.getElementById('bottomNav');
             if (!bubble || !nav || !el) return;
             
             const navRect = nav.getBoundingClientRect();
             const elRect = el.getBoundingClientRect();
+            const padX = 0; 
+            const padY = 0;
             
-            // Пузырь на 4px больше по ширине и на 3px по высоте
-            const padX = 4;
-            const padY = 3;
-            
-            bubble.style.width = (elRect.width + padX * 2) + 'px';
-            bubble.style.height = (elRect.height + padY * 2) + 'px';
-            bubble.style.left = (elRect.left - navRect.left - padX) + 'px';
-            bubble.style.top = (elRect.top - navRect.top - padY) + 'px';
-        }
+            if (isInit) {
+                // При первой загрузке просто ставим на место без анимаций
+                bubble.style.width = (elRect.width + padX * 2) + 'px';
+                bubble.style.height = (elRect.height + padY * 2) + 'px';
+                bubble.style.left = (elRect.left - navRect.left - padX) + 'px';
+                bubble.style.top = (elRect.top - navRect.top - padY) + 'px';
+                return;
+            }
 
+            // --- ЭТАП 1: Раздуваем пузырь на месте (150мс) ---
+            bubble.classList.add('expanding');
+
+            // --- ЭТАП 2: Начинаем движение (через 150мс) ---
+            setTimeout(() => {
+                bubble.style.width = (elRect.width + padX * 2) + 'px';
+                bubble.style.height = (elRect.height + padY * 2) + 'px';
+                bubble.style.left = (elRect.left - navRect.left - padX) + 'px';
+                bubble.style.top = (elRect.top - navRect.top - padY) + 'px';
+
+                // Синхронизируем прыжок иконки с началом движения пузыря
+                const currentActive = document.querySelector('.nav-item.active');
+                if (currentActive) {
+                    const svg = currentActive.querySelector('svg');
+                    if (svg) {
+                        svg.classList.remove('bounce');
+                        void svg.offsetWidth; 
+                        svg.classList.add('bounce');
+                        setTimeout(() => svg.classList.remove('bounce'), 300);
+                    }
+                }
+            }, 150);
+
+            // --- ЭТАП 3: Возвращаем размер после приземления (через 150 + 250 = 400мс) ---
+            setTimeout(() => {
+                bubble.classList.remove('expanding');
+            }, 400); 
+        }
+        
         function initNavBubble() {
             const bubble = document.getElementById('navBubble');
             const activeNav = document.querySelector('.nav-item.active');
             if (!bubble || !activeNav) return;
+
+             bubble.classList.remove('expanding');
             
-            // Отключаем анимацию для самого первого позиционирования
+            // Когда пузырь приехал (закончил анимацию left) — возвращаем исходный размер
+            bubble.addEventListener('transitionend', (e) => {
+                if (e.propertyName === 'left') {
+                    bubble.classList.remove('moving'); 
+                }
+            });
+
             bubble.style.transition = 'none';
-            updateNavBubble(activeNav);
-            void bubble.offsetWidth; // Форсируем перерасчёт
+            updateNavBubble(activeNav, true);
+            void bubble.offsetWidth; 
             bubble.style.transition = '';
+        }
+
+                /* ==========================
+           ЛОГИКА ГЛАВНОГО ЭКРАНА
+           ========================== */
+        function renderHomeScreen() {
+            renderHomeLevel();
+            renderHomeBookings();
+        }
+
+        function renderHomeLevel() {
+            const circle = document.getElementById('homeProgressCircle');
+            const circleText = document.getElementById('homeProgressText');
+            const statusText = document.getElementById('homeStatStatusText');
+            const statusSub = document.getElementById('homeStatStatusSub');
+
+            if (!currentUser) {
+                statusText.innerText = "Гость";
+                statusSub.innerText = "Войдите, чтобы копить визиты";
+                circle.style.strokeDashoffset = 100; // Пустой круг
+                circleText.innerText = "0/0";
+                return;
+            }
+
+            // Логика уровней (дублируем для главного экрана)
+            const count = bookings.length;
+            let level = 0, nextLevel = 1, levelName = "", nextLevelName = "";
+            
+            if (count < 3) { levelName = "Новичок"; nextLevelName = "Постоянный"; level = count; nextLevel = 3; }
+            else if (count < 6) { levelName = "Постоянный"; nextLevelName = "Любимчик"; level = count - 3; nextLevel = 3; }
+            else if (count < 10) { levelName = "Любимчик"; nextLevelName = "VIP"; level = count - 6; nextLevel = 4; }
+            else { levelName = "VIP"; nextLevelName = "Максимум"; level = 1; nextLevel = 1; }
+
+            statusText.innerText = levelName;
+            statusSub.innerText = levelName === "VIP" ? "Вы лучший!" : `До "${nextLevelName}" осталось ${nextLevel - level} виз.`;
+
+            const radius = 42, circumference = 2 * Math.PI * radius;
+            circle.style.strokeDasharray = `${circumference} ${circumference}`;
+            circle.style.strokeDashoffset = circumference - (level / nextLevel) * circumference;
+            circleText.innerText = `${level}/${nextLevel}`;
+        }
+
+        function renderHomeBookings() {
+            const list = document.getElementById('homeHistoryList');
+            const scrollArea = document.getElementById('homeBookingsScroll');
+            const expandBtn = document.getElementById('homeExpandBtn');
+            const collapseBtn = document.getElementById('homeCollapseBtn');
+            
+            const activeBookings = bookings.filter(b => b.status === 'active').sort((a,b) => parseDate(a) - parseDate(b));
+
+            if (!currentUser || activeBookings.length === 0) {
+                list.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:13px; padding: 20px 0;">${currentUser ? 'У вас пока нет активных записей' : 'Войдите, чтобы видеть записи'}</div>`;
+                expandBtn.style.display = 'none';
+                collapseBtn.style.display = 'none';
+                scrollArea.classList.remove('expanded');
+                return;
+            }
+
+            // Создаем шаблон с КНОПКОЙ ОТМЕНЫ (он должен быть ЗДЕСЬ, до вывода)
+            const createHTML = (b) => `
+                <div class="home-booking-item" style="position: relative;">
+                    <div class="hb-date">${b.appointmentDate} в ${b.time}</div>
+                    <div class="hb-master">Мастер: ${b.barber.name}</div>
+                    <div class="hb-services">${b.services.map(s => s.title).join(', ')}</div>
+                    
+                    <button class="btn-cancel-small" onclick="openActionModal(${b.id})">
+                        Отменить
+                    </button>
+                </div>
+            `;
+
+            // Выводим все активные записи, используя этот шаблон
+            list.innerHTML = activeBookings.map(createHTML).join('');
+
+            if (activeBookings.length > 1) {
+                if (isHomeExpanded) {
+                    scrollArea.classList.add('expanded');
+                    expandBtn.style.display = 'none';
+                    collapseBtn.style.display = 'flex';
+                } else {
+                    scrollArea.classList.remove('expanded');
+                    expandBtn.style.display = 'flex';
+                    collapseBtn.style.display = 'none';
+                    document.getElementById('homeExpandText').innerText = `Все записи (${activeBookings.length})`;
+                }
+            } else {
+                expandBtn.style.display = 'none';
+                collapseBtn.style.display = 'none';
+                scrollArea.classList.remove('expanded');
+            }
+        }
+
+        function toggleHomeBookings() {
+            isHomeExpanded = !isHomeExpanded;
+            const scrollArea = document.getElementById('homeBookingsScroll');
+            const expandBtn = document.getElementById('homeExpandBtn');
+            const collapseBtn = document.getElementById('homeCollapseBtn');
+            
+            if (isHomeExpanded) {
+                scrollArea.classList.add('expanded');
+                expandBtn.style.display = 'none';
+                collapseBtn.style.display = 'flex';
+            } else {
+                scrollArea.classList.remove('expanded');
+                expandBtn.style.display = 'flex';
+                collapseBtn.style.display = 'none';
+            }
+        }
+        
+        function toggleProfileBookings() {
+            isProfileExpanded = !isProfileExpanded;
+            const scrollArea = document.getElementById('profileBookingsScroll');
+            const expandBtn = document.getElementById('profileExpandBtn');
+            const collapseBtn = document.getElementById('profileCollapseBtn');
+
+            if (isProfileExpanded) {
+                scrollArea.classList.add('expanded');
+                expandBtn.style.display = 'none';
+                collapseBtn.style.display = 'flex';
+            } else {
+                scrollArea.classList.remove('expanded');
+                expandBtn.style.display = 'flex';
+                collapseBtn.style.display = 'none';
+            }
+        }
+
+        function renderProfileBookings() {
+            const list = document.getElementById('profileHistoryList');
+            const scrollArea = document.getElementById('profileBookingsScroll');
+            const expandBtn = document.getElementById('profileExpandBtn');
+            const collapseBtn = document.getElementById('profileCollapseBtn');
+
+            if (!currentUser || bookings.length === 0) {
+                list.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:13px; padding: 15px 0;">История пуста</div>`;
+                expandBtn.style.display = 'none';
+                collapseBtn.style.display = 'none';
+                scrollArea.classList.remove('expanded');
+                return;
+            }
+
+            const sorted = [...bookings].sort((a,b) => parseDate(b) - parseDate(a));
+
+            // Выводим все записи в один список
+            list.innerHTML = sorted.map(b => {
+                if (b.status === 'active' && parseDate(b) < Date.now()) {
+                    b.status = 'completed';
+                    localStorage.setItem('menfire_bookings', JSON.stringify(bookings));
+                }
+
+                let badgeHTML = '';
+                let itemClass = '';
+                
+                if (b.status === 'active') badgeHTML = `<div class="status-badge active">Активная</div>`;
+                else if (b.status === 'completed') { badgeHTML = `<div class="status-badge completed">Завершена</div>`; itemClass = 'completed'; }
+                else if (b.status === 'cancelled') { badgeHTML = `<div class="status-badge cancelled">Отменена</div>`; itemClass = 'cancelled'; }
+
+                return `
+                    <div class="home-booking-item ${itemClass}">
+                        ${badgeHTML}
+                        <div class="hb-date">${b.appointmentDate} в ${b.time}</div>
+                        <div class="hb-master">Мастер: ${b.barber.name}</div>
+                        <div class="hb-services">${b.services.map(s => s.title).join(', ')}</div>
+                    </div>
+                `;
+            }).join('');
+
+            if (sorted.length > 1) {
+                if (isProfileExpanded) {
+                    scrollArea.classList.add('expanded');
+                    expandBtn.style.display = 'none';
+                    collapseBtn.style.display = 'flex';
+                } else {
+                    scrollArea.classList.remove('expanded');
+                    expandBtn.style.display = 'flex';
+                    collapseBtn.style.display = 'none';
+                    document.getElementById('profileExpandText').innerText = `Показать всю историю (${sorted.length})`;
+                }
+            } else {
+                expandBtn.style.display = 'none';
+                collapseBtn.style.display = 'none';
+                scrollArea.classList.remove('expanded');
+            }
         }
 
         function goHomeFromHeader() {
@@ -1635,7 +2413,7 @@
             checkMasterAvailability();
         }
 
-        function toggleService(service) {
+                function toggleService(service) {
             const index = cart.findIndex(item => item.id === service.id);
             if (index === -1) {
                 if (cart.length > 0 && cart[0].type !== service.type) {
@@ -1649,6 +2427,11 @@
             }
             renderServices(service.type);
             checkMasterAvailability();
+
+            // НОВАЯ ЛОГИКА: Если мастер уже выбран и услуга добавлена, сразу открываем корзину
+            if (selectedBarber && cart.length > 0) {
+                openDrawer();
+            }
         }
 
         function renderMasters() {
@@ -1680,9 +2463,18 @@
             renderMasters();
 
             if (cart.length > 0) {
+                // Если услуги уже выбраны, сразу открываем корзину
                 openDrawer();
             } else {
+                // Если услуг нет, подсказываем и переключаем вкладку под мастера
                 showToast(`Выберите услуги для ${barber.name}`, 'info');
+                
+                // Находим нужную кнопку вкладки (ТОП или БАРБЕР) и программно нажимаем
+                const targetTab = document.querySelector(`.tab-btn[onclick*="'${barber.type}'"]`);
+                if (targetTab) {
+                    filterServices(barber.type, targetTab);
+                }
+                
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
@@ -1779,7 +2571,8 @@
                 time: selectedTime,
                 appointmentDate: selectedDate,
                 total: total,
-                date: new Date().toLocaleDateString('ru-RU')
+                date: new Date().toLocaleDateString('ru-RU'),
+                status: 'active'
             };
 
             bookings.push(newBooking);
@@ -1788,13 +2581,14 @@
 
             renderServices('top'); checkMasterAvailability(); closeDrawer();
             document.getElementById('successModal').classList.add('active');
+            renderHomeScreen();
+            renderProfileBookings();
         }
 
         function goToCabinetFromSuccess() {
             document.getElementById('successModal').classList.remove('active');
             switchView('viewProfile', document.getElementById('navProfile'));
             updateAuthUI();
-            renderBookings();
         }
         function closeSuccessAndGoHome() {
             document.getElementById('successModal').classList.remove('active');
@@ -1822,28 +2616,45 @@
             } else showToast("Неверный код", "error");
         }
         function updateAuthUI() {
-            document.getElementById('headerAuthBtn').style.display = currentUser ? 'none' : 'block';
             document.getElementById('loginBtnProfile').style.display = currentUser ? 'none' : 'block';
             document.getElementById('logoutBtn').style.display = currentUser ? 'block' : 'none';
             document.getElementById('loyaltyBlock').style.display = currentUser ? 'flex' : 'none';
 
             if (currentUser) {
-                document.getElementById('profileHeader').innerHTML = `<div class="profile-avatar">👤</div><h1>${currentUser.name}</h1><p>${currentUser.phone}</p>`;
+                document.getElementById('profileHeader').innerHTML = `
+                    <div class="profile-avatar-gold">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="profile-info">
+                        <h1>${currentUser.name}</h1>
+                        <p>${currentUser.phone}</p> <!-- ВОЗВРАЩАЕМ ТЕЛЕФОН -->
+                    </div>
+                `;
                 updateStatusUI(bookings.length);
             } else {
-                document.getElementById('profileHeader').innerHTML = `<div class="profile-avatar">👤</div><h1>Гость</h1><p>Войдите, чтобы видеть записи</p>`;
+                document.getElementById('profileHeader').innerHTML = `
+                    <div class="profile-avatar-gold">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                    </div>
+                    <div class="profile-info">
+                        <h1>Гость</h1>
+                        <p>Войдите, чтобы видеть записи</p>
+                    </div>
+                `;
             }
+            renderHomeScreen();
+            renderProfileBookings();
         }
+
         function logout() {
             localStorage.removeItem('menfire_user'); currentUser = null;
-            updateAuthUI(); renderBookings();
+            updateAuthUI();
             switchView('viewBook', document.getElementById('navBook'));
             showToast('Вы вышли', 'info');
         }
 
         function updateStatusUI(count) {
-            const circle = document.getElementById('progressCircle');
-            const circleText = document.getElementById('progressText');
+            // Убрали переменные circle и circleText, так как круга больше нет в профиле
             const statusText = document.getElementById('statStatusText');
             const statusSub = document.getElementById('statStatusSub');
 
@@ -1855,11 +2666,8 @@
 
             statusText.innerText = levelName;
             statusSub.innerText = levelName === "VIP" ? "Вы лучший!" : `До "${nextLevelName}" осталось ${nextLevel - level} виз.`;
-
-            const radius = 42, circumference = 2 * Math.PI * radius;
-            circle.style.strokeDasharray = `${circumference} ${circumference}`;
-            circle.style.strokeDashoffset = circumference - (level / nextLevel) * circumference;
-            circleText.innerText = `${level}/${nextLevel}`;
+            
+            // Всю логику с strokeDashoffset удалили
         }
 
         function renderBookings() {
@@ -1924,16 +2732,35 @@
         }
         function confirmCancel() {
             if (!bookingToEdit) return;
-            bookings = bookings.filter(b => b.id !== bookingToEdit.id);
+            // Вместо удаления меняем статус
+            const index = bookings.findIndex(b => b.id === bookingToEdit.id);
+            if (index !== -1) {
+                bookings[index].status = 'cancelled';
+            }
             localStorage.setItem('menfire_bookings', JSON.stringify(bookings));
-            closeActionModal(); renderBookings(); updateAuthUI();
+            closeActionModal();
+            renderHomeScreen(); // Обновляем главную
+            renderProfileBookings(); // Обновляем профиль
+            updateAuthUI();
             showToast('Запись отменена', 'success');
         }
 
         window.addEventListener('resize', () => {
             const activeNav = document.querySelector('.nav-item.active');
-            if (activeNav) updateNavBubble(activeNav);
+            if (activeNav) updateNavBubble(activeNav, true);
         });
+
+        function copyPhoneNumber() {
+            const phone = "+7 927 789-56-21";
+            
+            // Копируем в буфер обмена
+            navigator.clipboard.writeText(phone).then(() => {
+                showToast("Номер скопирован!", "success");
+            }).catch(err => {
+                // Если браузер запретил копировать (редкость для HTTPS)
+                showToast("Не удалось скопировать", "error");
+            });
+        }
     </script>
 </body>
 </html>
