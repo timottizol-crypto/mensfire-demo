@@ -24,13 +24,18 @@
             -webkit-touch-callout: none; 
         }
 
+        /* АБСОЛЮТНЫЙ запрет выделения — даже в полях ввода */
         input, textarea {
-            -webkit-user-select: text;
-            -moz-user-select: text;
-            -ms-user-select: text;
-            user-select: text;
-            -webkit-touch-callout: default;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
+
+        /* Дополнительная страховка: выделение невидимое */
+        ::selection      { background: transparent; color: inherit; }
+        ::-moz-selection { background: transparent; color: inherit; }
         
         body { 
             background-color: var(--bg-dark); 
@@ -518,17 +523,15 @@
             100% { transform: translateY(-2px) scale(1.1); } /* Возврат */
         }
 
-            /* ==========================
-           ПЛАВАЮЩИЙ СТЕКЛЯННЫЙ ПУЗЫРЬ
-           ========================== */
-        /* ==========================
+          
+         /* ==========================
            ПЛАВАЮЩИЙ СТЕКЛЯННЫЙ ПУЗЫРЬ
            ========================== */
         .nav-bubble {
             position: absolute;
             top: 0;
             left: 0;
-            border-radius: 50px;
+            border-radius: 50px; /* Исходный размер (таблетка) */
             background: rgba(212, 175, 55, 0.08);
             backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
             -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
@@ -542,23 +545,26 @@
             z-index: 0;
             transform: scale(1); 
             
-            /* Движение (0.25с), изменение размера (0.15с) */
             transition: 
                 left 0.25s cubic-bezier(0.25, 1, 0.5, 1),
                 top 0.25s cubic-bezier(0.25, 1, 0.5, 1),
                 width 0.25s cubic-bezier(0.25, 1, 0.5, 1),
                 height 0.25s cubic-bezier(0.25, 1, 0.5, 1),
-                transform 0.15s ease-out;
+                transform 0.15s ease-out,
+                border-radius 0.15s ease-out; 
         }
 
-        /* Новый класс для этапа "раздувания" */
+        /* ЭТАП РАЗДУВАНИЯ: border-radius: 50% делает его идеальным овалом (без прямых линий) */
         .nav-bubble.expanding {
-            transform: scale(1.1, 1.3); /* Ширина на 10%, Высота на 30% */
+            transform: scale(0.7, 1.5); 
+            border-radius: 50%; 
         }
 
+        /* ЭТАП ПЛЮХА: маленький radius (12px) делает углы более прямыми (квадратными) */
         .nav-bubble.squashing {
-            transform: scale(1.3, 0.8); /* Растягиваем в ширину, сжимаем в высоту */
-            transition: transform 0.1s ease-out !important; /* Быстрое сжатие */
+            transform: scale(1.2, 0.7); 
+            border-radius: 999px; 
+            transition: transform 0.1s ease-out, border-radius 0.1s ease-out !important; 
         }
 
         
@@ -864,34 +870,295 @@
             background: var(--gold-hover);
         }
 
-                /* Единый стеклянный блок в профиле */
-        .profile-main-card {
-            display: flex;
-            flex-direction: column;
-            gap: 20px; 
-            margin-bottom: 15px;
-            padding: 25px 20px;
-            border-radius: 24px;
-            width: 100%;
-            
-            /* Более заметное стекло */
-            background: rgba(30, 30, 32, 0.65); 
-            border: 1.5px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 
-                inset 0 1px 2px rgba(255, 255, 255, 0.3),
-                0 10px 30px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(25px) saturate(200%);
-            -webkit-backdrop-filter: blur(25px) saturate(200%);
+            /* =========================================
+            ПРОФИЛЬ — ПЛАВНАЯ АНИМАЦИЯ СЖАТИЯ
+            ========================================= */
+
+        @property --profile-border-angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
         }
 
-        /* Горизонтальный профиль */
-        .profile-header-horizontal {
+        .profile-main-card {
             display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 20px;
+            border-radius: 24px;
+            width: 100%;
+
+            background: rgba(20, 20, 22, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow:
+                inset 0 2px 5px rgba(255, 255, 255, 0.15),
+                inset 0 -2px 5px rgba(0, 0, 0, 0.2),
+                0 8px 32px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(15px) saturate(180%);
+            -webkit-backdrop-filter: blur(15px) saturate(180%);
+            position: relative;
+            overflow: hidden;
+            transition:
+                padding 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                gap 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Бегущие линии (не трогаем) */
+        .profile-main-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 24px;
+            padding: 1.5px;
+            background: conic-gradient(
+                from var(--profile-border-angle),
+                transparent 0deg,
+                var(--gold) 10deg,
+                var(--gold) 30deg,
+                transparent 40deg,
+                transparent 180deg,
+                var(--gold) 190deg,
+                var(--gold) 210deg,
+                transparent 220deg,
+                transparent 360deg
+            );
+            -webkit-mask:
+                linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .profile-main-card.animate-profile-border::before {
+            animation: profileBorderRun 2.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes profileBorderRun {
+            0% { --profile-border-angle: 0deg; opacity: 1; }
+            80% { --profile-border-angle: 144deg; opacity: 1; }
+            100% { --profile-border-angle: 180deg; opacity: 0; }
+        }
+
+        /* --- ВЕРХНИЙ БЛОК (Профиль) --- */
+        .profile-header-horizontal {
+            flex: 0 0 100%;          /* на всю ширину */
+            position: relative;      /* для разделителя-псевдоэлемента */
+            display: flex;
+            flex-wrap: wrap;         /* разрешаем перенос текста под аватарку */
             align-items: center;
-            gap: 20px;
+            gap: 5px 20px;
             text-align: left;
-            padding-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+            padding-bottom: 15px;
+            transition:
+                flex-basis 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                padding 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                gap 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* Разделитель: в обычном состоянии — горизонтальная линия внизу */
+        .profile-header-horizontal::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .profile-avatar-gold {
+            flex: 0 0 auto;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(212, 175, 55, 0.15);
+            border: 2px solid var(--gold);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            transition:
+                width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .profile-avatar-gold svg {
+            width: 45px;
+            height: 45px;
+            fill: var(--gold);
+            transition: width 0.4s ease, height 0.4s ease;
+        }
+
+        .profile-info {
+            flex: 1 1 auto;
+            min-width: 0;
+            
+        }
+
+        .profile-info h1 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 5px;
+            color: #fff;
+            letter-spacing: 0.5px;
+            transition: font-size 0.4s ease, margin 0.4s ease;
+        }
+
+        .profile-info p {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: font-size 0.4s ease;
+        }
+
+        /* --- НИЖНИЙ БЛОК (Уровень) --- */
+        .status-block-simple {
+            flex: 0 0 100%;          /* на всю ширину */
+            display: flex;
+            flex-wrap: wrap;         /* разрешаем перенос текста под диаграмму */
+            align-items: center;
+            gap: 5px 15px;
+            transition:
+                flex-basis 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                gap 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .mini-diagram {
+            flex: 0 0 auto;
+            position: relative;
+            width: 45px;
+            height: 45px;
+            transition:
+                width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+                height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .mini-diagram svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .mini-diagram .status-circle-bg {
+            fill: none;
+            stroke: #333;
+            stroke-width: 8;
+        }
+
+        .mini-diagram .status-circle-progress {
+            fill: none;
+            stroke: var(--gold);
+            stroke-width: 8;
+            stroke-linecap: round;
+            transition: stroke-dashoffset 1s, stroke 0.3s;
+        }
+
+        .level-text-wrapper {
+            flex: 1 1 auto;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            
+        }
+
+        .level-text-wrapper .status-level-name {
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 2px;
+            color: var(--gold);
+            transition: font-size 0.4s ease, margin 0.4s ease;
+        }
+
+        .level-text-wrapper .status-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            transition: font-size 0.4s ease, opacity 0.4s ease;
+        }
+
+
+        /* =========================================
+        СЖАТОЕ СОСТОЯНИЕ
+        ========================================= */
+
+        .profile-main-card.collapsed {
+            padding: 15px;
+            gap: 10px;
+        }
+
+        /* Оба блока становятся по половине ширины */
+        .profile-main-card.collapsed .profile-header-horizontal,
+        .profile-main-card.collapsed .status-block-simple {
+            flex: 0 0 calc(50% - 5px);
+        }
+
+        .profile-main-card.collapsed .profile-header-horizontal {
+            justify-content: center;
+            gap: 5px;
+            padding-bottom: 0;
+        }
+
+        /* Разделитель переезжает вправо и становится вертикальным */
+        .profile-main-card.collapsed .profile-header-horizontal::after {
+            bottom: 10%;
+            left: 100%;
+            width: 1px;
+            height: 80%;
+        }
+
+        .profile-main-card.collapsed .profile-avatar-gold {
+            width: 45px;
+            height: 45px;
+        }
+
+        .profile-main-card.collapsed .profile-avatar-gold svg {
+            width: 20px;
+            height: 20px;
+        }
+
+
+        .profile-main-card.collapsed .profile-info h1 {
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .profile-main-card.collapsed .profile-info {
+            flex-basis: 100%;
+            text-align: center;
+        }
+
+        .profile-main-card.collapsed .profile-info p {
+            font-size: 10px;
+        }
+
+        .profile-main-card.collapsed .status-block-simple {
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .profile-main-card.collapsed .mini-diagram {
+            width: 35px;
+            height: 35px;
+        }
+
+        .profile-main-card.collapsed .level-text-wrapper {
+            flex-basis: 100%;
+            text-align: center;
+            align-items: center;
+        }
+
+        .profile-main-card.collapsed .level-text-wrapper .status-level-name {
+            font-size: 13px;
+        }
+
+        .profile-main-card.collapsed .level-text-wrapper .status-hint {
+            font-size: 0;
+            opacity: 0;
         }
 
         /* Уровень внутри блока (без фона) */
@@ -899,15 +1166,6 @@
             display: flex;
             align-items: center;
             gap: 20px;
-        }
-
-                /* Карточка записи (уменьшаем внутренние отступы) */
-        .home-booking-item {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            padding: 12px 15px; /* Уменьшили высоту карточки */
-            margin-bottom: 10px;
-            border-left: 3px solid var(--gold);
         }
 
         /* Текстовая часть (чтобы длинные названия услуг не ломали верстку) */
@@ -938,89 +1196,7 @@
             white-space: nowrap; /* Текст кнопки не переносится на новую строку */
             flex-shrink: 0;      /* Кнопка не сжимается, если текст слева длинный */
         }
-        
-        .btn-cancel-small:active {
-            background: rgba(255, 77, 77, 0.1);
-            transform: scale(0.95);
-        }
-        .btn-cancel-small:active {
-            background: rgba(255, 77, 77, 0.1);
-            transform: scale(0.95);
-        }
 
-        /* Горизонтальное выравнивание */
-        .profile-header-horizontal {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            text-align: left;
-        }
-
-        /* Желтая аватарка (человечек) */
-        .profile-avatar-gold {
-            width: 90px; /* Увеличили с 70px */
-            height: 90px;
-            border-radius: 50%;
-            background: rgba(212, 175, 55, 0.15);
-            border: 2px solid var(--gold);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-        }
-
-        .profile-avatar-gold svg {
-            width: 45px;
-            height: 45px;
-            fill: var(--gold); /* Желтый человечек */
-        }
-
-        /* Текст справа от аватарки */
-        .profile-info h1 {
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 5px;
-            color: #fff;
-            letter-spacing: 0.5px;
-        }
-
-        .profile-info p {
-            font-size: 13px; 
-            color: var(--text-muted); 
-            font-weight: 500;
-        }
-
-        .status-block-simple {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            text-align: center; /* Центрируем текст */
-            align-items: center;
-        }
-
-        .status-block-simple .status-level-name {
-            font-size: 20px;
-            color: var(--gold);
-            font-weight: 800;
-        }
-
-        .status-block-simple .status-hint {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        
-        .status-circle-container {
-            position: relative;
-            width: 75px;
-            height: 75px;
-        }
-        .status-circle-container svg {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-        }
         .status-circle-bg {
             fill: none;
             stroke: #333;
@@ -1360,7 +1536,7 @@
             opacity: 0;
             animation: fadeIn 0.4s ease 1s forwards;
         }
-                /* =========================================
+            /* =========================================
            ФОН НА ГЛАВНОМ ЭКРАНЕ (ЗАТЕМНЕННЫЙ)
            ========================================= */
         #viewHome {
@@ -1393,21 +1569,7 @@
             display: block;
         }
 
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Карточка уровня (Вертикальная, крупная) */
-        .home-level-card {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            padding: 25px 20px;
-            cursor: pointer;
-            gap: 15px;
-        }
+       
         .home-level-card:active {
             transform: scale(0.97);
         }
@@ -1596,28 +1758,7 @@
             border-radius: 4px;
         }
 
-        /* Стили для кнопок-стрелок */
-        .home-scroll-btn {
-            width: 100%;
-            background: transparent;
-            border: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-            padding: 5px 0;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-        .home-scroll-btn svg {
-            width: 20px;
-            height: 20px;
-        }
-        .home-scroll-btn:active {
-            opacity: 0.7;
-        }
+        
 
             /* =========================================
            ИСТОРИЯ ВИЗИТОВ (СТИЛЬ КАК У АКТИВНЫХ)
@@ -1779,11 +1920,6 @@
             /* =========================================
            КАРТОЧКА УРОВНЯ
            ========================================= */
-        @property --border-angle {
-            syntax: '<angle>';
-            initial-value: 0deg;
-            inherits: false;
-        }
 
         .home-level-card {
             display: flex;
@@ -1946,36 +2082,7 @@
             height: 18px;
         }
         
-        .home-scroll-area::-webkit-scrollbar {
-            display: none; 
-        }
-
-        .home-scroll-area .home-booking-item {
-            scroll-snap-align: start;
-            margin-bottom: 0; 
-        }
-
-        .home-scroll-area .home-booking-item:not(:last-child) {
-            margin-bottom: 10px; 
-        }
-        
-        /* Скрываем скроллбар в Chrome/Safari */
-        .home-scroll-area::-webkit-scrollbar {
-            display: none; 
-        }
-
-        /* Прилипание карточек при свайпе */
-        .home-scroll-area .home-booking-item {
-            scroll-snap-align: start;
-            margin-bottom: 0; 
-        }
-
-        /* Отступ между карточками */
-        .home-scroll-area .home-booking-item:not(:last-child) {
-            margin-bottom: 10px; 
-        }
-
-                /* =========================================
+            /* =========================================
            МИГАНИЕ ОБОДКА КНОПКИ (РОВНО 2 РАЗА)
            ========================================= */
         @keyframes blinkEdge {
@@ -1993,18 +2100,18 @@
             animation: blinkEdge 0.8s ease-in-out 0.5s both;
         }
 
-                /* =========================================
+            /* =========================================
            БЕСКОНЕЧНАЯ КАРУСЕЛЬ АКЦИЙ
            ========================================= */
         .promo-carousel-wrapper {
             margin-top: 20px;
-            margin-bottom: -20px; /* Компенсируем нижний отступ */
-            flex-grow: 1; /* Занимает оставшееся место */
+            margin-bottom: 0; /* Убрали -20px, чтобы тень не обрезалась снизу */
+            flex-grow: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            width: calc(100% + 40px); /* Растягиваем на всю ширину (учитывая padding родителя) */
+            overflow: visible; /* Разрешаем свечению выходить за пределы контейнера */
+            width: calc(100% + 40px);
             margin-left: -20px;
             margin-right: -20px;
             position: relative;
@@ -2015,13 +2122,15 @@
             gap: 15px;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
-            scrollbar-width: none; /* Firefox */
+            scrollbar-width: none;
             -webkit-overflow-scrolling: touch;
-            padding: 10px 0;
-            align-items: center;
-            /* Чтобы первая и последняя карточка были по центру */
+            
+            padding-top: 10px;
+            padding-bottom: 35px; /* ДОБАВИЛИ: Место для плавного растворения тени снизу */
             padding-left: calc(50vw - 130px); 
             padding-right: calc(50vw - 130px);
+            
+            align-items: center;
         }
         
         .promo-track::-webkit-scrollbar {
@@ -2046,6 +2155,7 @@
             overflow: hidden;
             transition: transform 0.3s ease, opacity 0.3s ease;
             transform-origin: center center;
+            will-change: transform;
         }
 
         /* 3D-эффект (будет управляться через JS) */
@@ -2206,4 +2316,62 @@
         /* Вылет скролла внутри карточки активных записей */
         #appContainer.animate-in .home-scroll-area {
             animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.25s backwards;
+        }
+            /* =========================================
+           АДАПТАЦИЯ АКЦИЙ (САЙТ vs ПРИЛОЖЕНИЕ)
+           ========================================= */
+        
+        /* В ПРИЛОЖЕНИИ (PWA) */
+        html.is-pwa .promo-tabs { display: flex !important; }       /* Показываем вкладки */
+        html.is-pwa .promo-badge { display: none !important; }      /* Прячем бейджи */
+        html.is-pwa .install-app-btn { display: none !important; }  /* Прячем кнопку Скачать */
+        /* Аккуратный бейдж (в стиле вкладок) */
+        .promo-badge {
+            display: none;
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(212, 175, 55, 0.1); /* Полупрозрачный фон как у вкладки */
+            border: 1px solid rgba(212, 175, 55, 0.3); /* Мягкий ободок вместо яркого */
+            color: var(--gold);
+            font-size: 9px;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 8px; /* Скругление как у кнопок */
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            z-index: 5;
+        }
+
+        /* Отступаем текст заголовка вправо, чтобы бейдж не налезал на название */
+        .promo-item h4 {
+            padding-right: 65px !important; 
+        }
+
+        /* =========================================
+        ТАКТИЛЬНЫЙ ОТКЛИК НА НАЖАТИЕ
+        ========================================= */
+        .is-pressing {
+            transform: scale(0.95) !important;
+            filter: brightness(1.12) !important;
+            transition:
+                transform 0.07s cubic-bezier(0.25, 1, 0.5, 1),
+                filter 0.07s ease !important;
+        }
+
+        /* Обратная связь при отмене долгого нажатия */
+        .is-cancelled {
+            animation: cancelShake 0.42s ease;
+        }
+
+        @keyframes cancelShake {
+            0%   { filter: brightness(1.2); }
+            30%  { filter: brightness(0.7) saturate(0.3); }
+            70%  { filter: brightness(1.4) saturate(1.3); }
+            100% { filter: brightness(1); }
+        }
+
+        #viewHome {
+            overflow: hidden;
+            padding-bottom: 90px; /* оставляем место под фиксированное нижнее меню */
         }

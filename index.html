@@ -11,6 +11,14 @@
     <link rel="apple-touch-icon" href="img/icon-dark.jpg">
     <title>MENSFIRE | Приложение</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <script>
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        if (isStandalone) {
+            document.documentElement.classList.add('is-pwa');
+        }
+    </script>
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -135,14 +143,23 @@
         <!-- ЭКРАН ПРОФИЛЯ -->
         <div id="viewProfile" class="view">
             <!-- ЕДИНЫЙ СТЕКЛЯННЫЙ БЛОК ПРОФИЛЯ И УРОВНЯ -->
-            <div class="glass-card profile-main-card">
+                        <!-- ЕДИНЫЙ СТЕКЛЯННЫЙ БЛОК ПРОФИЛЯ И УРОВНЯ -->
+            <div class="glass-card profile-main-card" id="profileMainCard">
                 <!-- Верхняя часть (Аватарка и Имя) -->
                 <div class="profile-header-horizontal" id="profileHeader"></div>
                 
-                <!-- Нижняя часть (Только текст уровня, без диаграммы) -->
+                <!-- Нижняя часть (Уровень с мини-диаграммой) -->
                 <div class="status-block-simple" id="loyaltyBlock" style="display: none;">
-                    <div class="status-level-name" id="statStatusText">Новичок</div>
-                    <div class="status-hint" id="statStatusSub">До статуса "Постоянный" осталось 3 визита</div>
+                    <div class="mini-diagram">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="status-circle-bg" cx="50" cy="50" r="42"></circle>
+                            <circle class="status-circle-progress" id="profileProgressCircle" cx="50" cy="50" r="42"></circle>
+                        </svg>
+                    </div>
+                    <div class="level-text-wrapper">
+                        <div class="status-level-name" id="statStatusText">Новичок</div>
+                        <div class="status-hint" id="statStatusSub">До статуса "Постоянный" осталось 3 визита</div>
+                    </div>
                 </div>
             </div>
 

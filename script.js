@@ -33,6 +33,7 @@ const servicesData = {
                 { id: 'b18', title: 'Стрижка "счастливые Часы" (пн-ср 12:00-16:00)', time: '45 мин', price: 1100, type: 'barber' }
             ]
         };
+
         const barbersData = [
             { id: 'b_al', name: 'Али', role: 'ТОП-БАРБЕР', photo: 'img/Ali.jpg', type: 'top' },
             { id: 'b_ben', name: 'Бенджо', role: 'Барбер', photo: 'img/Benjo.jpg', type: 'barber' },
@@ -205,6 +206,21 @@ const servicesData = {
             
             if (viewId === 'viewProfile') {
                 renderProfileBookings();
+            
+
+                // --- АНИМАЦИЯ БЕГУЩИХ ЛИНИЙ В ПРОФИЛЕ ---
+                const profileCard = document.querySelector('.profile-main-card');
+                if (profileCard) {
+                    profileCard.classList.remove('animate-profile-border');
+                    void profileCard.offsetWidth; // Форсируем перерасчет (сбрасываем анимацию)
+                    profileCard.classList.add('animate-profile-border');
+                    
+                    // Убираем класс после завершения анимации (через 2.2 секунды)
+                    clearTimeout(window.profileAnimTimer);
+                    window.profileAnimTimer = setTimeout(() => {
+                        profileCard.classList.remove('animate-profile-border');
+                    }, 2200);
+                }
             }
         }
 
@@ -349,74 +365,80 @@ const servicesData = {
         }
 
         function renderHomeLevel() {
-            const circle = document.getElementById('homeProgressCircle');
-            const circleText = document.getElementById('homeProgressText');
-            const statusText = document.getElementById('homeStatStatusText');
-            const statusSub = document.getElementById('homeStatStatusSub');
-            const levelCard = document.querySelector('.home-level-card'); 
+        const circle = document.getElementById('homeProgressCircle');
+        const circleText = document.getElementById('homeProgressText');
+        const statusText = document.getElementById('homeStatStatusText');
+        const statusSub = document.getElementById('homeStatStatusSub');
+        const levelCard = document.querySelector('.home-level-card'); 
 
-            if (!currentUser) {
-                statusText.innerText = "Гость";
-                statusSub.innerText = "Войдите, чтобы копить визиты";
-                circle.style.strokeDashoffset = 100; 
-                circleText.innerText = "0/0";
-                levelCard.style.setProperty('--level-color', '#555555'); 
-                return;
-            }
-
-            const validVisitsCount = bookings.filter(b => b.status === 'active' || b.status === 'completed').length;
-            const info = getLevelInfo(validVisitsCount);
-
-            
-            // --- ЛОГИКА АНИМАЦИИ ЛИНИИ ---
-            if (previousLevelName !== info.level) {
-                // 1. Если уровень изменился (или это первый вход) — запускаем анимацию
-                levelCard.classList.remove('animate-border');
-                void levelCard.offsetWidth; // Форсируем перерасчет (сбрасываем анимацию)
-                levelCard.classList.add('animate-border');
-                
-                previousLevelName = info.level; // Запоминаем новый уровень
-
-                // 2. Убираем класс через 3 секунды, чтобы при смене вкладок линия не бежала заново
-                clearTimeout(window.lineAnimTimer);
-                window.lineAnimTimer = setTimeout(() => {
-                    levelCard.classList.remove('animate-border');
-                }, 3000); // 3000 мс = 3 секунды (ровно столько длится линия)
-
-            } else {
-                // 3. Если уровень НЕ изменился (просто переключили вкладку) — жестко убираем класс
-                levelCard.classList.remove('animate-border');
-            }
-            // -----------------------------
-
-            const levelColors = {
-                "Новичок": "#B0B0B0",     
-                "Постоянный": "#CD7F32",  
-                "Любимчик": "#D4AF37",    
-                "VIP": "#E5E4E2",         
-                "Эксклюзив": "#4A90E2",   
-                "Легенда": "#E0115F"      
-            };
-            
-            const currentColor = levelColors[info.level] || "#D4AF37";
-            levelCard.style.setProperty('--level-color', currentColor);
-
-            statusText.innerText = info.level;
-            statusSub.innerText = info.level === "Легенда" ? "Вы лучший!" : `До "${info.nextLevel}" осталось ${info.target - info.current} виз.`;
-
-            const radius = 42, circumference = 2 * Math.PI * radius;
-            circle.style.strokeDasharray = `${circumference} ${circumference}`;
-            
-            const progress = info.current / info.target;
-            circle.style.strokeDashoffset = circumference - (progress * circumference);
-            
-            if (info.level === "Легенда") {
-                circle.style.strokeDashoffset = 0;
-                circleText.innerText = "MAX";
-            } else {
-                circleText.innerText = `${info.current}/${info.target}`;
-            }
+        if (!currentUser) {
+            statusText.innerText = "Гость";
+            statusSub.innerText = "Войдите, чтобы копить визиты";
+            circle.style.strokeDashoffset = 100; 
+            circleText.innerText = "0/0";
+            levelCard.style.setProperty('--level-color', '#555555'); 
+            return;
         }
+
+        const validVisitsCount = bookings.filter(b => b.status === 'active' || b.status === 'completed').length;
+        const info = getLevelInfo(validVisitsCount);
+
+        // --- ЛОГИКА АНИМАЦИИ ЛИНИИ ---
+        // Анимация запускается ТОЛЬКО если главный экран активен.
+        // Иначе (например, во время completeBooking или updateAuthUI) — просто
+        // не трогаем previousLevelName, чтобы анимация дождалась перехода на главную.
+        const isHomeActive = document.getElementById('viewHome').classList.contains('active');
+
+        if (isHomeActive && previousLevelName !== info.level) {
+            // Уровень изменился И мы на главной — запускаем анимацию
+            levelCard.classList.remove('animate-border');
+            void levelCard.offsetWidth;              // форс-перезапуск
+            levelCard.classList.add('animate-border');
+
+            previousLevelName = info.level;          // запоминаем ПОСЛЕ запуска
+
+            clearTimeout(window.lineAnimTimer);
+            window.lineAnimTimer = setTimeout(() => {
+                levelCard.classList.remove('animate-border');
+            }, 3000);
+        } else if (isHomeActive) {
+            // Мы на главной, но уровень НЕ изменился — просто снимаем класс на всякий случай
+            levelCard.classList.remove('animate-border');
+        } else {
+            // Мы НЕ на главной — ничего не трогаем, previousLevelName обновится
+            // только когда пользователь реально перейдёт на главную
+            levelCard.classList.remove('animate-border');
+        }
+        // -----------------------------
+
+        const levelColors = {
+            "Новичок": "#B0B0B0",     
+            "Постоянный": "#CD7F32",  
+            "Любимчик": "#D4AF37",    
+            "VIP": "#E5E4E2",         
+            "Эксклюзив": "#4A90E2",   
+            "Легенда": "#E0115F"      
+        };
+        
+        const currentColor = levelColors[info.level] || "#D4AF37";
+        levelCard.style.setProperty('--level-color', currentColor);
+
+        statusText.innerText = info.level;
+        statusSub.innerText = info.level === "Легенда" ? "Вы лучший!" : `До "${info.nextLevel}" осталось ${info.target - info.current} виз.`;
+
+        const radius = 42, circumference = 2 * Math.PI * radius;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        
+        const progress = info.current / info.target;
+        circle.style.strokeDashoffset = circumference - (progress * circumference);
+        
+        if (info.level === "Легенда") {
+            circle.style.strokeDashoffset = 0;
+            circleText.innerText = "MAX";
+        } else {
+            circleText.innerText = `${info.current}/${info.target}`;
+        }
+    }
 
         function renderHomeBookings() {
             const list = document.getElementById('homeHistoryList');
@@ -446,9 +468,74 @@ const servicesData = {
         
         function toggleProfileBookings() {
             isProfileExpanded = !isProfileExpanded;
+
+            const card = document.getElementById('profileMainCard');
+            if (!card) return;
+
+            // Элементы, чьё положение в потоке меняется из-за flex-wrap.
+            // Размеры анимируются через CSS-transition, а сами позиции — через FLIP.
+            const tracked = [
+                card.querySelector('.profile-avatar-gold'),
+                card.querySelector('.profile-info'),
+                card.querySelector('.mini-diagram'),
+                card.querySelector('.level-text-wrapper')
+            ].filter(Boolean);
+
+            // 1. FIRST — запоминаем позиции ДО изменения layout
+            const first = tracked.map(el => el.getBoundingClientRect());
+
+            // 2. Временно отключаем ВСЕ transition у профиля,
+            //    чтобы переключение класса произошло мгновенно и мы прочли честный LAST
+            const blocker = document.createElement('style');
+            blocker.id = '__profile_flip_block__';
+            blocker.textContent = '#profileMainCard, #profileMainCard * { transition: none !important; }';
+            document.head.appendChild(blocker);
+
+            // 3. Меняем класс — layout перестраивается мгновенно
+            if (isProfileExpanded) card.classList.add('collapsed');
+            else                   card.classList.remove('collapsed');
+
+            // 4. Форсируем reflow, чтобы браузер применил новые размеры
+            void card.offsetHeight;
+
+            // 5. LAST — читаем новые позиции (без анимаций)
+            const last = tracked.map(el => el.getBoundingClientRect());
+
+            // 6. Возвращаем transition (для размеров) — но пока НЕ включаем на transform
+            blocker.remove();
+
+            // 7. FLIP: сдвигаем элементы обратно в старую позицию через transform,
+            //    затем плавно возвращаем в 0. Это и есть «переезд».
+            tracked.forEach((el, i) => {
+                const dx = first[i].left - last[i].left;
+                const dy = first[i].top  - last[i].top;
+                if (Math.abs(dx) < 1 && Math.abs(dy) < 1) return;
+
+                // Инлайново отключаем CSS-transition именно на transform,
+                // чтобы не было конфликта с CSS-transition на width/height/font-size
+                el.style.transition = 'none';
+                el.style.transform  = `translate(${dx}px, ${dy}px)`;
+
+                // Двойной rAF — гарантирует, что браузер увидел стартовый transform
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        el.style.transition = 'transform 0.4s cubic-bezier(0.25, 1, 0.5, 1)';
+                        el.style.transform  = 'translate(0, 0)';
+                    });
+                });
+            });
+
+            // 8. Чистим инлайн-стили после окончания FLIP
+            clearTimeout(window.profileFlipTimer);
+            window.profileFlipTimer = setTimeout(() => {
+                tracked.forEach(el => {
+                    el.style.transition = '';
+                    el.style.transform  = '';
+                });
+            }, 450);
+
             renderProfileBookings();
         }
-
         function renderProfileBookings() {
             const list = document.getElementById('profileHistoryList');
             const scrollArea = document.getElementById('profileBookingsScroll');
@@ -875,7 +962,7 @@ const servicesData = {
                     </div>
                     <div class="profile-info">
                         <h1>${currentUser.name}</h1>
-                        <p>${currentUser.phone}</p> <!-- ВОЗВРАЩАЕМ ТЕЛЕФОН -->
+                        <p onclick="copyPhoneNumber('${currentUser.phone}')" style="cursor: pointer;">${currentUser.phone}</p>
                     </div>
                 `;
                 updateStatusUI(bookings.length);
@@ -905,6 +992,7 @@ const servicesData = {
         function updateStatusUI() {
             const statusText = document.getElementById('statStatusText');
             const statusSub = document.getElementById('statStatusSub');
+            const profileCircle = document.getElementById('profileProgressCircle');
 
             if (!currentUser) return;
 
@@ -912,8 +1000,29 @@ const servicesData = {
             const validVisitsCount = bookings.filter(b => b.status === 'active' || b.status === 'completed').length;
             const info = getLevelInfo(validVisitsCount);
 
+            const levelColors = {
+                "Новичок": "#B0B0B0",     
+                "Постоянный": "#CD7F32",  
+                "Любимчик": "#D4AF37",    
+                "VIP": "#E5E4E2",         
+                "Эксклюзив": "#4A90E2",   
+                "Легенда": "#E0115F"      
+            };
+            
+            const currentColor = levelColors[info.level] || "#D4AF37";
+
             statusText.innerText = info.level;
+            statusText.style.color = currentColor; // Красим текст в цвет уровня
             statusSub.innerText = info.level === "Легенда" ? "Вы лучший!" : `До "${info.nextLevel}" осталось ${info.target - info.current} виз.`;
+
+            // Рисуем мини-диаграмму в профиле
+            if (profileCircle) {
+                const radius = 42, circumference = 2 * Math.PI * radius;
+                profileCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+                const progress = info.current / info.target;
+                profileCircle.style.strokeDashoffset = circumference - (progress * circumference);
+                profileCircle.style.stroke = currentColor;
+            }
         }
 
 
@@ -980,14 +1089,13 @@ const servicesData = {
             if (activeNav) updateNavBubble(activeNav, true);
         });
 
-        function copyPhoneNumber() {
-            const phone = "+7 927 789-56-21";
-            
-            // Копируем в буфер обмена
-            navigator.clipboard.writeText(phone).then(() => {
+        function copyPhoneNumber(phone) {
+            // Если аргумент не передан — копируем номер из шапки (кнопка справа вверху)
+            const phoneToCopy = phone || "+7 927 789-56-21";
+
+            navigator.clipboard.writeText(phoneToCopy).then(() => {
                 showToast("Номер скопирован!", "success");
             }).catch(err => {
-                // Если браузер запретил копировать (редкость для HTTPS)
                 showToast("Не удалось скопировать", "error");
             });
         }
@@ -1024,7 +1132,11 @@ const servicesData = {
             const track = document.getElementById('promoTrack');
             if (!track) return;
 
-            const filteredPromos = promosData.filter(p => p.type === type);
+            // Проверяем, запущено ли приложение
+            const isPWA = document.documentElement.classList.contains('is-pwa');
+            
+            // Если САЙТ — показываем ВСЕ акции. Если ПРИЛОЖЕНИЕ — только выбранную вкладку.
+            const filteredPromos = isPWA ? promosData.filter(p => p.type === type) : promosData;
             
             let cardsHTML = '';
             // Дублируем 3 раза для бесконечности
@@ -1037,17 +1149,29 @@ const servicesData = {
             track.innerHTML = cardsHTML;
             const items = track.querySelectorAll('.promo-item');
 
-            // 3D-эффект
+            // 3D-эффект (обновленный, только ОДНА карточка активна)
             const update3DEffect = () => {
                 const trackRect = track.getBoundingClientRect();
                 const centerX = trackRect.left + trackRect.width / 2;
-
+                
+                let closestItem = null;
+                let minDistance = Infinity;
+                
+                // Находим самую близкую к центру карточку
                 items.forEach(item => {
                     const itemRect = item.getBoundingClientRect();
                     const itemCenterX = itemRect.left + itemRect.width / 2;
                     const distance = Math.abs(centerX - itemCenterX);
-
-                    if (distance < 50) {
+                    
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestItem = item;
+                    }
+                });
+                
+                // Применяем классы (только одна карточка active)
+                items.forEach(item => {
+                    if (item === closestItem) {
                         item.classList.add('active');
                         item.classList.remove('inactive');
                     } else {
@@ -1059,35 +1183,104 @@ const servicesData = {
 
             setTimeout(update3DEffect, 50);
 
-            // Логика зацикливания
-            let isScrolling;
-            track.addEventListener('scroll', () => {
+            // Точный расчет ширины для исправления перескоков
+            let singleSetWidth = 0;
+            if (items.length > filteredPromos.length) {
+                const firstItem = items[0];
+                const firstItemOfSecondSet = items[filteredPromos.length];
+                singleSetWidth = firstItemOfSecondSet.offsetLeft - firstItem.offsetLeft;
+            }
+
+            let scrollTimeout;
+            track.onscroll = null; 
+            
+            track.onscroll = () => {
                 update3DEffect();
-                window.clearTimeout(isScrolling);
-                isScrolling = setTimeout(() => {
-                    const totalWidth = track.scrollWidth;
-                    const singleSetWidth = totalWidth / 3;
+                
+                window.clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    if (singleSetWidth === 0) return;
                     
-                    if (track.scrollLeft >= singleSetWidth * 2 - 20) {
-                        track.scrollTo({ left: singleSetWidth, behavior: 'instant' });
-                    } else if (track.scrollLeft <= 20) {
-                        track.scrollTo({ left: singleSetWidth, behavior: 'instant' });
+                    const scrollLeft = track.scrollLeft;
+                    let needsReset = false;
+                    let newScrollLeft = scrollLeft;
+                    
+                    if (scrollLeft >= singleSetWidth * 2 - 50) {
+                        newScrollLeft = scrollLeft - singleSetWidth;
+                        needsReset = true;
+                    } else if (scrollLeft <= 50) {
+                        newScrollLeft = scrollLeft + singleSetWidth;
+                        needsReset = true;
                     }
-                }, 150);
-            });
+                    
+                    if (needsReset) {
+                        // 1. Отключаем магнитный скролл, чтобы не было рывка
+                        track.style.scrollSnapType = 'none';
+                        
+                        // 2. Отключаем анимацию карточек на время телепорта
+                        items.forEach(item => item.style.transition = 'none');
+                        
+                        // 3. Телепорт
+                        track.scrollLeft = newScrollLeft;
+                        
+                        // 4. Мгновенно применяем правильные классы
+                        update3DEffect();
+                        
+                        // 5. Форсируем перерасчет (чтобы браузер применил новые позиции)
+                        void track.offsetWidth;
+                        
+                        // 6. Включаем анимацию и магнит обратно (через кадр)
+                        requestAnimationFrame(() => {
+                            items.forEach(item => item.style.transition = '');
+                            requestAnimationFrame(() => {
+                                track.style.scrollSnapType = 'x mandatory';
+                            });
+                        });
+                    }
+                }, 200); // 200мс — безопасная задержка после остановки
+            };
 
             // Центрируем при старте
             setTimeout(() => {
-                const singleSetWidth = track.scrollWidth / 3;
-                track.scrollLeft = singleSetWidth;
-                update3DEffect();
+                if (singleSetWidth > 0) {
+                    track.style.scrollSnapType = 'none';
+                    track.scrollLeft = singleSetWidth;
+                    update3DEffect();
+                    requestAnimationFrame(() => {
+                        track.style.scrollSnapType = 'x mandatory';
+                    });
+                }
             }, 50);
         }
 
         function createPromoHTML(promo) {
-            // ТЕПЕРЬ ПРИ КЛИКЕ ВЫЗЫВАЕТСЯ openPromoCart С ID УСЛУГИ И МАСТЕРА
+            const badgeText = promo.type === 'top' ? 'ТОП' : 'БАРБЕР';
+
             return `
                 <div class="promo-item" onclick="openPromoCart('${promo.serviceId}', '${promo.barberId}')">
+                    <!-- Бейдж (на сайте виден, в приложении скрыт через CSS) -->
+                    <div class="promo-badge">${badgeText}</div>
+                    
+                    <div class="promo-bg-icon">${promo.icon}</div>
+                    <div>
+                        <h4>${promo.title}</h4>
+                        <p>${promo.desc}</p>
+                    </div>
+                    <div class="promo-price">
+                        <span>${promo.oldPrice} ₽</span>${promo.price} ₽
+                    </div>
+                </div>
+            `;
+        }
+
+        function createPromoHTML(promo) {
+            const badgeText = promo.type === 'top' ? 'ТОП' : 'БАРБЕР';
+
+            return `
+                <div class="promo-item" onclick="openPromoCart('${promo.serviceId}', '${promo.barberId}')">
+                    <!-- Бейдж (на сайте виден, в приложении скрыт через CSS) -->
+                    <div class="promo-badge">${badgeText}</div>
+                    
                     <div class="promo-bg-icon">${promo.icon}</div>
                     <div>
                         <h4>${promo.title}</h4>
@@ -1134,24 +1327,25 @@ const servicesData = {
         let deferredPrompt;
         const installBtn = document.getElementById('installAppBtn');
 
-        // Проверяем, запущено ли приложение уже как PWA (отдельное окно)
-        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-        
-        // Проверяем устройство
+        // Проверяем устройство и браузер
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        
+        // Проверяем Яндекс.Браузер (он не поддерживает нативную установку)
+        const isYandex = navigator.userAgent.includes('YaBrowser');
 
-        // Если это iOS (Safari) и мы НЕ в установленном приложении — показываем кнопку
-        if (isIOS && isSafari && !isStandalone) {
+        // Если это iOS (Safari), НЕ Яндекс, и мы НЕ в установленном приложении — показываем кнопку
+        if (isIOS && isSafari && !isStandalone && !isYandex) {
             if (installBtn) installBtn.style.display = 'flex';
         }
 
-        // Ловим событие готовности к установке (Android/PC Chrome)
+        // Ловим событие готовности к установке (Chrome, Edge, Opera)
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            // Показываем кнопку, если приложение еще не установлено
-            if (installBtn && !isStandalone) {
+            
+            // Показываем кнопку ТОЛЬКО если это не Яндекс и не PWA
+            if (installBtn && !isStandalone && !isYandex) {
                 installBtn.style.display = 'flex'; 
             }
         });
@@ -1181,3 +1375,91 @@ const servicesData = {
                 showToast('Приложение уже установлено или недоступно в этом браузере', 'info');
             }
         }
+
+        /* =========================================
+        ТАКТИЛЬНЫЙ ОТКЛИК + ОТМЕНА ДОЛГОГО НАЖАТИЯ (2 СЕК)
+        ========================================= */
+        (function() {
+            const PRESSABLE = [
+                'button',
+                '.nav-item',
+                '.glass-card',
+                '.home-level-card',
+                '.home-cta-btn',
+                '.service-card',
+                '.master-card',
+                '.promo-item',
+                '.promo-tab',
+                '.tab-btn',
+                '.date-opt',
+                '.time-opt',
+                '.header-pill',
+                '.action-modal-btn',
+                '.checkout-btn',
+                '.install-app-btn',
+                '.history-toggle-btn',
+                '.btn-cancel-small',
+                '.logout-btn',
+                '.close-btn',
+                '[onclick]'
+            ].join(', ');
+
+            let holdTimer = null;
+            let pressedEl = null;
+            let longPressFired = false;
+
+            document.addEventListener('pointerdown', (e) => {
+                // Только ЛКМ / касание, не правая кнопка
+                if (e.button !== undefined && e.button !== 0) return;
+
+                const el = e.target.closest(PRESSABLE);
+                if (!el) return;
+                if (el.disabled || el.classList.contains('disabled')) return;
+
+                // Сброс предыдущего
+                clearTimeout(holdTimer);
+                if (pressedEl) pressedEl.classList.remove('is-pressing');
+
+                pressedEl = el;
+                longPressFired = false;
+                el.classList.add('is-pressing');
+
+                holdTimer = setTimeout(() => {
+                    longPressFired = true;
+                    el.classList.remove('is-pressing');
+                    el.classList.add('is-cancelled');
+                    setTimeout(() => el.classList.remove('is-cancelled'), 450);
+
+                    // Вибро (Android)
+                    if (navigator.vibrate) {
+                        try { navigator.vibrate(30); } catch (_) {}
+                    }
+
+                    if (typeof showToast === 'function') {
+                        showToast('Действие отменено', 'info');
+                    }
+                }, 2000);
+            }, { passive: true });
+
+            const endPress = () => {
+                clearTimeout(holdTimer);
+                holdTimer = null;
+                if (pressedEl) pressedEl.classList.remove('is-pressing');
+            };
+
+            document.addEventListener('pointerup', endPress, { passive: true });
+            document.addEventListener('pointercancel', endPress, { passive: true });
+            document.addEventListener('pointerleave', endPress, { passive: true });
+
+            // Отмена клика после 2-секундного удержания
+            document.addEventListener('click', (e) => {
+                if (longPressFired) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    e.stopImmediatePropagation();
+                    longPressFired = false;
+                }
+            }, true); // capture — сработает раньше любых inline onclick
+        })();
+
+        
