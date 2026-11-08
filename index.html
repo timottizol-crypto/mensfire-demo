@@ -71,20 +71,30 @@
         <!-- ЭКРАН ГЛАВНАЯ -->
         <div id="viewHome" class="view active">
             
-            <!-- Блок уровня пользователя (Увеличенный, вертикальный) -->
-            <div class="glass-card home-level-card" onclick="switchView('viewProfile', document.getElementById('navProfile'))">
-                <div class="home-level-circle">
-                    <svg viewBox="0 0 100 100">
-                        <circle class="status-circle-bg" cx="50" cy="50" r="42"></circle>
-                        <circle class="status-circle-progress" id="homeProgressCircle" cx="50" cy="50" r="42"></circle>
-                    </svg>
-                    <div class="status-text-inner" id="homeProgressText">0/3</div>
+            <!-- Верхний ряд: Уровень + Кнопка Скачать -->
+            <div class="home-top-row">
+                <!-- Блок уровня пользователя -->
+                <div class="glass-card home-level-card" onclick="switchView('viewProfile', document.getElementById('navProfile'))">
+                    <div class="home-level-circle">
+                        <svg viewBox="0 0 100 100">
+                            <circle class="status-circle-bg" cx="50" cy="50" r="42"></circle>
+                            <circle class="status-circle-progress" id="homeProgressCircle" cx="50" cy="50" r="42"></circle>
+                        </svg>
+                        <div class="status-text-inner" id="homeProgressText">0/3</div>
+                    </div>
+                    <div class="home-level-info">
+                        <div class="status-level-name" id="homeStatStatusText">Новичок</div>
+                        <div class="status-hint" id="homeStatStatusSub">До статуса "Постоянный" осталось 3 визита</div>
+                    </div>
                 </div>
-                <div class="home-level-info">
-                    <div class="status-level-name" id="homeStatStatusText">Новичок</div>
-                    <div class="status-hint" id="homeStatStatusSub">До статуса "Постоянный" осталось 3 визита</div>
-                </div>
+
+                <!-- Кнопка Скачать приложение (Скрыта по умолчанию, появляется на сайте) -->
+                <button class="install-app-btn" id="installAppBtn" onclick="handleInstallClick()" style="display: none;">
+                    <span class="plus-icon">+</span> 
+                    <span class="install-text">Скачать<br>приложение</span>
+                </button>
             </div>
+            
 
             <!-- Блок записей -->
             <div class="glass-card home-bookings-card">
@@ -108,11 +118,6 @@
                     </div>
                 </button>
             </div>
-
-            <!-- Кнопка Скачать приложение (Скрыта по умолчанию) -->
-            <button class="install-app-btn" id="installAppBtn" onclick="handleInstallClick()" style="display: none;">
-                <span class="plus-icon">+</span> Скачать приложение
-            </button>
 
             <!-- Табы для акций -->
             <div class="promo-tabs">

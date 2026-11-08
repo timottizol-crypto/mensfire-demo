@@ -1618,7 +1618,7 @@
             -webkit-backdrop-filter: blur(15px);
             border: 1px solid rgba(212, 175, 55, 0.3); 
             border-radius: 20px;
-            padding: 10px 15px; 
+            padding: 14px 15px; 
             color: var(--gold); 
             cursor: pointer;
             box-shadow: 
@@ -2337,9 +2337,6 @@
         .promo-badge { 
             display: block; /* Показываем бейджи на сайте */
         }
-        .install-app-btn { 
-            display: flex; /* Кнопка скачать видна на сайте (управляется через JS) */
-        }
 
         /* --- ДЛЯ ПРИЛОЖЕНИЯ (PWA) --- */
         html.is-pwa .promo-tabs { 
@@ -2352,7 +2349,7 @@
             display: none !important; /* Прячем кнопку Скачать в PWA */
         }
 
-        /* Аккуратный бейдж (в стиле вкладок) */
+        /* Стиль бейджа (ТОП / БАРБЕР) */
         .promo-badge {
             position: absolute;
             top: 15px;
@@ -2369,7 +2366,7 @@
             z-index: 5;
         }
 
-        /* Отступаем текст заголовка вправо, чтобы бейдж не налезал на название */
+        /* Отступаем текст, чтобы бейдж не налезал */
         .promo-item h4 {
             padding-right: 65px !important; 
         }
@@ -2399,4 +2396,61 @@
         #viewHome {
             overflow: hidden;
             padding-bottom: 90px; /* оставляем место под фиксированное нижнее меню */
+        }
+
+        /* =========================================
+        ВЕРХНИЙ РЯД: УРОВЕНЬ + КНОПКА СКАЧАТЬ
+        ========================================= */
+        .home-top-row {
+            display: flex;
+            gap: 10px; /* Расстояние между уровнем и кнопкой */
+            width: 100%;
+            margin-bottom: 15px; /* Отступ снизу (вместо старого margin у level-card) */
+        }
+
+        /* Уровень занимает всё свободное место (около 75-80%) */
+        .home-top-row .home-level-card {
+            flex: 1; 
+            margin-bottom: 0; /* Убираем старый отступ */
+            min-width: 0;
+        }
+
+        /* Кнопка скачать (занимает около 20-25%) */
+        .home-top-row .install-app-btn {
+            width: 75px; /* Фиксированная ширина справа */
+            flex-shrink: 0;
+            margin-top: 0; /* Убираем старый отступ */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            font-size: 10px;
+            text-align: center;
+            line-height: 1.2;
+            padding: 10px 5px;
+            border-radius: 20px;
+        }
+
+        /* Чтобы плюсик и текст в кнопке не ломались */
+        .install-text {
+            white-space: nowrap;
+        }
+
+        /* =========================================
+        ЧУТЬ УМЕНЬШАЕМ ОТСТУПЫ, ЧТОБЫ АКЦИИ БЫЛИ ВИДНЫ
+        ========================================= */
+
+        /* Немного сжимаем кнопку "Записаться" */
+        .home-cta-btn {
+            padding: 10px 15px !important; /* Было 14px, стало 10px */
+        }
+
+        /* Уменьшаем пустоту вокруг карусели акций */
+        .promo-track {
+            padding-bottom: 20px !important; /* Было 35px, стало 20px */
+        }
+
+        .promo-item {
+            height: 140px !important; /* Чуть уменьшили высоту карточек (было 160px) */
+            padding: 15px !important;
         }
