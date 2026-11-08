@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mensfire-v11'; // <-- Подняли версию
+const CACHE_NAME = 'mensfire-v16'; // <-- Подняли версию
 const ASSETS = [
   './index.html',
   './style.css',
