@@ -427,3 +427,14 @@ html.light-theme .promo-bg-icon {
     opacity: 0.25 !important;
     filter: none !important; 
 }
+
+/* =========================================
+   ФИКС ТЕКСТА НА КНОПКЕ "СКАЧАТЬ" (СВЕТЛАЯ ТЕМА)
+   ========================================= */
+html.light-theme .install-app-btn {
+    color: var(--text-main) !important; /* Делаем текст темным */
+}
+
+html.light-theme .install-app-btn .plus-icon {
+    color: var(--gold) !important; /* Плюсик оставляем золотым */
+}
