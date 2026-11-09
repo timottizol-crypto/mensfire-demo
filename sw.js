@@ -4,7 +4,7 @@ const ASSETS = [
   './style.css',
   './script.js',
   './manifest.json',
-  './img/icon-dark.jpg',
+  './img/icon-dark.png',
   './img/background.jpg',
   './img/Ali.jpg',     
   './img/Benjo.jpg',   
