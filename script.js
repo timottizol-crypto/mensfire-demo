@@ -146,6 +146,31 @@ window.addEventListener('DOMContentLoaded', () => {
         document.getElementById('splashScreen').classList.add('hidden');
         document.getElementById('appContainer').classList.add('visible');
     }
+        // АВТООБНОВЛЕНИЕ SERVICE WORKER
+    if ('serviceWorker' in navigator) {
+        let refreshing;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (refreshing) return;
+            window.location.reload();
+            refreshing = true;
+        });
+        
+        navigator.serviceWorker.register('sw.js').then(reg => {
+            reg.onupdatefound = () => {
+                const installingWorker = reg.installing;
+                installingWorker.onstatechange = () => {
+                    if (installingWorker.state === 'installed') {
+                        if (navigator.serviceWorker.controller) {
+                            // Новый контент доступен, перезагружаем страницу
+                            if (confirm('Доступно обновление приложения. Перезагрузить?')) {
+                                window.location.reload();
+                            }
+                        }
+                    }
+                };
+            };
+        });
+    }
 });
 
         // Порядок вкладок для свайпов (слева направо)
@@ -254,7 +279,8 @@ document.addEventListener('touchstart', e => {
         e.target.closest('.bookings-scroll-wrapper') || 
         e.target.closest('.promo-carousel-wrapper') ||
         e.target.closest('.home-scroll-area') ||
-        e.target.closest('.profile-history-scroll')) return;
+        e.target.closest('.profile-history-scroll') ||
+        e.target.closest('#viewProfile')) return; 
 
     touchStartX = e.changedTouches[0].screenX;
     touchStartY = e.changedTouches[0].screenY;
@@ -270,7 +296,8 @@ document.addEventListener('touchend', e => {
         e.target.closest('.bookings-scroll-wrapper') || 
         e.target.closest('.promo-carousel-wrapper') ||
         e.target.closest('.home-scroll-area') ||
-        e.target.closest('.profile-history-scroll')) return;
+        e.target.closest('.profile-history-scroll') ||
+        e.target.closest('#viewProfile')) return; 
 
     const touchEndX = e.changedTouches[0].screenX;
     const touchEndY = e.changedTouches[0].screenY;

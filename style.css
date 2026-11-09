@@ -2831,3 +2831,34 @@ html.is-pwa .phone-cta-btn {
         -webkit-overflow-scrolling: touch;
     }
 }
+
+/* =========================================
+   ЖЕСТКИЙ ФИКС СКРОЛЛА ДЛЯ IPHONE
+   ========================================= */
+@supports (-webkit-touch-callout: none) {
+    /* Принудительно разрешаем скролл для всех вкладок */
+    .view.active {
+        overflow-y: scroll !important; 
+        -webkit-overflow-scrolling: touch !important;
+    }
+    
+    /* Убираем блокировку скролла, если она где-то осталась */
+    body, html {
+        overflow: hidden;
+        position: fixed;
+        height: 100%;
+        width: 100%;
+    }
+    
+    #appContainer {
+        height: 100%;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Фикс для самой истории визитов (внутри профиля) */
+    .profile-history-scroll.expanded {
+        overflow-y: scroll !important;
+        -webkit-overflow-scrolling: touch !important;
+    }
+}
