@@ -20,8 +20,9 @@
     </script>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="theme-light.css">
 </head>
-<body>
+<body class="header-hidden">
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- ЭКРАН ЗАГРУЗКИ -->
@@ -62,9 +63,9 @@
             </div>
 
             
-            <!-- Правая пилюля: Контактный телефон -->
-            <div class="header-pill right-pill" onclick="copyPhoneNumber()" id="headerPhoneBtn">
-                <span id="phoneText">+7 927 789-56-21</span>
+                <!-- Правая пилюля: Переключатель темы -->
+            <div class="header-pill right-pill" onclick="toggleTheme()" id="headerThemeBtn">
+                <span id="themeIcon" style="font-size: 20px;">☀️</span>
             </div>
         </div>
 
@@ -86,13 +87,8 @@
                         <div class="status-level-name" id="homeStatStatusText">Новичок</div>
                         <div class="status-hint" id="homeStatStatusSub">До статуса "Постоянный" осталось 3 визита</div>
                     </div>
+                       <div class="shop-brand-name">MENS<span>FIRE</span></div>
                 </div>
-
-                <!-- Кнопка Скачать приложение (Скрыта по умолчанию, появляется на сайте) -->
-                <button class="install-app-btn" id="installAppBtn" onclick="handleInstallClick()" style="display: none;">
-                    <span class="plus-icon">+</span> 
-                    <span class="install-text">Скачать<br>приложение</span>
-                </button>
             </div>
             
 
@@ -117,6 +113,10 @@
                         <small>Онлайн 24/7</small>
                     </div>
                 </button>
+                <button class="install-app-btn" id="installAppBtn" onclick="handleInstallClick()" style="display: none;">
+                    <span class="plus-icon">+</span> 
+                    <span class="install-text">Скачать<br>приложение</span>
+                </button>
             </div>
 
             <!-- Табы для акций -->
@@ -131,9 +131,31 @@
                     <!-- Карточки будут добавляться через JS -->
                 </div>
             </div>
+            <!-- НОВАЯ КНОПКА: Запись по телефону (под акциями) -->
+            <button class="phone-cta-btn" onclick="copyPhoneNumber('+7 927 789-56-21')">
+                <div class="cta-text" style="flex-direction: row; align-items: center;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 22px; height: 22px; margin-right: 10px; margin-bottom: 2px;">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    <span>Запись по телефону</span>
+                </div>
+            </button>
         </div>
-        <!-- ЭКРАН ЗАПИСИ -->
+                <!-- ЭКРАН ЗАПИСИ -->
         <div id="viewBook" class="view">
+            <div class="book-top-section">
+                <div class="book-top-info">
+                    <h2>Выберите услугу</h2>
+                    <p>Или свяжитесь с нами для консультации</p>
+                </div>
+                <button class="book-phone-btn" onclick="copyPhoneNumber('+7 927 789-56-21')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    <span>Позвонить</span>
+                </button>
+            </div>
+
             <div class="category-tabs">
                 <button class="tab-btn active" onclick="filterServices('top', this)">ТОП-БАРБЕР</button>
                 <button class="tab-btn" onclick="filterServices('barber', this)">БАРБЕР</button>
@@ -147,23 +169,21 @@
 
         <!-- ЭКРАН ПРОФИЛЯ -->
         <div id="viewProfile" class="view">
-            <!-- ЕДИНЫЙ СТЕКЛЯННЫЙ БЛОК ПРОФИЛЯ И УРОВНЯ -->
-                        <!-- ЕДИНЫЙ СТЕКЛЯННЫЙ БЛОК ПРОФИЛЯ И УРОВНЯ -->
+            <!-- ЕДИНЫЙ СТЕКЛЯННЫЙ БЛОК ПРОФИЛЯ -->
             <div class="glass-card profile-main-card" id="profileMainCard">
                 <!-- Верхняя часть (Аватарка и Имя) -->
                 <div class="profile-header-horizontal" id="profileHeader"></div>
                 
-                <!-- Нижняя часть (Уровень с мини-диаграммой) -->
-                <div class="status-block-simple" id="loyaltyBlock" style="display: none;">
-                    <div class="mini-diagram">
-                        <svg viewBox="0 0 100 100">
-                            <circle class="status-circle-bg" cx="50" cy="50" r="42"></circle>
-                            <circle class="status-circle-progress" id="profileProgressCircle" cx="50" cy="50" r="42"></circle>
-                        </svg>
+                <!-- НОВАЯ НИЖНЯЯ ЧАСТЬ: ТЕЛЕФОНЫ -->
+                <div class="profile-contact-block" id="profileContactBlock">
+                   
+                    <div class="contact-row" id="profileUserPhoneRow" style="display: none;">
+                        <span class="contact-label">Ваш номер:</span>
+                        <span class="contact-value" id="profileUserPhoneVal"></span>
                     </div>
-                    <div class="level-text-wrapper">
-                        <div class="status-level-name" id="statStatusText">Новичок</div>
-                        <div class="status-hint" id="statStatusSub">До статуса "Постоянный" осталось 3 визита</div>
+                    <div class="contact-row" onclick="copyPhoneNumber('+7 927 789-56-21')">
+                        <span class="contact-label">Запись по телефону:</span>
+                        <span class="contact-value gold">+7 927 789-56-21</span>
                     </div>
                 </div>
             </div>
@@ -265,7 +285,7 @@
             </div>
             <h2 style="margin-bottom: 15px; font-size: 22px;">Вы записаны!</h2>
             <button class="checkout-btn" onclick="goToCabinetFromSuccess()">В личный кабинет</button>
-            <button class="btn-cancel" onclick="closeSuccessAndGoHome()" style="margin-top: 10px;">вернуться</button>
+            <button class="btn-cancel" onclick="closeSuccessAndGoHome()" style="margin-top: 10px;">Вернуться</button>
         </div>
     </div>
 

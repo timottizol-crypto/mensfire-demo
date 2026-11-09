@@ -1,0 +1,331 @@
+/* ============================================
+   СВЕТЛАЯ ТЕМА ДЛЯ MENSFIRE (v2)
+   ============================================ */
+
+/* ---------- 1. Переменные ---------- */
+html.light-theme {
+    --bg-dark: #F5F5F7;     /* Чуть светлее фон */
+    --bg-card: #FFFFFF;
+    --gold: #C79A2A;        /* Более насыщенный, "желтый" цвет */
+    --gold-hover: #B08A25;
+    --text-main: #121212;   /* Почти черный для контраста */
+    --text-muted: #4A4A4A;  /* Темнее серый, чтобы было видно */
+
+    --bg-image: url('img/background-light.jpg');
+    --bg-gradient-start: rgba(226, 226, 232, 0.60);  /* Темнее */
+    --bg-gradient-end: rgba(226, 226, 232, 0.90);    /* Темнее */
+
+}
+
+/* ---------- 2. База ---------- */
+html.light-theme body {
+    background-color: var(--bg-dark);
+    color: var(--text-main);
+}
+
+html.light-theme .view {
+    background: var(--bg-dark);
+}
+
+
+html.light-theme #viewBook,
+html.light-theme #viewProfile,
+html.light-theme #viewBookings {
+    background: var(--bg-dark) !important;
+}
+
+/* ---------- 3. Стеклянные блоки (основные) ---------- */
+html.light-theme .header-pill,
+html.light-theme .bottom-nav,
+html.light-theme .home-level-card,
+html.light-theme .profile-main-card,
+html.light-theme .home-bookings-card,
+html.light-theme .profile-history-card, /* ИСПРАВЛЕНИЕ: Серые блоки */
+html.light-theme .service-card,
+html.light-theme .master-card,
+html.light-theme .tab-btn,
+html.light-theme .promo-tab,
+html.light-theme .install-app-btn,
+html.light-theme .nav-bubble,
+html.light-theme .history-toggle-btn {
+    background: rgba(255, 255, 255, 0.85) !important; /* Белое, полупрозрачное стекло */
+    border: 1px solid rgba(0, 0, 0, 0.06) !important; /* Едва заметная рамка */
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.9),
+        0 4px 20px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Фикс для блока активных записей и истории (внутренние карточки) */
+html.light-theme .home-bookings-card,
+html.light-theme .profile-history-card {
+    background: rgba(255, 255, 255, 0.6) !important; /* Чуть прозрачнее */
+}
+
+/* ---------- 4. Текст ---------- */
+html.light-theme .profile-info h1,
+html.light-theme .header-title,
+html.light-theme .logo-text,
+html.light-theme .status-level-name,
+html.light-theme .hb-master,
+html.light-theme .form-group label,
+html.light-theme .level-text-wrapper .status-level-name {
+    color: var(--text-main) !important;
+}
+
+html.light-theme .profile-info p,
+html.light-theme .status-hint,
+html.light-theme .hb-services {
+    color: var(--text-muted) !important;
+}
+
+/* Желтый текст делаем сочнее */
+html.light-theme .logo-text span,
+html.light-theme .header-title,
+html.light-theme .hb-date,
+html.light-theme .level-text-wrapper .status-level-name,
+html.light-theme .home-level-info .status-level-name,
+html.light-theme .nvi-block h3 {
+    color: var(--gold) !important;
+}
+
+/* ---------- 5. Карточки записей внутри блоков ---------- */
+html.light-theme .home-booking-item {
+    background: rgba(255, 255, 255, 0.9) !important; /* Белая карточка */
+    border-left: 3px solid var(--gold) !important;
+    border-top: 1px solid rgba(0, 0, 0, 0.04) !important;
+    border-right: 1px solid rgba(0, 0, 0, 0.04) !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important;
+}
+
+/* ---------- 6. Акции (Промо) и Стикеры ---------- */
+html.light-theme .promo-item {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 240, 230, 0.9) 100%) !important;
+    border: 1px solid rgba(199, 154, 42, 0.4) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Название и цена на белом фоне */
+html.light-theme .promo-item h4 {
+    color: var(--text-main) !important;
+}
+html.light-theme .promo-item .promo-price {
+    color: var(--text-main) !important;
+}
+html.light-theme .promo-item .promo-price span {
+    color: #888 !important;
+}
+html.light-theme .promo-item p {
+    color: var(--text-muted) !important;
+}
+
+/* Стикеры (эмодзи на фоне) */
+html.light-theme .promo-bg-icon {
+    opacity: 0.3 !important; /* Увеличили видимость */
+    filter: grayscale(50%) !important; /* Убираем лишнюю пестроту */
+}
+
+/* Бейджи ТОП/БАРБЕР */
+html.light-theme .promo-badge {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid var(--gold) !important;
+    color: var(--gold) !important;
+}
+
+/* ---------- 7. Кнопки и разделители ---------- */
+html.light-theme .profile-header-horizontal::after {
+    background: rgba(0, 0, 0, 0.08) !important;
+}
+
+html.light-theme .home-cta-btn {
+    background: rgba(199, 154, 42, 0.15) !important;
+    border: 1px solid rgba(199, 154, 42, 0.5) !important;
+    color: var(--gold) !important;
+}
+
+html.light-theme .checkout-btn {
+    color: #fff !important; /* На золоте остается белым */
+}
+
+html.light-theme .btn-cancel-small {
+    border-color: #E53E3E !important;
+    color: #E53E3E !important;
+    background: rgba(229, 62, 62, 0.05) !important;
+}
+
+/* ---------- 8. Навигация (нижнее меню) ---------- */
+html.light-theme .nav-item {
+    color: var(--text-muted) !important;
+}
+html.light-theme .nav-item.active {
+    color: var(--gold) !important;
+}
+html.light-theme .nav-bubble {
+    background: rgba(199, 154, 42, 0.1) !important;
+    border: 1px solid rgba(199, 154, 42, 0.2) !important;
+    box-shadow: 0 2px 12px rgba(199, 154, 42, 0.15) !important;
+}
+
+/* ---------- 9. Модалки и Корзина ---------- */
+html.light-theme .modal-content,
+html.light-theme .drawer {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1) !important;
+}
+html.light-theme .drawer-footer {
+    background: rgba(245, 245, 247, 0.9) !important;
+}
+html.light-theme .date-opt,
+html.light-theme .time-opt {
+    background: rgba(0, 0, 0, 0.03) !important;
+    color: var(--text-main) !important;
+    border: 1px solid transparent !important;
+}
+html.light-theme .date-opt.selected,
+html.light-theme .time-opt.selected {
+    background: var(--gold) !important;
+    color: #fff !important;
+}
+
+/* Плавный переход */
+html, body, .view, .glass-card, .home-level-card, .profile-main-card, .bottom-nav, .header-pill, .home-booking-item, .promo-item {
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ============================================
+   ИСПРАВЛЕНИЕ ДИАГРАММЫ ДЛЯ СВЕТЛОЙ ТЕМЫ
+   ============================================ */
+html.light-theme .status-circle-bg {
+    stroke: #E0E0E0 !important; /* Светло-серый фон вместо черного */
+}
+
+/* Если у тебя есть элементы, где эта диаграмма черная - они станут светлыми */
+html.light-theme .mini-diagram .status-circle-bg,
+html.light-theme .home-level-circle .status-circle-bg {
+    stroke: #E0E0E0 !important;
+}
+
+/* =========================================
+   НАЗВАНИЕ БРЕНДА: СВЕТЛАЯ ТЕМА
+   ========================================= */
+html.light-theme .shop-brand-name {
+    color: var(--text-main);
+}
+
+html.light-theme .shop-brand-name span {
+    color: var(--gold);
+}
+
+html.light-theme .shop-brand-name::after {
+    background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold) 100%);
+    opacity: 0.7;
+}
+/* =========================================
+   АКТИВНЫЕ ЗАПИСИ: ПОД УРОВЕНЬ (светлая тема)
+   ========================================= */
+html.light-theme .home-bookings-card {
+    background: rgba(255, 255, 255, 0.65) !important; /* Прозрачнее, как у уровня */
+    border: 1px solid rgba(0, 0, 0, 0.08) !important; /* Такая же рамка */
+    box-shadow: 
+        inset 0 2px 4px rgba(255, 255, 255, 0.9),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.04),
+        0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+/* Стили для новых блоков в светлой теме */
+html.light-theme .book-top-section {
+    background: rgba(255, 255, 255, 0.65) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 
+        inset 0 2px 4px rgba(255, 255, 255, 0.9),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.04),
+        0 4px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+html.light-theme .profile-contact-block {
+    border-top-color: rgba(0, 0, 0, 0.08);
+}
+
+html.light-theme .contact-row {
+    background: rgba(0, 0, 0, 0.03);
+}
+html.light-theme .contact-row:active {
+    background: rgba(0, 0, 0, 0.06);
+}
+
+/* Светлая тема для кнопки записи по телефону */
+html.light-theme .phone-cta-btn {
+    background: rgba(199, 154, 42, 0.15) !important;
+    border: 1px solid rgba(199, 154, 42, 0.5) !important;
+    color: var(--gold) !important;
+}
+
+html.light-theme .phone-cta-btn:active {
+    background: rgba(199, 154, 42, 0.25) !important;
+}
+
+/* =========================================
+   АКЦИИ: СВЕТЛАЯ ТЕМА (ЗОЛОТЫЕ ЛИНИИ)
+   ========================================= */
+/* Убрали !important, чтобы анимация могла менять цвет рамки */
+html.light-theme .promo-item {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 240, 230, 0.9) 100%) !important;
+    border: 2px solid rgba(199, 154, 42, 0.4); /* Убрали !important */
+}
+html.light-theme .promo-item h4 { color: var(--text-main) !important; }
+html.light-theme .promo-item p { color: var(--text-muted) !important; }
+html.light-theme .promo-item .promo-price { color: var(--text-main) !important; }
+
+/* Золотые линии */
+html.light-theme .promo-item::before {
+    padding: 2px; /* Сделали 2px, чтобы линии были видны */
+    background: conic-gradient(
+        from calc(var(--promo-angle) + 45deg),
+        transparent 0deg,
+        rgba(199, 154, 42, 1) 30deg,
+        transparent 60deg,
+        transparent 180deg,
+        rgb(120, 92, 23) 210deg,
+        transparent 240deg,
+        transparent 360deg
+    );
+}
+
+/* Запускаем ту же анимацию, что и в темной теме */
+html.light-theme .promo-item.is-active-card::before {
+    animation: promoLineRun 0.6s linear forwards;
+}
+
+/* Золотое свечение (задержка 0.35s) */
+html.light-theme .promo-item.is-active-card {
+    animation: promoGlowGold 0.3s ease-in-out 0.35s forwards;
+}
+
+@keyframes promoGlowGold {
+    0% { 
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06); 
+        border-color: rgba(199, 154, 42, 0.4); 
+    }
+    100% { 
+        box-shadow: 
+            0 15px 35px rgba(199, 154, 42, 0.45), 
+            0 0 25px rgba(199, 154, 42, 0.4),
+            inset 0 0 15px rgba(255, 255, 255, 0.8); 
+        border-color: var(--gold); 
+    }
+}
+
+/* =========================================
+   ЭКРАН ЗАГРУЗКИ: ФИКС ТЕКСТА ДЛЯ СВЕТЛОЙ ТЕМЫ
+   ========================================= */
+html.light-theme .splash-greeting-oval {
+    color: #FFFFFF !important; /* Принудительно белый текст */
+    border-color: rgba(255, 255, 255, 0.4) !important; /* Светлая рамка */
+    background: rgba(20, 20, 22, 0.4) !important; /* Темная стеклянная подложка, чтобы текст не сливался с фото */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Тень для лучшей читаемости */
+}
+
+html.light-theme .splash-greeting-oval span {
+    color: var(--gold) !important; /* Имя оставляем золотым */
+    text-shadow: 0 0 10px rgba(212, 175, 55, 0.6); /* Добавляем золотое свечение имени */
+}

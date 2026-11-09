@@ -1,2456 +1,2820 @@
 :root {
-            --bg-dark: #0a0a0a;
-            --bg-card: #1E1E1E;
-            --gold: #D4AF37;
-            --gold-hover: #b5952f;
-            --text-main: #F5F5F5;
-            --text-muted: #A0A0A0;
-            --font-main: 'Montserrat', sans-serif;
-            --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            --smooth: cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: var(--font-main); 
-            -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none; /* Safari */
-            -moz-user-select: none;    /* Firefox */
-            -ms-user-select: none;     /* IE/Edge */
-            user-select: none;         /* Стандарт */
-            
-            /* Отключаем вызов контекстного меню при долгом тапе на iOS */
-            -webkit-touch-callout: none; 
-        }
+    --bg-dark: #0a0a0a;
+    --bg-card: #1E1E1E;
+    --gold: #D4AF37;
+    --gold-hover: #b5952f;
+    --text-main: #F5F5F5;
+    --text-muted: #A0A0A0;
+    --font-main: 'Montserrat', sans-serif;
+    --spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --smooth: cubic-bezier(0.25, 0.8, 0.25, 1);
+    --bg-image: url('img/background.jpg');   
+    --bg-gradient-start: rgba(0,0,0,0.85);   
+    --bg-gradient-end: rgba(10,10,10,1);  
+}
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    font-family: var(--font-main); 
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* IE/Edge */
+    user-select: none;         /* Стандарт */
+    
+    /* Отключаем вызов контекстного меню при долгом тапе на iOS */
+    -webkit-touch-callout: none; 
+}
 
-        /* АБСОЛЮТНЫЙ запрет выделения — даже в полях ввода */
-        input, textarea {
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            -webkit-touch-callout: none;
-        }
+/* АБСОЛЮТНЫЙ запрет выделения — даже в полях ввода */
+input, textarea {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+}
 
-        /* Дополнительная страховка: выделение невидимое */
-        ::selection      { background: transparent; color: inherit; }
-        ::-moz-selection { background: transparent; color: inherit; }
-        
-        body { 
-            background-color: var(--bg-dark); 
-            color: var(--text-main); 
-            height: 100vh; 
-            width: 100vw; 
-            overflow: hidden; 
-        }
+/* Дополнительная страховка: выделение невидимое */
+::selection      { background: transparent; color: inherit; }
+::-moz-selection { background: transparent; color: inherit; }
+
+body { 
+    background-color: var(--bg-dark); 
+    color: var(--text-main); 
+    height: 100vh; 
+    width: 100vw; 
+    overflow: hidden; 
+    overscroll-behavior-y: none;
+}
+/* ==========================
+    ЭТАП 2: ЭКРАН ЗАГРУЗКИ
+    ========================== */     
+
+.splash-title-wrapper {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+.splash-title {
+    font-size: 52px;
+    font-weight: 800;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: #fff;
+    text-align: center;
+    line-height: 1;
+    margin-right: -8px;
+    text-shadow: 0 0 30px rgba(255,255,255,0.25);
+}
+.splash-title span {
+    color: var(--gold);
+    text-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
+}
+
+.splash-line {
+    position: absolute;
+    height: 2px;
+    background: #fff;
+    box-shadow: 0 0 15px 3px var(--gold);
+    opacity: 0;
+    width: 250px;
+    top: 50%;
+    left: 50%;
+    transform-origin: center center;
+}
+.splash-line::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: -5px;
+    border: 6px solid transparent;
+    border-left-color: #fff;
+}
+@keyframes shootLeft {
+    0% { transform: translate(-50%, -50%) rotate(135deg) scale(0.1); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translate(-50%, -50%) rotate(135deg) translateX(400px) scale(1.2); opacity: 0; }
+}
+@keyframes shootRight {
+    0% { transform: translate(-50%, -50%) rotate(45deg) scale(0.1); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translate(-50%, -50%) rotate(45deg) translateX(400px) scale(1.2); opacity: 0; }
+}
+.sl-1 { animation: shootLeft 1.2s var(--smooth) 1.2s forwards; }
+.sl-2 { animation: shootRight 1.4s var(--smooth) 1.3s forwards; }
+.sl-3 { animation: shootLeft 1s var(--smooth) 1.5s forwards; }
+
+.splash-greeting-oval {
+    border: 1px solid rgba(212, 175, 55, 0.5);
+    background: rgba(212, 175, 55, 0.05);
+    padding: 12px 30px;
+    border-radius: 50px;
+    font-size: 15px;
+    color: var(--text-main);
+    text-align: center;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+    opacity: 0;
+    transform: translateY(15px) scale(0.9);
+    animation: ovalAppear 0.6s var(--spring) 1.3s forwards;
+}
+.splash-greeting-oval span {
+    color: var(--gold);
+    font-weight: 800;
+    font-size: 17px;
+}
+@keyframes ovalAppear {
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.splash-loader {
+    position: absolute;
+    bottom: 60px;
+    width: 140px;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeIn 0.4s ease 1s forwards;
+}
+.splash-loader-bar {
+    width: 0%;
+    height: 100%;
+    background: var(--gold);
+    box-shadow: 0 0 10px var(--gold);
+    animation: loadBar 2s var(--smooth) 1s forwards;
+}
+@keyframes fadeIn { to { opacity: 1; } }
+@keyframes loadBar {
+    0% { width: 0%; }
+    50% { width: 60%; }
+    100% { width: 100%; }
+}
+
+/* ==========================
+    ОСНОВНОЕ ПРИЛОЖЕНИЕ
+    ========================== */
+#appContainer {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    opacity: 0;
+    transition: opacity 0.4s var(--smooth);
+}
+#appContainer.visible { opacity: 1; }
         /* ==========================
-           ЭТАП 2: ЭКРАН ЗАГРУЗКИ
-           ========================== */     
+    СТЕКЛЯННЫЕ ПИЛЮЛИ В ШАПКЕ
+    ========================== */
+@property --border-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
 
-        .splash-title-wrapper {
-            position: relative;
-            display: inline-block;
-            margin-bottom: 25px;
-        }
-        .splash-title {
-            font-size: 52px;
-            font-weight: 800;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-            color: #fff;
-            text-align: center;
-            line-height: 1;
-            margin-right: -8px;
-            text-shadow: 0 0 30px rgba(255,255,255,0.25);
-        }
-        .splash-title span {
-            color: var(--gold);
-            text-shadow: 0 0 30px rgba(212, 175, 55, 0.7);
-        }
-
-        .splash-line {
-            position: absolute;
-            height: 2px;
-            background: #fff;
-            box-shadow: 0 0 15px 3px var(--gold);
-            opacity: 0;
-            width: 250px;
-            top: 50%;
-            left: 50%;
-            transform-origin: center center;
-        }
-        .splash-line::after {
-            content: '';
-            position: absolute;
-            right: -8px;
-            top: -5px;
-            border: 6px solid transparent;
-            border-left-color: #fff;
-        }
-        @keyframes shootLeft {
-            0% { transform: translate(-50%, -50%) rotate(135deg) scale(0.1); opacity: 0; }
-            20% { opacity: 1; }
-            100% { transform: translate(-50%, -50%) rotate(135deg) translateX(400px) scale(1.2); opacity: 0; }
-        }
-        @keyframes shootRight {
-            0% { transform: translate(-50%, -50%) rotate(45deg) scale(0.1); opacity: 0; }
-            20% { opacity: 1; }
-            100% { transform: translate(-50%, -50%) rotate(45deg) translateX(400px) scale(1.2); opacity: 0; }
-        }
-        .sl-1 { animation: shootLeft 1.2s var(--smooth) 1.2s forwards; }
-        .sl-2 { animation: shootRight 1.4s var(--smooth) 1.3s forwards; }
-        .sl-3 { animation: shootLeft 1s var(--smooth) 1.5s forwards; }
-
-        .splash-greeting-oval {
-            border: 1px solid rgba(212, 175, 55, 0.5);
-            background: rgba(212, 175, 55, 0.05);
-            padding: 12px 30px;
-            border-radius: 50px;
-            font-size: 15px;
-            color: var(--text-main);
-            text-align: center;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
-            opacity: 0;
-            transform: translateY(15px) scale(0.9);
-            animation: ovalAppear 0.6s var(--spring) 1.3s forwards;
-        }
-        .splash-greeting-oval span {
-            color: var(--gold);
-            font-weight: 800;
-            font-size: 17px;
-        }
-        @keyframes ovalAppear {
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        .splash-loader {
-            position: absolute;
-            bottom: 60px;
-            width: 140px;
-            height: 3px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            opacity: 0;
-            animation: fadeIn 0.4s ease 1s forwards;
-        }
-        .splash-loader-bar {
-            width: 0%;
-            height: 100%;
-            background: var(--gold);
-            box-shadow: 0 0 10px var(--gold);
-            animation: loadBar 2s var(--smooth) 1s forwards;
-        }
-        @keyframes fadeIn { to { opacity: 1; } }
-        @keyframes loadBar {
-            0% { width: 0%; }
-            50% { width: 60%; }
-            100% { width: 100%; }
-        }
-
-        /* ==========================
-           ОСНОВНОЕ ПРИЛОЖЕНИЕ
-           ========================== */
-        #appContainer {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            opacity: 0;
-            transition: opacity 0.4s var(--smooth);
-        }
-        #appContainer.visible { opacity: 1; }
-               /* ==========================
-           СТЕКЛЯННЫЕ ПИЛЮЛИ В ШАПКЕ
-           ========================== */
-        @property --border-angle {
-            syntax: '<angle>';
-            initial-value: 0deg;
-            inherits: false;
-        }
-
-        /* Контейнер шапки (прозрачный, только для позиционирования) */
-        .app-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: calc(10px + env(safe-area-inset-top, 0px));
-            left: 0;
-            width: 100%;
-            padding: 0 12px;
-            z-index: 100;
-            pointer-events: none; /* Клики проходят сквозь пустое пространство */
-            gap: 10px;
-        }
-
-                /* ==========================
-           ЦЕНТРАЛЬНЫЙ ЗАГОЛОВОК В ШАПКЕ
-           ========================== */
-        .header-title-wrapper {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            pointer-events: none; /* Клики проходят сквозь текст на кнопки */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: max-content;
-            z-index: 2;
-        }
-
-        .header-title {
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin: 0;
-            text-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
-            position: relative;
-            padding-bottom: 5px;
-        }
-
-        /* Красивое подчеркивание */
-        .header-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            height: 2px;
-            background: var(--gold);
-            border-radius: 2px;
-            box-shadow: 0 0 8px var(--gold);
-        }
-
-        /* Анимация, которая запускается при смене вкладки */
-        .header-title.animate-title::after {
-            animation: lineGrow 0.4s var(--spring) forwards;
-        }
-
-        @keyframes lineGrow {
-            0% { width: 0; opacity: 0; }
-            100% { width: 80%; opacity: 1; }
-        }
-
-        /* Общие стили для обеих пилюль */
-        .header-pill {
-            pointer-events: auto; 
-            width: calc(30vw * 1.03); /* Возвращаем нормальную ширину */
-            height: 44px; /* УМЕНЬШИЛИ ВЫСОТУ */
-            border-radius: 50px;
-            
-            background: rgba(20, 20, 22, 0.25); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px);
-            
-            border: 1px solid rgba(255, 255, 255, 0.15); 
-            box-shadow: 
-                inset 0 2px 5px rgba(255, 255, 255, 0.25), 
-                inset 0 -2px 5px rgba(0, 0, 0, 0.4),       
-                0 8px 32px rgba(0, 0, 0, 0.3);
-                
-            position: relative;
-            isolation: isolate;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.2s var(--spring);
-        }
-        .header-pill:active {
-            transform: scale(0.95);
-        }
-
-
-        .left-pill {
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            flex: none;
-        }
-        .right-pill {
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            flex: none;
-            padding: 0; 
-        }
-
-        .right-pill span {
-            font-size: 10px; /* Уменьшили, чтобы точно влезло по высоте */
-            font-weight: 800;
-            color: var(--gold);
-            white-space: nowrap;
-            letter-spacing: 0.5px;
-        }
-
-        /* Блик-рефракция стекла (для обеих) */
-        .header-pill::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.16) 0%,
-                rgba(255, 255, 255, 0.05) 20%,
-                transparent 50%,
-                rgba(0, 0, 0, 0.18) 100%
-            );
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Жёлтая искра (ТОЛЬКО для левой пилюли) */
-        .left-pill::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            padding: 1.5px;
-            background: conic-gradient(
-                from var(--border-angle),
-                transparent 0deg,
-                transparent 230deg,
-                rgba(212, 175, 55, 0.15) 270deg,
-                rgba(212, 175, 55, 0.85) 335deg,
-                var(--gold) 355deg,
-                transparent 360deg
-            );
-            -webkit-mask:
-                linear-gradient(#000 0 0) content-box,
-                linear-gradient(#000 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        /* Контент поверх эффектов */
-        .header-pill > * {
-            position: relative;
-            z-index: 2;
-        }
-
-        /* Логотип внутри левой пилюли */
-        .left-pill .logo {
-            display: flex;
-            align-items: center;
-            gap: 8px; /* Чуть меньше отступ */
-            line-height: 1;
-        }
-        .left-pill .logo svg {
-            width: 16px; /* Уменьшили с 20px */
-            height: 16px; 
-            flex-shrink: 0;
-        }
-        .left-pill .logo-text {
-            display: flex;
-            flex-direction: column;
-            font-size: 11px; /* Уменьшили с 13px */
-            font-weight: 800;
-            letter-spacing: 1px;
-            white-space: nowrap;
-        }
-        .left-pill .logo-text span {
-            color: var(--gold);
-            font-size: 11px;
-            letter-spacing: 1.5px;
-        }
-
-        /* Запуск анимации */
-        #appContainer.visible .left-pill::before {
-            animation: borderSpin 2.5s cubic-bezier(0.5, 0, 0.3, 1) forwards;
-        }
-        
-        @keyframes borderSpin {
-            0%   { --border-angle: 0deg;   opacity: 1; }
-            85%  { --border-angle: 306deg; opacity: 1; }
-            100% { --border-angle: 360deg; opacity: 0; }
-        }
-        @keyframes headerBorderIn {
-            to { border-color: rgba(212, 175, 55, 0.42); }
-        }
-
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            70% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); }
-        }
-
-        .view {
-            display: none;
-            flex-direction: column;
-            flex-grow: 1;
-            padding: calc(70px + env(safe-area-inset-top, 0px)) 20px 110px 20px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            background: var(--bg-dark);
-        }
-       
-        .view.active {
-            display: flex;
-        }
-
-        /* Анимация въезда справа (когда листаем вправо) */
-        .view.slide-from-right {
-            animation: slideInRight 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-        }
-
-        /* Анимация въезда слева (когда листаем влево) */
-        .view.slide-from-left {
-            animation: slideInLeft 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-        }
-
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(40px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
-        @keyframes slideInLeft {
-            from { opacity: 0; transform: translateX(-40px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-            /* ==========================
-           СТЕКЛЯННОЕ НИЖНЕЕ МЕНЮ 
-           ========================== */
-        .bottom-nav {
-            position: fixed;
-            bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-            left: 12px;
-            right: 12px;
-            width: auto; 
-            height: 64px; 
-            
-            /* Стекло как у уровня */
-            background: rgba(20, 20, 22, 0.25); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px);
-            
-            border: 1px solid rgba(255, 255, 255, 0.15); 
-            border-radius: 50px; 
-            box-shadow: 
-                inset 0 2px 5px rgba(255, 255, 255, 0.25), 
-                inset 0 -2px 5px rgba(0, 0, 0, 0.4),       
-                0 8px 32px rgba(0, 0, 0, 0.3);
-                
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 4px; 
-            z-index: 100;
-            isolation: isolate;
-        }
-
-        /* Легкий блик для всего меню */
-        .bottom-nav::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            background: linear-gradient(
-                180deg,
-                rgba(255, 255, 255, 0.12) 0%,
-                rgba(255, 255, 255, 0.02) 30%,
-                transparent 60%,
-                rgba(0, 0, 0, 0.15) 100%
-            );
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Кнопки внутри меню (теперь прозрачные) */
-        .nav-item {
-            pointer-events: auto;
-            flex: 1;
-            height: 100%;
-            border-radius: 50px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s var(--spring);
-            background: transparent; /* Убрали фон */
-            border: none; /* Убрали границы */
-            position: relative;
-            z-index: 1; /* Поверх блика и пузыря */
-        }
-
-        .nav-item:active {
-            transform: scale(0.95);
-        }
-
-        .nav-item svg {
-            width: 22px;
-            height: 22px;
-            margin-bottom: 3px;
-            fill: currentColor;
-            transition: all 0.3s var(--spring);
-        }
-
-        /* Активная вкладка становится прозрачной (виден пузырь) */
-        .nav-item.active {
-            color: var(--gold);
-            background: transparent;
-            border-color: transparent;
-            box-shadow: none;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-        }
-        .nav-item.active::after {
-            opacity: 0;
-        }
-        .nav-item.active svg { 
-            transform: translateY(-2px) scale(1.1); 
-        }
-
-        /* Пружинка для иконки при приземлении */
-                /* Пружинка для иконки при приземлении (очень маленькая) */
-        .nav-item.active svg.bounce {
-            animation: iconBounce 0.3s var(--spring) forwards;
-        }
-
-        @keyframes iconBounce {
-            0% { transform: translateY(-2px) scale(1.1); }
-            50% { transform: translateY(-4px) scale(1.15); } /* Легкий подскок */
-            100% { transform: translateY(-2px) scale(1.1); } /* Возврат */
-        }
-
-          
-         /* ==========================
-           ПЛАВАЮЩИЙ СТЕКЛЯННЫЙ ПУЗЫРЬ
-           ========================== */
-        .nav-bubble {
-            position: absolute;
-            top: 0;
-            left: 0;
-            border-radius: 50px; /* Исходный размер (таблетка) */
-            background: rgba(212, 175, 55, 0.08);
-            backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
-            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
-            border: 1px solid rgba(212, 175, 55, 0.2); 
-            box-shadow: 
-                inset 1px 0 1px rgba(255, 100, 100, 0.25),
-                inset -1px 0 1px rgba(100, 200, 255, 0.25),
-                inset 0 1px 1px rgba(255, 255, 255, 0.4),
-                0 0 15px rgba(212, 175, 55, 0.15);
-            pointer-events: none;
-            z-index: 0;
-            transform: scale(1); 
-            
-            transition: 
-                left 0.25s cubic-bezier(0.25, 1, 0.5, 1),
-                top 0.25s cubic-bezier(0.25, 1, 0.5, 1),
-                width 0.25s cubic-bezier(0.25, 1, 0.5, 1),
-                height 0.25s cubic-bezier(0.25, 1, 0.5, 1),
-                transform 0.15s ease-out,
-                border-radius 0.15s ease-out; 
-        }
-
-        /* ЭТАП РАЗДУВАНИЯ: border-radius: 50% делает его идеальным овалом (без прямых линий) */
-        .nav-bubble.expanding {
-            transform: scale(0.7, 1.5); 
-            border-radius: 50%; 
-        }
-
-        /* ЭТАП ПЛЮХА: маленький radius (12px) делает углы более прямыми (квадратными) */
-        .nav-bubble.squashing {
-            transform: scale(1.2, 0.7); 
-            border-radius: 999px; 
-            transition: transform 0.1s ease-out, border-radius 0.1s ease-out !important; 
-        }
-
-        
-        /* Вкладки */
-        .category-tabs {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tab-btn {
-            flex: 1;
-            background: rgba(20, 20, 22, 0.55);
-            backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
-            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-muted);
-            padding: 12px;
-            border-radius: 14px;
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.3s var(--smooth);
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-        }
-        
-        .tab-btn:active { transform: scale(0.95); }
-        .tab-btn.active {
-            background: rgba(212, 175, 55, 0.15);
-            border-color: rgba(212, 175, 55, 0.6);
-            color: var(--gold);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
-        }
-
-        /* Услуги */
-        .services-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .service-card {
-            background: rgba(20, 20, 22, 0.55);
-            backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
-            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
-            border-radius: 16px;
-            padding: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: all 0.2s var(--smooth);
-            position: relative;
-            box-shadow: 
-                inset 1px 0 1px rgba(255, 100, 100, 0.1), 
-                inset -1px 0 1px rgba(100, 200, 255, 0.1), 
-                0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .service-card:active { transform: scale(0.96); }
-        .service-card.selected {
-            border-color: var(--gold);
-            background: rgba(212, 175, 55, 0.08);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-        }
-        .service-card h3 {
-            font-size: 13px;
-            margin-bottom: 5px;
-            padding-right: 20px;
-            line-height: 1.3;
-        }
-        .service-card .time {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
-        .service-card .price {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--gold);
-        }
-        .service-card .checkbox {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            border: 2px solid var(--text-muted);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s var(--spring);
-        }
-        .service-card.selected .checkbox {
-            border-color: var(--gold);
-            background: var(--gold);
-            transform: scale(1.1);
-        }
-        .service-card.selected .checkbox::after {
-            content: '✓';
-            color: #000;
-            font-weight: bold;
-            font-size: 10px;
-        }
-
-        /* Мастера */
-        .masters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .master-card {
-            background: rgba(20, 20, 22, 0.55);
-            backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
-            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
-            border-radius: 16px;
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            text-align: center;
-            transition: all 0.2s var(--smooth);
-            box-shadow: 
-                inset 1px 0 1px rgba(255, 100, 100, 0.1), 
-                inset -1px 0 1px rgba(100, 200, 255, 0.1), 
-                0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        .master-card:active { transform: scale(0.95); }
-        .master-card.selected {
-            border-color: var(--gold);
-            background: rgba(212, 175, 55, 0.1);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
-        }
-        .master-img {
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            margin: 0 auto 10px;
-            background: #333;
-            border: 2px solid transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden; /* Обрезаем фото по кругу */
-            transition: all 0.3s var(--spring);
-        }
-
-        .master-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-        .master-card.selected .master-img {
-            border-color: var(--gold);
-            transform: scale(1.05);
-        }
-        .master-card h3 { font-size: 13px; margin-bottom: 2px; }
-        .master-card p {
-            font-size: 9px;
-            color: var(--gold);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+/* Контейнер шапки (прозрачный, только для позиционирования) */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: calc(10px + env(safe-area-inset-top, 0px));
+    left: 0;
+    width: 100%;
+    padding: 0 12px;
+    z-index: 100;
+    pointer-events: none; /* Клики проходят сквозь пустое пространство */
+    gap: 10px;
+}
 
         /* ==========================
-           СТЕКЛЯННАЯ КОРЗИНА (iOS-style)
-           ========================== */
-        .drawer-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.55);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            z-index: 1500;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.4s var(--smooth);
-        }
-        .drawer-overlay.active { opacity: 1; visibility: visible; }
+    ЦЕНТРАЛЬНЫЙ ЗАГОЛОВОК В ШАПКЕ
+    ========================== */
+.header-title-wrapper {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none; /* Клики проходят сквозь текст на кнопки */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: max-content;
+    z-index: 2;
+}
 
-        .drawer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 85vh;
-            background: rgba(28, 28, 30, 0.72);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            border-top: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 
-                inset 0 1px 0 rgba(255, 255, 255, 0.12),
-                0 -10px 40px rgba(0, 0, 0, 0.5);
-            z-index: 1600;
-            transform: translateY(100%);
-            transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
-            border-radius: 24px 24px 0 0;
-            display: flex;
-            flex-direction: column;
-        }
-        .drawer.active { transform: translateY(0); }
-        .drawer-header {
-            padding: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .drawer-header h2 { font-size: 18px; }
-        .close-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 28px;
-            cursor: pointer;
-            line-height: 1;
-            transition: transform 0.2s var(--spring);
-        }
-        .close-btn:active { transform: scale(0.8); }
-        .drawer-body { padding: 20px; flex-grow: 1; overflow-y: auto; }
-        .drawer-section { margin-bottom: 25px; }
-        .drawer-section h3 {
-            font-size: 15px;
-            margin-bottom: 12px;
-            color: var(--gold);
-        }
-        .selected-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 14px;
-        }
-        .date-grid {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-        .date-opt {
-            min-width: 65px;
-            padding: 10px;
-            background: rgba(18, 18, 18, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            text-align: center;
-            transition: all 0.2s var(--smooth);
-        }
-        .date-opt:active { transform: scale(0.9); }
-        .date-opt.selected {
-            border-color: var(--gold);
-            background: var(--gold);
-            color: #000;
-        }
-        .time-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-        }
-        .time-opt {
-            padding: 12px;
-            text-align: center;
-            background: rgba(18, 18, 18, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            font-size: 13px;
-            transition: all 0.2s var(--smooth);
-        }
-        .time-opt:active { transform: scale(0.9); }
-        .time-opt.selected {
-            border-color: var(--gold);
-            background: var(--gold);
-            color: #000;
-            font-weight: bold;
-        }
-        .time-opt.disabled { opacity: 0.3; text-decoration: line-through; }
-        .drawer-footer {
-            padding: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            background: rgba(15, 15, 15, 0.5);
-            border-radius: 0 0 24px 24px;
-        }
-        .total-price {
-            display: flex;
-            justify-content: space-between;
-            font-size: 16px;
-            font-weight: 800;
-            margin-bottom: 15px;
-        }
-        .total-price span { color: var(--gold); }
-        .checkout-btn {
-            width: 100%;
-            padding: 16px;
-            background: var(--gold);
-            color: #000;
-            border: none;
-            border-radius: 14px;
-            font-size: 16px;
-            font-weight: 800;
-            transition: all 0.2s var(--smooth);
-        }
-        .checkout-btn:active {
-            transform: scale(0.96);
-            background: var(--gold-hover);
-        }
+.header-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin: 0;
+    text-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+    position: relative;
+    padding-bottom: 5px;
+}
 
-            /* =========================================
-            ПРОФИЛЬ — ПЛАВНАЯ АНИМАЦИЯ СЖАТИЯ
-            ========================================= */
+/* Красивое подчеркивание */
+.header-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 2px;
+    box-shadow: 0 0 8px var(--gold);
+}
 
-        @property --profile-border-angle {
-            syntax: '<angle>';
-            initial-value: 0deg;
-            inherits: false;
-        }
+/* Анимация, которая запускается при смене вкладки */
+.header-title.animate-title::after {
+    animation: lineGrow 0.4s var(--spring) forwards;
+}
 
-        .profile-main-card {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            margin-bottom: 15px;
-            padding: 20px;
-            border-radius: 24px;
-            width: 100%;
+@keyframes lineGrow {
+    0% { width: 0; opacity: 0; }
+    100% { width: 80%; opacity: 1; }
+}
 
-            background: rgba(20, 20, 22, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow:
-                inset 0 2px 5px rgba(255, 255, 255, 0.15),
-                inset 0 -2px 5px rgba(0, 0, 0, 0.2),
-                0 8px 32px rgba(0, 0, 0, 0.2);
-            backdrop-filter: blur(15px) saturate(180%);
-            -webkit-backdrop-filter: blur(15px) saturate(180%);
-            position: relative;
-            overflow: hidden;
-            transition:
-                padding 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                gap 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        /* Бегущие линии (не трогаем) */
-        .profile-main-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 24px;
-            padding: 1.5px;
-            background: conic-gradient(
-                from var(--profile-border-angle),
-                transparent 0deg,
-                var(--gold) 10deg,
-                var(--gold) 30deg,
-                transparent 40deg,
-                transparent 180deg,
-                var(--gold) 190deg,
-                var(--gold) 210deg,
-                transparent 220deg,
-                transparent 360deg
-            );
-            -webkit-mask:
-                linear-gradient(#000 0 0) content-box,
-                linear-gradient(#000 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            pointer-events: none;
-            z-index: 10;
-        }
-
-        .profile-main-card.animate-profile-border::before {
-            animation: profileBorderRun 2.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-
-        @keyframes profileBorderRun {
-            0% { --profile-border-angle: 0deg; opacity: 1; }
-            80% { --profile-border-angle: 144deg; opacity: 1; }
-            100% { --profile-border-angle: 180deg; opacity: 0; }
-        }
-
-        /* --- ВЕРХНИЙ БЛОК (Профиль) --- */
-        .profile-header-horizontal {
-            flex: 0 0 100%;          /* на всю ширину */
-            position: relative;      /* для разделителя-псевдоэлемента */
-            display: flex;
-            flex-wrap: wrap;         /* разрешаем перенос текста под аватарку */
-            align-items: center;
-            gap: 5px 20px;
-            text-align: left;
-            padding-bottom: 15px;
-            transition:
-                flex-basis 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                padding 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                gap 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        /* Разделитель: в обычном состоянии — горизонтальная линия внизу */
-        .profile-header-horizontal::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .profile-avatar-gold {
-            flex: 0 0 auto;
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: rgba(212, 175, 55, 0.15);
-            border: 2px solid var(--gold);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
-            transition:
-                width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .profile-avatar-gold svg {
-            width: 45px;
-            height: 45px;
-            fill: var(--gold);
-            transition: width 0.4s ease, height 0.4s ease;
-        }
-
-        .profile-info {
-            flex: 1 1 auto;
-            min-width: 0;
-            
-        }
-
-        .profile-info h1 {
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 5px;
-            color: #fff;
-            letter-spacing: 0.5px;
-            transition: font-size 0.4s ease, margin 0.4s ease;
-        }
-
-        .profile-info p {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 500;
-            transition: font-size 0.4s ease;
-        }
-
-        /* --- НИЖНИЙ БЛОК (Уровень) --- */
-        .status-block-simple {
-            flex: 0 0 100%;          /* на всю ширину */
-            display: flex;
-            flex-wrap: wrap;         /* разрешаем перенос текста под диаграмму */
-            align-items: center;
-            gap: 5px 15px;
-            transition:
-                flex-basis 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                gap 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .mini-diagram {
-            flex: 0 0 auto;
-            position: relative;
-            width: 45px;
-            height: 45px;
-            transition:
-                width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-                height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .mini-diagram svg {
-            width: 100%;
-            height: 100%;
-            transform: rotate(-90deg);
-        }
-
-        .mini-diagram .status-circle-bg {
-            fill: none;
-            stroke: #333;
-            stroke-width: 8;
-        }
-
-        .mini-diagram .status-circle-progress {
-            fill: none;
-            stroke: var(--gold);
-            stroke-width: 8;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 1s, stroke 0.3s;
-        }
-
-        .level-text-wrapper {
-            flex: 1 1 auto;
-            min-width: 0;
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-            
-        }
-
-        .level-text-wrapper .status-level-name {
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 2px;
-            color: var(--gold);
-            transition: font-size 0.4s ease, margin 0.4s ease;
-        }
-
-        .level-text-wrapper .status-hint {
-            font-size: 12px;
-            color: var(--text-muted);
-            transition: font-size 0.4s ease, opacity 0.4s ease;
-        }
-
-
-        /* =========================================
-        СЖАТОЕ СОСТОЯНИЕ
-        ========================================= */
-
-        .profile-main-card.collapsed {
-            padding: 15px;
-            gap: 10px;
-        }
-
-        /* Оба блока становятся по половине ширины */
-        .profile-main-card.collapsed .profile-header-horizontal,
-        .profile-main-card.collapsed .status-block-simple {
-            flex: 0 0 calc(50% - 5px);
-        }
-
-        .profile-main-card.collapsed .profile-header-horizontal {
-            justify-content: center;
-            gap: 5px;
-            padding-bottom: 0;
-        }
-
-        /* Разделитель переезжает вправо и становится вертикальным */
-        .profile-main-card.collapsed .profile-header-horizontal::after {
-            bottom: 10%;
-            left: 100%;
-            width: 1px;
-            height: 80%;
-        }
-
-        .profile-main-card.collapsed .profile-avatar-gold {
-            width: 45px;
-            height: 45px;
-        }
-
-        .profile-main-card.collapsed .profile-avatar-gold svg {
-            width: 20px;
-            height: 20px;
-        }
-
-
-        .profile-main-card.collapsed .profile-info h1 {
-            font-size: 13px;
-            margin-bottom: 2px;
-        }
-
-        .profile-main-card.collapsed .profile-info {
-            flex-basis: 100%;
-            text-align: center;
-        }
-
-        .profile-main-card.collapsed .profile-info p {
-            font-size: 10px;
-        }
-
-        .profile-main-card.collapsed .status-block-simple {
-            justify-content: center;
-            gap: 5px;
-        }
-
-        .profile-main-card.collapsed .mini-diagram {
-            width: 35px;
-            height: 35px;
-        }
-
-        .profile-main-card.collapsed .level-text-wrapper {
-            flex-basis: 100%;
-            text-align: center;
-            align-items: center;
-        }
-
-        .profile-main-card.collapsed .level-text-wrapper .status-level-name {
-            font-size: 13px;
-        }
-
-        .profile-main-card.collapsed .level-text-wrapper .status-hint {
-            font-size: 0;
-            opacity: 0;
-        }
-
-        /* Уровень внутри блока (без фона) */
-        .status-block-inner {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        /* Текстовая часть (чтобы длинные названия услуг не ломали верстку) */
-        .hb-info {
-            overflow: hidden;
-        }
+/* Общие стили для обеих пилюль */
+.header-pill {
+    pointer-events: auto; 
+    width: calc(30vw * 1.03); /* Возвращаем нормальную ширину */
+    height: 44px; /* УМЕНЬШИЛИ ВЫСОТУ */
+    border-radius: 50px;
+    
+    background: rgba(20, 20, 22, 0.25); 
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px);
+    
+    border: 1px solid rgba(255, 255, 255, 0.15); 
+    box-shadow: 
+        inset 0 2px 5px rgba(255, 255, 255, 0.25), 
+        inset 0 -2px 5px rgba(0, 0, 0, 0.4),       
+        0 8px 32px rgba(0, 0, 0, 0.3);
         
-        .hb-services {
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.3;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis; /* Если услуга длинная, будет троеточие... */
-        }
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s var(--spring);
+}
+.header-pill:active {
+    transform: scale(0.95);
+}
 
-        /* Кнопка "Отменить" (теперь справа) */
-        .btn-cancel-small {
-            background: transparent;
-            border: 1px solid rgba(255, 77, 77, 0.4);
-            color: #ff4d4d;
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 11px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s var(--smooth);
-            white-space: nowrap; /* Текст кнопки не переносится на новую строку */
-            flex-shrink: 0;      /* Кнопка не сжимается, если текст слева длинный */
-        }
 
-        .status-circle-bg {
-            fill: none;
-            stroke: #333;
-            stroke-width: 6;
-        }
-        .status-circle-progress {
-            fill: none;
-            stroke: var(--gold);
-            stroke-width: 6;
-            stroke-linecap: round;
-            transition: stroke-dashoffset 1s var(--smooth);
-        }
-        .status-text-inner {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--gold);
-        }
-        .status-level-name {
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 4px;
-        }
-        .status-hint {
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.3;
-        }
+.left-pill {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    flex: none;
+}
+.right-pill {
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    flex: none;
+    padding: 0; 
+}
 
-        .logout-btn {
-            width: 100%;
-            background: transparent;
-            border: 1px solid rgba(255, 77, 77, 0.5);
-            color: #ff4d4d;
-            padding: 16px;
-            border-radius: 14px;
-            font-weight: bold;
-            font-size: 15px;
-            margin-top: 15px;
-            transition: all 0.2s var(--smooth);
-        }
-        .logout-btn:active {
-            transform: scale(0.96);
-            background: rgba(255, 77, 77, 0.1);
-        }
+.right-pill span {
+    font-size: 10px; /* Уменьшили, чтобы точно влезло по высоте */
+    font-weight: 800;
+    color: var(--gold);
+    white-space: nowrap;
+    letter-spacing: 0.5px;
+}
 
-        .next-visit-card {
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(30, 30, 30, 0.7) 100%);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid var(--gold);
-            border-radius: 20px;
-            padding: 25px 20px 20px;
-            margin-bottom: 25px;
-            position: relative;
-            box-shadow: 
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 10px 30px rgba(212, 175, 55, 0.1);
-        }
-        .next-visit-card::before {
-            content: 'Ближайший визит';
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            background: var(--gold);
-            color: #000;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 3px 12px;
-            border-radius: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .next-visit-info { display: flex; flex-direction: column; gap: 12px; }
-        .nvi-block p {
-            color: var(--text-muted);
-            font-size: 11px;
-            margin-bottom: 2px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
-        }
-        .nvi-block h3 { font-size: 17px; }
+/* Блик-рефракция стекла (для обеих) */
+.header-pill::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.16) 0%,
+        rgba(255, 255, 255, 0.05) 20%,
+        transparent 50%,
+        rgba(0, 0, 0, 0.18) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
 
-        .history-title {
-            font-size: 16px;
-            margin-bottom: 15px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-        .booking-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .booking-card {
-            background: var(--bg-card);
-            padding: 18px;
-            border-radius: 16px;
-            border-left: 4px solid #333;
-            transition: all 0.2s var(--smooth);
-        }
-        .booking-card:hover { border-left-color: var(--gold); }
-        .bc-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-        .bc-header h3 { font-size: 15px; }
-        .bc-header p { font-size: 11px; color: var(--text-muted); }
-        .bc-services {
-            font-size: 13px;
-            color: #ddd;
-            margin-bottom: 12px;
-            line-height: 1.4;
-        }
-        .bc-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-        .bc-price {
-            font-size: 18px;
-            font-weight: bold;
-            color: var(--gold);
-        }
-        .btn-cancel {
-            background: transparent;
-            border: 1px solid #555;
-            color: #aaa;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 600;
-            width: 100%;
-            margin-top: 12px;
-            transition: all 0.2s var(--smooth);
-        }
-        .btn-cancel:active {
-            transform: scale(0.97);
-            background: rgba(255, 255, 255, 0.05);
-        }
+/* Жёлтая искра (ТОЛЬКО для левой пилюли) */
+.left-pill::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: conic-gradient(
+        from var(--border-angle),
+        transparent 0deg,
+        transparent 230deg,
+        rgba(212, 175, 55, 0.15) 270deg,
+        rgba(212, 175, 55, 0.85) 335deg,
+        var(--gold) 355deg,
+        transparent 360deg
+    );
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    z-index: 1;
+    pointer-events: none;
+}
 
-        /* ==========================
-           СТЕКЛЯННЫЕ МОДАЛКИ (как на iPhone)
-           ========================== */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            z-index: 2000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s var(--smooth);
-        }
-        .modal.active { opacity: 1; visibility: visible; }
+/* Контент поверх эффектов */
+.header-pill > * {
+    position: relative;
+    z-index: 2;
+}
 
-        .modal-content {
-            background: rgba(35, 35, 37, 0.72);
-            backdrop-filter: blur(40px) saturate(180%);
-            -webkit-backdrop-filter: blur(40px) saturate(180%);
-            padding: 30px 25px;
-            border-radius: 24px;
-            width: 90%;
-            max-width: 350px;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 
-                inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                0 20px 50px rgba(0, 0, 0, 0.6);
-            transform: scale(0.85) translateY(20px);
-            opacity: 0;
-            transition: all 0.4s var(--spring);
-        }
-        .modal.active .modal-content {
-            transform: scale(1) translateY(0);
-            opacity: 1;
-        }
+/* Логотип внутри левой пилюли */
+.left-pill .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Чуть меньше отступ */
+    line-height: 1;
+}
+.left-pill .logo svg {
+    width: 16px; /* Уменьшили с 20px */
+    height: 16px; 
+    flex-shrink: 0;
+}
+.left-pill .logo-text {
+    display: flex;
+    flex-direction: column;
+    font-size: 11px; /* Уменьшили с 13px */
+    font-weight: 800;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+.left-pill .logo-text span {
+    color: var(--gold);
+    font-size: 11px;
+    letter-spacing: 1.5px;
+}
 
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-        .form-group input {
-            width: 100%;
-            padding: 15px;
-            background: rgba(18, 18, 18, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            color: #fff;
-            font-size: 15px;
-            outline: none;
-            transition: border 0.3s var(--smooth);
-        }
-        .form-group input:focus { border-color: var(--gold); }
+/* Запуск анимации */
+#appContainer.visible .left-pill::before {
+    animation: borderSpin 2.5s cubic-bezier(0.5, 0, 0.3, 1) forwards;
+}
 
-        /* Уведомления */
-        .toast-container {
-            position: fixed;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            pointer-events: none;
-            align-items: center;
-            width: 100%;
-        }
-        .toast {
-            background: rgba(30, 30, 30, 0.78);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            padding: 14px 22px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 
-                inset 0 1px 0 rgba(255, 255, 255, 0.1),
-                0 10px 30px rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--gold);
-            color: var(--text-main);
-            font-weight: 600;
-            font-size: 13px;
-            pointer-events: auto;
-            animation: toastSlideDown 0.4s var(--spring);
-        }
-        @keyframes toastSlideDown {
-            from { transform: translateY(-20px) scale(0.9); opacity: 0; }
-            to { transform: translateY(0) scale(1); opacity: 1; }
-        }
-                /* =========================================
-           ЧИСТЫЙ ЭКРАН ЗАГРУЗКИ
-           ========================================= */
-        #splashScreen {
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: transparent !important; /* Убираем фон с контейнера */
-            opacity: 0;
-            visibility: hidden;
-            /* Делаем исчезновение всего экрана более долгим (1.2 сек) */
-            transition: opacity 1.2s ease, visibility 1.2s;
-        }
+@keyframes borderSpin {
+    0%   { --border-angle: 0deg;   opacity: 1; }
+    85%  { --border-angle: 306deg; opacity: 1; }
+    100% { --border-angle: 360deg; opacity: 0; }
+}
+@keyframes headerBorderIn {
+    to { border-color: rgba(212, 175, 55, 0.42); }
+}
 
-        #splashScreen.active {
-            opacity: 1;
-            visibility: visible;
-        }
+@keyframes popIn {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1); }
+}
 
-        /* Создаем фон через псевдоэлемент */
-        #splashScreen::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)), url('img/background.jpg') center/cover !important;
-            z-index: -1;
-            opacity: 0;
-            /* Фон начинает появляться с 0.5с (как и текст), но длится 2.5 секунды (дольше текста) */
-            animation: bgFadeIn 2.5s ease 0.5s forwards;
-        }
+.view {
+    display: none;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: calc(70px + env(safe-area-inset-top, 0px)) 20px 110px 20px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--bg-dark);
+    overscroll-behavior-y: none;
+}
 
-        @keyframes bgFadeIn {
-            0% { opacity: 0; }
-            100% { opacity: 1; }
-        }
+.view.active {
+    display: flex;
+}
 
-        #splashScreen.hidden {
-            opacity: 0;
-            visibility: hidden;
-        }
-        /* Текст (слова) */
-        .splash-content {
-            position: relative;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            opacity: 0;
-            transform: translateY(20px);
-            /* Текст появляется за 1 секунду */
-            animation: splashContentAppear 1s var(--smooth) 0.5s forwards;
-        }
+/* Анимация въезда справа (когда листаем вправо) */
+.view.slide-from-right {
+    animation: slideInRight 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
 
-        /* Когда загрузка заканчивается, текст пропадает мгновенно (за 0.3 сек) */
-        #splashScreen.hidden .splash-content {
-            opacity: 0;
-            transform: translateY(-15px);
-            animation: none;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-        }
+/* Анимация въезда слева (когда листаем влево) */
+.view.slide-from-left {
+    animation: slideInLeft 0.35s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+}
 
-        @keyframes splashContentAppear {
-            0% { opacity: 0; transform: translateY(20px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
+@keyframes slideInRight {
+    from { opacity: 0; transform: translateX(40px); }
+    to { opacity: 1; transform: translateX(0); }
+}
 
-        .splash-title-wrapper {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 25px;
-        }
+@keyframes slideInLeft {
+    from { opacity: 0; transform: translateX(-40px); }
+    to { opacity: 1; transform: translateX(0); }
+}
 
-        .splash-loader {
-            position: absolute;
-            bottom: 60px;
-            left: 50%; 
-            transform: translateX(-50%);
-            width: 140px;
-            height: 3px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            opacity: 0;
-            animation: fadeIn 0.4s ease 1s forwards;
-        }
-            /* =========================================
-           ФОН НА ГЛАВНОМ ЭКРАНЕ (ЗАТЕМНЕННЫЙ)
-           ========================================= */
-        #viewHome {
-            /* Накладываем темный градиент (85% и 100% черного) поверх твоей картинки */
-            background: linear-gradient(rgba(0,0,0,0.85), rgba(10,10,10,1)), url('img/background.jpg') center/cover !important;
-        }
-
-        /* Убираем фон с остальных вкладок, чтобы там был просто черный цвет */
-        #viewBook, #viewProfile, #viewBookings {
-            background: var(--bg-dark) !important;
-        }
-
-            /* ==========================
-           ГЛАВНЫЙ ЭКРАН (СТЕКЛЯННЫЕ БЛОКИ)
-           ========================== */
-
-        .collapsible-list::-webkit-scrollbar {
-            width: 4px;
-        }
-        .collapsible-list::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .collapsible-list::-webkit-scrollbar-thumb {
-            background: rgba(212, 175, 55, 0.3);
-            border-radius: 4px;
-        }
-
-        /* Показ списка при добавлении класса expanded */
-        .collapsible-list.expanded {
-            display: block;
-        }
-
-       
-        .home-level-card:active {
-            transform: scale(0.97);
-        }
-        .home-level-circle {
-            position: relative;
-            width: 110px; /* Увеличили размер диаграммы */
-            height: 110px;
-            flex-shrink: 0;
-        }
-        .home-level-circle .status-text-inner {
-            font-size: 22px; /* Увеличили текст внутри круга */
-        }
-        .home-level-info .status-level-name {
-            font-size: 20px;
-            margin-bottom: 5px;
-        }
-        .home-level-info .status-hint {
-            font-size: 13px;
-        }
-        .home-arrow-right {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 24px;
-            height: 24px;
-            opacity: 0.3;
-        }
-
-        /* Нижний блок (Кнопка + Акция) */
-        .home-bottom-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 10px;
-            padding-bottom: 20px;
-        }
-
-                /* Кнопка записи (Стеклянная, прозрачная с желтым оттенком) */
-        .home-cta-btn {
-            width: 100%; 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(212, 175, 55, 0.12); 
-            backdrop-filter: blur(15px); 
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(212, 175, 55, 0.3); 
-            border-radius: 20px;
-            padding: 14px 15px; 
-            color: var(--gold); 
-            cursor: pointer;
-            box-shadow: 
-                inset 0 1px 1px rgba(255, 255, 255, 0.2), 
-                0 8px 25px rgba(0, 0, 0, 0.2);
-            transition: all 0.2s var(--spring);
-        }
+    /* ==========================
+    СТЕКЛЯННОЕ НИЖНЕЕ МЕНЮ 
+    ========================== */
+.bottom-nav {
+    position: fixed;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    left: 12px;
+    right: 12px;
+    width: auto; 
+    height: 64px; 
+    
+    /* Стекло как у уровня */
+    background: rgba(20, 20, 22, 0.25); 
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px);
+    
+    border: 1px solid rgba(255, 255, 255, 0.15); 
+    border-radius: 50px; 
+    box-shadow: 
+        inset 0 2px 5px rgba(255, 255, 255, 0.25), 
+        inset 0 -2px 5px rgba(0, 0, 0, 0.4),       
+        0 8px 32px rgba(0, 0, 0, 0.3);
         
-        .home-cta-btn:active {
-            transform: scale(0.96);
-            background: rgba(212, 175, 55, 0.25); /* Чуть ярче при нажатии */
-        }
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px; 
+    z-index: 100;
+    isolation: isolate;
+}
+
+/* Легкий блик для всего меню */
+.bottom-nav::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.12) 0%,
+        rgba(255, 255, 255, 0.02) 30%,
+        transparent 60%,
+        rgba(0, 0, 0, 0.15) 100%
+    );
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Кнопки внутри меню (теперь прозрачные) */
+.nav-item {
+    pointer-events: auto;
+    flex: 1;
+    height: 100%;
+    border-radius: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s var(--spring);
+    background: transparent; /* Убрали фон */
+    border: none; /* Убрали границы */
+    position: relative;
+    z-index: 1; /* Поверх блика и пузыря */
+}
+
+.nav-item:active {
+    transform: scale(0.95);
+}
+
+.nav-item svg {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 3px;
+    fill: currentColor;
+    transition: all 0.3s var(--spring);
+}
+
+/* Активная вкладка становится прозрачной (виден пузырь) */
+.nav-item.active {
+    color: var(--gold);
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+.nav-item.active::after {
+    opacity: 0;
+}
+.nav-item.active svg { 
+    transform: translateY(-2px) scale(1.1); 
+}
+
+/* Пружинка для иконки при приземлении */
+        /* Пружинка для иконки при приземлении (очень маленькая) */
+.nav-item.active svg.bounce {
+    animation: iconBounce 0.3s var(--spring) forwards;
+}
+
+@keyframes iconBounce {
+    0% { transform: translateY(-2px) scale(1.1); }
+    50% { transform: translateY(-4px) scale(1.15); } /* Легкий подскок */
+    100% { transform: translateY(-2px) scale(1.1); } /* Возврат */
+}
+
+    
+    /* ==========================
+    ПЛАВАЮЩИЙ СТЕКЛЯННЫЙ ПУЗЫРЬ
+    ========================== */
+.nav-bubble {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50px; /* Исходный размер (таблетка) */
+    background: rgba(212, 175, 55, 0.08);
+    backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
+    -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12) contrast(1.05);
+    border: 1px solid rgba(212, 175, 55, 0.2); 
+    box-shadow: 
+        inset 1px 0 1px rgba(255, 100, 100, 0.25),
+        inset -1px 0 1px rgba(100, 200, 255, 0.25),
+        inset 0 1px 1px rgba(255, 255, 255, 0.4),
+        0 0 15px rgba(212, 175, 55, 0.15);
+    pointer-events: none;
+    z-index: 0;
+    transform: scale(1); 
+    
+    transition: 
+        left 0.25s cubic-bezier(0.25, 1, 0.5, 1),
+        top 0.25s cubic-bezier(0.25, 1, 0.5, 1),
+        width 0.25s cubic-bezier(0.25, 1, 0.5, 1),
+        height 0.25s cubic-bezier(0.25, 1, 0.5, 1),
+        transform 0.15s ease-out,
+        border-radius 0.15s ease-out; 
+}
+
+/* ЭТАП РАЗДУВАНИЯ: border-radius: 50% делает его идеальным овалом (без прямых линий) */
+.nav-bubble.expanding {
+    transform: scale(0.7, 1.5); 
+    border-radius: 50%; 
+}
+
+/* ЭТАП ПЛЮХА: маленький radius (12px) делает углы более прямыми (квадратными) */
+.nav-bubble.squashing {
+    transform: scale(1.2, 0.7); 
+    border-radius: 999px; 
+    transition: transform 0.1s ease-out, border-radius 0.1s ease-out !important; 
+}
+
+
+/* Вкладки */
+.category-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tab-btn {
+    flex: 1;
+    background: rgba(20, 20, 22, 0.55);
+    backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+    -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 12px;
+    border-radius: 14px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.3s var(--smooth);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+}
+
+.tab-btn:active { transform: scale(0.95); }
+.tab-btn.active {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.6);
+    color: var(--gold);
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.15);
+}
+
+/* Услуги */
+.services-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.service-card {
+    background: rgba(20, 20, 22, 0.55);
+    backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+    -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+    border-radius: 16px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s var(--smooth);
+    position: relative;
+    box-shadow: 
+        inset 1px 0 1px rgba(255, 100, 100, 0.1), 
+        inset -1px 0 1px rgba(100, 200, 255, 0.1), 
+        0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.service-card:active { transform: scale(0.96); }
+.service-card.selected {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.08);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+}
+.service-card h3 {
+    font-size: 13px;
+    margin-bottom: 5px;
+    padding-right: 20px;
+    line-height: 1.3;
+}
+.service-card .time {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+.service-card .price {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--gold);
+}
+.service-card .checkbox {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--text-muted);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s var(--spring);
+}
+.service-card.selected .checkbox {
+    border-color: var(--gold);
+    background: var(--gold);
+    transform: scale(1.1);
+}
+.service-card.selected .checkbox::after {
+    content: '✓';
+    color: #000;
+    font-weight: bold;
+    font-size: 10px;
+}
+
+/* Мастера */
+.masters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+.master-card {
+    background: rgba(20, 20, 22, 0.55);
+    backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+    -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+    border-radius: 16px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: center;
+    transition: all 0.2s var(--smooth);
+    box-shadow: 
+        inset 1px 0 1px rgba(255, 100, 100, 0.1), 
+        inset -1px 0 1px rgba(100, 200, 255, 0.1), 
+        0 4px 15px rgba(0, 0, 0, 0.2);
+}
+.master-card:active { transform: scale(0.95); }
+.master-card.selected {
+    border-color: var(--gold);
+    background: rgba(212, 175, 55, 0.1);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+}
+.master-img {
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    background: #333;
+    border: 2px solid transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Обрезаем фото по кругу */
+    transition: all 0.3s var(--spring);
+}
+
+.master-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.master-card.selected .master-img {
+    border-color: var(--gold);
+    transform: scale(1.05);
+}
+.master-card h3 { font-size: 13px; margin-bottom: 2px; }
+.master-card p {
+    font-size: 9px;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ==========================
+    СТЕКЛЯННАЯ КОРЗИНА (iOS-style)
+    ========================== */
+.drawer-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    z-index: 1500;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.4s var(--smooth);
+}
+.drawer-overlay.active { opacity: 1; visibility: visible; }
+
+.drawer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 85vh;
+    background: rgba(28, 28, 30, 0.72);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 -10px 40px rgba(0, 0, 0, 0.5);
+    z-index: 1600;
+    transform: translateY(100%);
+    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+    border-radius: 24px 24px 0 0;
+    display: flex;
+    flex-direction: column;
+}
+.drawer.active { transform: translateY(0); }
+.drawer-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.drawer-header h2 { font-size: 18px; }
+.close-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 28px;
+    cursor: pointer;
+    line-height: 1;
+    transition: transform 0.2s var(--spring);
+}
+.close-btn:active { transform: scale(0.8); }
+.drawer-body { padding: 20px; flex-grow: 1; overflow-y: auto; }
+.drawer-section { margin-bottom: 25px; }
+.drawer-section h3 {
+    font-size: 15px;
+    margin-bottom: 12px;
+    color: var(--gold);
+}
+.selected-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+}
+.date-grid {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+}
+.date-opt {
+    min-width: 65px;
+    padding: 10px;
+    background: rgba(18, 18, 18, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    text-align: center;
+    transition: all 0.2s var(--smooth);
+}
+.date-opt:active { transform: scale(0.9); }
+.date-opt.selected {
+    border-color: var(--gold);
+    background: var(--gold);
+    color: #000;
+}
+.time-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+.time-opt {
+    padding: 12px;
+    text-align: center;
+    background: rgba(18, 18, 18, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    font-size: 13px;
+    transition: all 0.2s var(--smooth);
+}
+.time-opt:active { transform: scale(0.9); }
+.time-opt.selected {
+    border-color: var(--gold);
+    background: var(--gold);
+    color: #000;
+    font-weight: bold;
+}
+.time-opt.disabled { opacity: 0.3; text-decoration: line-through; }
+.drawer-footer {
+    padding: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(15, 15, 15, 0.5);
+    border-radius: 0 0 24px 24px;
+}
+.total-price {
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 15px;
+}
+.total-price span { color: var(--gold); }
+.checkout-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--gold);
+    color: #000;
+    border: none;
+    border-radius: 14px;
+    font-size: 16px;
+    font-weight: 800;
+    transition: all 0.2s var(--smooth);
+}
+.checkout-btn:active {
+    transform: scale(0.96);
+    background: var(--gold-hover);
+}
+
+    /* =========================================
+    ПРОФИЛЬ — ПЛАВНАЯ АНИМАЦИЯ СЖАТИЯ
+    ========================================= */
+
+@property --profile-border-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+.profile-main-card {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 4px !important;
+    padding: 20px;
+    border-radius: 24px;
+    width: 100%;
+
+    background: rgba(20, 20, 22, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow:
+        inset 0 2px 5px rgba(255, 255, 255, 0.15),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.2),
+        0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(15px) saturate(180%);
+    -webkit-backdrop-filter: blur(15px) saturate(180%);
+    position: relative;
+    overflow: hidden;
+    transition:
+        padding 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+        gap 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    height: auto !important;
+    min-height: max-content;
+}
+
+/* Бегущие линии (не трогаем) */
+.profile-main-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    padding: 1.5px;
+    background: conic-gradient(
+        from var(--profile-border-angle),
+        transparent 0deg,
+        var(--gold) 10deg,
+        var(--gold) 30deg,
+        transparent 40deg,
+        transparent 180deg,
+        var(--gold) 190deg,
+        var(--gold) 210deg,
+        transparent 220deg,
+        transparent 360deg
+    );
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.profile-main-card.animate-profile-border::before {
+    animation: profileBorderRun 2.2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes profileBorderRun {
+    0% { --profile-border-angle: 0deg; opacity: 1; }
+    80% { --profile-border-angle: 144deg; opacity: 1; }
+    100% { --profile-border-angle: 180deg; opacity: 0; }
+}
+
+/* --- ВЕРХНИЙ БЛОК (Профиль) --- */
+.profile-header-horizontal {
+    flex: 0 0 100%;          /* на всю ширину */
+    position: relative;      /* для разделителя-псевдоэлемента */
+    display: flex;
+    flex-wrap: wrap;         /* разрешаем перенос текста под аватарку */
+    align-items: center;
+    gap: 5px 20px;
+    text-align: left;
+    padding-bottom: 15px;
+    transition:
+        flex-basis 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+        padding 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+        gap 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* Разделитель: в обычном состоянии — горизонтальная линия внизу */
+.profile-header-horizontal::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.profile-avatar-gold {
+    flex: 0 0 auto;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: rgba(212, 175, 55, 0.15);
+    border: 2px solid var(--gold);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+    transition:
+        width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+        height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.profile-avatar-gold svg {
+    width: 45px;
+    height: 45px;
+    fill: var(--gold);
+    transition: width 0.4s ease, height 0.4s ease;
+}
+
+.profile-info {
+    flex: 1 1 auto;
+    min-width: 0;
+    
+}
+
+.profile-info h1 {
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 5px;
+    color: #fff;
+    letter-spacing: 0.5px;
+    transition: font-size 0.4s ease, margin 0.4s ease;
+}
+
+.profile-info p {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 500;
+    transition: font-size 0.4s ease;
+}
+
+/* --- НИЖНИЙ БЛОК (Уровень) --- */
+.status-block-simple {
+    flex: 0 0 100%;          /* на всю ширину */
+    display: flex;
+    flex-wrap: wrap;         /* разрешаем перенос текста под диаграмму */
+    align-items: center;
+    gap: 5px 15px;
+    transition:
+        flex-basis 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+        gap 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.mini-diagram {
+    flex: 0 0 auto;
+    position: relative;
+    width: 45px;
+    height: 45px;
+    transition:
+        width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
+        height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.mini-diagram svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.mini-diagram .status-circle-bg {
+    fill: none;
+    stroke: #333;
+    stroke-width: 8;
+}
+
+.mini-diagram .status-circle-progress {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 8;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s, stroke 0.3s;
+}
+
+.level-text-wrapper {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    
+}
+
+.level-text-wrapper .status-level-name {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 2px;
+    color: var(--gold);
+    transition: font-size 0.4s ease, margin 0.4s ease;
+}
+
+.level-text-wrapper .status-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: font-size 0.4s ease, opacity 0.4s ease;
+}
+
+
+/* =========================================
+СЖАТОЕ СОСТОЯНИЕ
+========================================= */
+
+/* Сжатое состояние для блока телефонов (уезжает вправо) */
+.profile-main-card.collapsed .profile-contact-block {
+    flex: 0 0 calc(50% - 5px); /* Занимает правую половину */
+    border-top: none;          /* Убираем верхнюю линию */
+    padding-top: 0;
+    justify-content: center;   /* Центрируем по вертикали */
+    gap: 8px;
+}
+
+.profile-main-card.collapsed .contact-row {
+    padding: 5px;
+    background: transparent;   /* Убираем фон плашки */
+    justify-content: center;
+}
+
+.profile-main-card.collapsed .contact-label {
+    display: none;             /* СКРЫВАЕМ ТЕКСТ "Ваш номер:" */
+}
+
+.profile-main-card.collapsed .contact-value {
+    font-size: 13px;           /* Уменьшаем шрифт */
+    text-align: center;
+}
+.profile-main-card.collapsed {
+    padding: 15px;
+    gap: 10px;
+}
+
+/* Оба блока становятся по половине ширины */
+.profile-main-card.collapsed .profile-header-horizontal,
+.profile-main-card.collapsed .status-block-simple {
+    flex: 0 0 calc(50% - 5px);
+}
+
+.profile-main-card.collapsed .profile-header-horizontal {
+    justify-content: center;
+    gap: 5px;
+    padding-bottom: 0;
+}
+
+/* Разделитель переезжает вправо и становится вертикальным */
+.profile-main-card.collapsed .profile-header-horizontal::after {
+    bottom: 10%;
+    left: 100%;
+    width: 1px;
+    height: 80%;
+}
+
+.profile-main-card.collapsed .profile-avatar-gold {
+    width: 45px;
+    height: 45px;
+}
+
+.profile-main-card.collapsed .profile-avatar-gold svg {
+    width: 20px;
+    height: 20px;
+}
+
+
+.profile-main-card.collapsed .profile-info h1 {
+    font-size: 13px;
+    margin-bottom: 2px;
+}
+
+.profile-main-card.collapsed .profile-info {
+    flex-basis: 100%;
+    text-align: center;
+}
+
+.profile-main-card.collapsed .profile-info p {
+    font-size: 10px;
+}
+
+
+/* Уровень внутри блока (без фона) */
+.status-block-inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Текстовая часть (чтобы длинные названия услуг не ломали верстку) */
+.hb-info {
+    overflow: hidden;
+}
+
+.hb-services {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; /* Если услуга длинная, будет троеточие... */
+}
+
+/* Кнопка "Отменить" (теперь справа) */
+.btn-cancel-small {
+    background: transparent;
+    border: 1px solid rgba(255, 77, 77, 0.4);
+    color: #ff4d4d;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s var(--smooth);
+    white-space: nowrap; /* Текст кнопки не переносится на новую строку */
+    flex-shrink: 0;      /* Кнопка не сжимается, если текст слева длинный */
+}
+
+.status-circle-bg {
+    fill: none;
+    stroke: #333;
+    stroke-width: 6;
+}
+.status-circle-progress {
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 6;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s var(--smooth);
+}
+.status-text-inner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--gold);
+}
+.status-level-name {
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 4px;
+}
+.status-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.3;
+}
+
+.logout-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid rgba(255, 77, 77, 0.5);
+    color: #ff4d4d;
+    padding: 16px;
+    border-radius: 14px;
+    font-weight: bold;
+    font-size: 15px;
+    margin-top: 15px;
+    transition: all 0.2s var(--smooth);
+}
+.logout-btn:active {
+    transform: scale(0.96);
+    background: rgba(255, 77, 77, 0.1);
+}
+
+.next-visit-card {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(30, 30, 30, 0.7) 100%);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    padding: 25px 20px 20px;
+    margin-bottom: 25px;
+    position: relative;
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 10px 30px rgba(212, 175, 55, 0.1);
+}
+.next-visit-card::before {
+    content: 'Ближайший визит';
+    position: absolute;
+    top: -10px;
+    left: 20px;
+    background: var(--gold);
+    color: #000;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 3px 12px;
+    border-radius: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.next-visit-info { display: flex; flex-direction: column; gap: 12px; }
+.nvi-block p {
+    color: var(--text-muted);
+    font-size: 11px;
+    margin-bottom: 2px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+.nvi-block h3 { font-size: 17px; }
+
+.history-title {
+    font-size: 16px;
+    margin-bottom: 15px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+.booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.booking-card {
+    background: var(--bg-card);
+    padding: 18px;
+    border-radius: 16px;
+    border-left: 4px solid #333;
+    transition: all 0.2s var(--smooth);
+}
+.booking-card:hover { border-left-color: var(--gold); }
+.bc-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+.bc-header h3 { font-size: 15px; }
+.bc-header p { font-size: 11px; color: var(--text-muted); }
+.bc-services {
+    font-size: 13px;
+    color: #ddd;
+    margin-bottom: 12px;
+    line-height: 1.4;
+}
+.bc-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+.bc-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--gold);
+}
+.btn-cancel {
+    background: transparent;
+    border: 1px solid #555;
+    color: #aaa;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 12px;
+    transition: all 0.2s var(--smooth);
+}
+.btn-cancel:active {
+    transform: scale(0.97);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* ==========================
+    СТЕКЛЯННЫЕ МОДАЛКИ (как на iPhone)
+    ========================== */
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s var(--smooth);
+}
+.modal.active { opacity: 1; visibility: visible; }
+
+.modal-content {
+    background: rgba(35, 35, 37, 0.72);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    padding: 30px 25px;
+    border-radius: 24px;
+    width: 90%;
+    max-width: 350px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        0 20px 50px rgba(0, 0, 0, 0.6);
+    transform: scale(0.85) translateY(20px);
+    opacity: 0;
+    transition: all 0.4s var(--spring);
+}
+.modal.active .modal-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+.form-group { margin-bottom: 15px; text-align: left; }
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+.form-group input {
+    width: 100%;
+    padding: 15px;
+    background: rgba(18, 18, 18, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+    transition: border 0.3s var(--smooth);
+}
+.form-group input:focus { border-color: var(--gold); }
+
+/* Уведомления */
+.toast-container {
+    position: fixed;
+    top: calc(15px + env(safe-area-inset-top, 0px));
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    align-items: center;
+    width: 100%;
+}
+.toast {
+    background: rgba(30, 30, 30, 0.78);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    padding: 10px 16px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        0 10px 30px rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--gold);
+    color: var(--text-main);
+    font-weight: 600;
+    font-size: 13px;
+    pointer-events: auto;
+    animation: toastSlideDown 0.3s ease-out forwards;
+}
+@keyframes toastSlideDown {
+    from { transform: translateY(-15px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+    /* =========================================
+    ЧИСТЫЙ ЭКРАН ЗАГРУЗКИ
+    ========================================= */
+#splashScreen {
+    position: fixed;
+    inset: 0;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: transparent !important; /* Убираем фон с контейнера */
+    opacity: 0;
+    visibility: hidden;
+    /* Делаем исчезновение всего экрана более долгим (1.2 сек) */
+    transition: opacity 1.2s ease, visibility 1.2s;
+}
+
+#splashScreen.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Создаем фон через псевдоэлемент */
+#splashScreen::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)), var(--bg-image) center/cover !important;
+    z-index: -1;
+    opacity: 0;
+    /* Фон начинает появляться с 0.5с (как и текст), но длится 2.5 секунды (дольше текста) */
+    animation: bgFadeIn 2.5s ease 0.5s forwards;
+}
+
+@keyframes bgFadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+#splashScreen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+/* Текст (слова) */
+.splash-content {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    opacity: 0;
+    transform: translateY(20px);
+    /* Текст появляется за 1 секунду */
+    animation: splashContentAppear 1s var(--smooth) 0.5s forwards;
+}
+
+/* Когда загрузка заканчивается, текст пропадает мгновенно (за 0.3 сек) */
+#splashScreen.hidden .splash-content {
+    opacity: 0;
+    transform: translateY(-15px);
+    animation: none;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+@keyframes splashContentAppear {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.splash-title-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.splash-loader {
+    position: absolute;
+    bottom: 60px;
+    left: 50%; 
+    transform: translateX(-50%);
+    width: 140px;
+    height: 3px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeIn 0.4s ease 1s forwards;
+}
+    /* =========================================
+    ФОН НА ГЛАВНОМ ЭКРАНЕ (ЗАТЕМНЕННЫЙ)
+    ========================================= */
+#viewHome {
+    background: linear-gradient(var(--bg-gradient-start), var(--bg-gradient-end)), var(--bg-image) center/cover !important;
+}
+
+/* Убираем фон с остальных вкладок, чтобы там был просто черный цвет */
+#viewBook, #viewProfile, #viewBookings {
+    background: var(--bg-dark) !important;
+}
+
+    /* ==========================
+    ГЛАВНЫЙ ЭКРАН (СТЕКЛЯННЫЕ БЛОКИ)
+    ========================== */
+
+.collapsible-list::-webkit-scrollbar {
+    width: 4px;
+}
+.collapsible-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+.collapsible-list::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.3);
+    border-radius: 4px;
+}
+
+/* Показ списка при добавлении класса expanded */
+.collapsible-list.expanded {
+    display: block;
+}
+
+
+.home-level-card:active {
+    transform: scale(0.97);
+}
+.home-level-circle {
+    position: relative;
+    width: 110px; /* Увеличили размер диаграммы */
+    height: 110px;
+    flex-shrink: 0;
+}
+.home-level-circle .status-text-inner {
+    font-size: 22px; /* Увеличили текст внутри круга */
+}
+.home-level-info .status-level-name {
+    font-size: 20px;
+    margin-bottom: 5px;
+}
+.home-level-info .status-hint {
+    font-size: 13px;
+}
+.home-arrow-right {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    opacity: 0.3;
+}
+
+/* Нижний блок (Кнопка + Акция) */
+.home-bottom-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+    padding-bottom: 20px;
+}
+
+        /* Кнопка записи (Стеклянная, прозрачная с желтым оттенком) */
+.home-cta-btn {
+    flex: 1;
+    width: auto; 
+    min-height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, 0.12); 
+    backdrop-filter: blur(15px); 
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(212, 175, 55, 0.3); 
+    border-radius: 20px;
+    padding: 15px 15px !important; 
+    color: var(--gold); 
+    cursor: pointer;
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.2), 
+        0 8px 25px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s var(--spring);
+}
+
+.home-cta-btn:active {
+    transform: scale(0.96);
+    background: rgba(212, 175, 55, 0.25); /* Чуть ярче при нажатии */
+}
+
+.cta-text {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+.cta-text span {
+    font-size: 16px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+.cta-text small {
+    font-size: 10px;
+    font-weight: 600;
+    opacity: 0.8;
+    margin-top: 2px;
+}
+
+/* Карточка акции (стеклянная) */
+.promo-card-side {
+    flex: 0.9;
+    background: rgba(20, 20, 22, 0.55);
+    backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+    -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+    border-radius: 20px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 
+        inset 1px 0 1px rgba(255, 100, 100, 0.15), 
+        inset -1px 0 1px rgba(100, 200, 255, 0.15), 
+        0 4px 15px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s var(--spring);
+}
+.promo-card-side:active {
+    transform: scale(0.96);
+}
+.promo-card-side .promo-icon {
+    font-size: 24px;
+    margin-bottom: 5px;
+}
+.promo-card-side h4 {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 2px;
+}
+.promo-card-side p {
+    font-size: 10px;
+    color: var(--text-muted);
+}
+
+/* Карточка записей */
+.home-booking-item {
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 16px;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-left: 3px solid var(--gold);
+}
+.home-booking-item:last-child {
+    margin-bottom: 0;
+}
+.hb-date {
+    color: var(--gold);
+    font-weight: 800;
+    font-size: 15px;
+    margin-bottom: 5px;
+}
+.hb-master {
+    font-size: 13px;
+    color: var(--text-main);
+    margin-bottom: 5px;
+}
+.hb-services {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.3;
+}
+
+.home-expand-btn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-top: 15px;
+    padding: 10px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.home-expand-btn:active {
+    color: var(--gold);
+}
+.home-expand-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: currentColor;
+    transition: transform 0.3s var(--spring);
+}
+.home-expand-btn.expanded svg {
+    transform: rotate(180deg);
+}
+
+/* Тонкий золотой скроллбар */
+#homeBookingsContainer::-webkit-scrollbar {
+    width: 4px;
+}
+#homeBookingsContainer::-webkit-scrollbar-track {
+    background: transparent;
+}
+#homeBookingsContainer::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.3);
+    border-radius: 4px;
+}
+
+
+
+    /* =========================================
+    ИСТОРИЯ ВИЗИТОВ (СТИЛЬ КАК У АКТИВНЫХ)
+    ========================================= */
+.profile-history-card {
+    margin-top: 0 !important;   
+    border-radius: 24px !important;
+    background: rgba(25, 25, 28, 0.45) !important; 
+    border: 1px solid rgba(255, 255, 255, 0.06) !important; 
+    box-shadow: 
+        inset 0 1px 2px rgba(255, 255, 255, 0.05),
+        0 8px 30px rgba(0, 0, 0, 0.2) !important;
+    padding: 20px 15px 15px 15px !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+/* Кнопка-стрелка сверху */
+.history-toggle-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s var(--smooth);
+}
+.history-toggle-btn:active {
+    transform: scale(0.9);
+}
+.history-toggle-btn svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+/* Поворот стрелки при раскрытии */
+.history-toggle-btn.expanded svg {
+    transform: rotate(180deg);
+}
+
+/* Зона прокрутки (без фиксированной высоты) */
+.profile-history-scroll {
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    touch-action: pan-y !important;
+}
+
+/* Когда история раскрыта (4+ записей) */
+.profile-history-scroll.expanded {
+    max-height: 320px; /* Ограничиваем высоту, чтобы пошел скролл */
+    overflow-y: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y !important;
+}
+.profile-history-scroll.expanded::-webkit-scrollbar {
+    display: none;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Бейджи статусов */
+.status-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 9px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+.status-badge.active {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--gold);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+.status-badge.completed {
+    background: rgba(255, 255, 255, 0.05);
+    color: #888;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.status-badge.cancelled {
+    background: rgba(255, 77, 77, 0.1);
+    color: #ff4d4d;
+    border: 1px solid rgba(255, 77, 77, 0.2);
+}
+
+/* Приглушаем отмененные и завершенные */
+.home-booking-item.cancelled, .home-booking-item.completed {
+    opacity: 0.7;
+    border-left-color: #555;
+}
+
+    /* =========================================
+    АНИМАЦИЯ ВЫЛЕТА СНИЗУ (БЕЗ ПРЫЖКОВ)
+    ========================================= */
+/* По умолчанию все блоки видны */
+.home-level-card, .home-bookings-card, .home-scroll-area, .home-bottom-actions, .install-app-btn, .promo-tabs, .promo-carousel-wrapper, .phone-cta-btn, .bottom-nav {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Анимация применяется ТОЛЬКО когда есть класс animate-in */
+/* Используем backwards, чтобы блоки ждали своей очереди внизу и не прыгали */
+#appContainer.animate-in .home-level-card {
+    animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.1s backwards;
+}
+
+#appContainer.animate-in .home-bookings-card {
+    animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.2s backwards;
+}
+
+/* ДОБАВЛЕНО: Вылет самого скролла внутри карточки (чуть с задержкой) */
+#appContainer.animate-in .home-scroll-area {
+    animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.25s backwards;
+}
+
+        #appContainer.animate-in .home-bottom-actions {
+    animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.3s backwards;
+}
+
+/* ДОБАВЛЕНО: Вылет кнопки "Скачать приложение" */
+#appContainer.animate-in .install-app-btn {
+    animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.35s backwards;
+}
+
+/* ДОБАВЛЕНО: Вылет табов (ТОП/БАРБЕР) */
+#appContainer.animate-in .promo-tabs {
+    animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.4s backwards;
+}
+
+/* ДОБАВЛЕНО: Вылет самой карусели акций */
+#appContainer.animate-in .promo-carousel-wrapper {
+    animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.45s backwards;
+}
+/* Вылет кнопки "Запись по телефону" */
+#appContainer.animate-in .phone-cta-btn {
+    animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.55s backwards;
+}
+
+/* Чуть сдвинули нижнее меню, чтобы оно вылетало самым последним */
+#appContainer.animate-in .bottom-nav {
+    animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.5s backwards;
+}
+
+@keyframes slideUpEntrance {
+    0% { opacity: 0; transform: translateY(60px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+    /* =========================================
+    КАРТОЧКА УРОВНЯ
+    ========================================= */
+
+.home-level-card {
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 130px;   
+    text-align: left;
+    padding: 20px;
+    gap: 15px;
+    position: relative;
+    --level-color: #D4AF37;
+    
+    /* Жестко задаем скругление */
+    border-radius: 24px; 
+    
+    /* Прозрачный фон, заметное стекло */
+    background: rgba(20, 20, 22, 0.25); 
+    backdrop-filter: blur(10px); 
+    -webkit-backdrop-filter: blur(10px);
+    
+    border: 1px solid rgba(255, 255, 255, 0.15); 
+    box-shadow: 
+        inset 0 2px 5px rgba(255, 255, 255, 0.25), 
+        inset 0 -2px 5px rgba(0, 0, 0, 0.4),       
+        0 8px 32px rgba(0, 0, 0, 0.3);              
+}
+
+/* Сама бегущая линия (по умолчанию скрыта) */
+.home-level-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px; /* Обязательно для закругления маски! */
+    padding: 2px; 
+    background: conic-gradient(
+        from var(--border-angle),
+        transparent 0deg,
+        var(--level-color) 20deg,
+        var(--level-color) 90deg, 
+        transparent 110deg,
+        transparent 360deg
+    );
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Класс, который запускает анимацию (добавляется через JS) */
+.home-level-card.animate-border::before {
+    animation: runOnce 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes runOnce {
+    0% { --border-angle: 0deg; opacity: 0; }
+    5% { opacity: 1; }      /* Быстро появляется */
+    50% { opacity: 1; }     /* Летит на полной яркости */
+    100% { --border-angle: 360deg; opacity: 0; } /* Плавно тает оставшуюся половину пути */
+}
+
+/* Размеры и цвета (без изменений) */
+.home-level-circle {
+    width: 120px; 
+    height: 120px;
+    flex-shrink: 0;
+}
+.home-level-circle .status-text-inner {
+    font-size: 26px; 
+    color: var(--level-color); 
+    transition: color 0.3s ease;
+}
+.home-level-info {
+    flex-grow: 1; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.home-level-info .status-level-name {
+    font-size: 22px; 
+    margin-bottom: 5px;
+    color: var(--level-color); 
+    transition: color 0.3s ease;
+}
+.home-level-info .status-hint {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+.home-level-card .status-circle-bg,
+.home-level-card .status-circle-progress {
+    stroke-width: 5;
+}
+.home-level-card .status-circle-progress {
+    stroke: var(--level-color); 
+    transition: stroke 0.3s ease, stroke-dashoffset 1s var(--smooth);
+}
+
+        /* Мягкие края для блока записей */
+        /* Блок записей (добавлен отступ сверху) */
+        /* Блок записей */
+.home-bookings-card {
+    margin-top: 4px !important; /* БЫЛО: 10px. Подняли еще выше к уровню */
+    border-radius: 24px !important; 
+    
+    background: rgba(20, 20, 22, 0.25) !important; 
+    border: 1px solid rgba(255, 255, 255, 0.15) !important; 
+    box-shadow: 
+        inset 0 2px 5px rgba(255, 255, 255, 0.25), 
+        inset 0 -2px 5px rgba(0, 0, 0, 0.4),       
+        0 8px 32px rgba(0, 0, 0, 0.3) !important;
         
-        .cta-text {
-            display: flex;
-            flex-direction: column;
-            text-align: center;
-        }
-        .cta-text span {
-            font-size: 16px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .cta-text small {
-            font-size: 10px;
-            font-weight: 600;
-            opacity: 0.8;
-            margin-top: 2px;
-        }
+    backdrop-filter: blur(10px) !important; 
+    -webkit-backdrop-filter: blur(10px) !important;
+    
+    /* Уменьшили нижний отступ, чтобы блок был короче */
+    padding: 15px 15px 10px 15px !important; 
+}
 
-        /* Карточка акции (стеклянная) */
-        .promo-card-side {
-            flex: 0.9;
-            background: rgba(20, 20, 22, 0.55);
-            backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
-            -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            border-radius: 20px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 
-                inset 1px 0 1px rgba(255, 100, 100, 0.15), 
-                inset -1px 0 1px rgba(100, 200, 255, 0.15), 
-                0 4px 15px rgba(0, 0, 0, 0.3);
-            transition: transform 0.2s var(--spring);
-        }
-        .promo-card-side:active {
-            transform: scale(0.96);
-        }
-        .promo-card-side .promo-icon {
-            font-size: 24px;
-            margin-bottom: 5px;
-        }
-        .promo-card-side h4 {
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--gold);
-            margin-bottom: 2px;
-        }
-        .promo-card-side p {
-            font-size: 10px;
-            color: var(--text-muted);
-        }
+.home-scroll-area {
+    height: 115px !important; /* БЫЛО: 138px */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y !important;
+    scroll-snap-type: y mandatory; 
+    scrollbar-width: none; 
+    display: flex;
+    flex-direction: column;
+}
+/* Текст, когда нет записей */
+.empty-bookings-msg {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    color: var(--text-main); /* Сделали цвет основным, чтобы было видно */
+    font-size: 20px;         /* Увеличили размер (было 15px) */
+    font-weight: 800;        /* Сделали жирным */
+    padding: 0 15px;
+    line-height: 1.3;
+    opacity: 0.9;
+    animation: fadeInEmpty 0.5s ease;
+    transition: opacity 0.5s ease, transform 0.5s ease; 
+}
 
-        /* Карточка записей */
-        .home-booking-item {
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 16px;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-left: 3px solid var(--gold);
-        }
-        .home-booking-item:last-child {
-            margin-bottom: 0;
-        }
-        .hb-date {
-            color: var(--gold);
-            font-weight: 800;
-            font-size: 15px;
-            margin-bottom: 5px;
-        }
-        .hb-master {
-            font-size: 13px;
-            color: var(--text-main);
-            margin-bottom: 5px;
-        }
-        .hb-services {
-            font-size: 12px;
-            color: var(--text-muted);
-            line-height: 1.3;
-        }
+@keyframes fadeInEmpty {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        .home-expand-btn {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 12px;
-            font-weight: 600;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-            margin-top: 15px;
-            padding: 10px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-        .home-expand-btn:active {
-            color: var(--gold);
-        }
-        .home-expand-btn svg {
-            width: 20px;
-            height: 20px;
-            fill: currentColor;
-            transition: transform 0.3s var(--spring);
-        }
-        .home-expand-btn.expanded svg {
-            transform: rotate(180deg);
-        }
+.home-scroll-area::-webkit-scrollbar {
+    display: none; 
+}
 
-        /* Тонкий золотой скроллбар */
-        #homeBookingsContainer::-webkit-scrollbar {
-            width: 4px;
-        }
-        #homeBookingsContainer::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        #homeBookingsContainer::-webkit-scrollbar-thumb {
-            background: rgba(212, 175, 55, 0.3);
-            border-radius: 4px;
-        }
+.home-scroll-area .home-booking-item {
+    scroll-snap-align: start;
+    margin-bottom: 0; 
+}
 
-        
+.home-scroll-area .home-booking-item:not(:last-child) {
+    margin-bottom: 10px; 
+}
 
-            /* =========================================
-           ИСТОРИЯ ВИЗИТОВ (СТИЛЬ КАК У АКТИВНЫХ)
-           ========================================= */
-        .profile-history-card {
-            margin-top: 15px !important; 
-            border-radius: 24px !important;
-            background: rgba(25, 25, 28, 0.45) !important; 
-            border: 1px solid rgba(255, 255, 255, 0.06) !important; 
-            box-shadow: 
-                inset 0 1px 2px rgba(255, 255, 255, 0.05),
-                0 8px 30px rgba(0, 0, 0, 0.2) !important;
-            padding: 20px 15px 15px 15px !important;
-            display: flex;
-            flex-direction: column;
-        }
+/* Общие стили для кнопок-стрелок (теперь они компактные) */
+.home-scroll-btn {
+    background: transparent;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s var(--smooth);
+}
 
-        .profile-history-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
+.home-scroll-btn:active {
+    transform: scale(0.95);
+    color: var(--gold);
+}
 
-        /* Кнопка-стрелка сверху */
-        .history-toggle-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            transition: all 0.2s var(--smooth);
-        }
-        .history-toggle-btn:active {
-            transform: scale(0.9);
-        }
-        .history-toggle-btn svg {
-            width: 20px;
-            height: 20px;
-            transition: transform 0.3s ease;
-        }
-        /* Поворот стрелки при раскрытии */
-        .history-toggle-btn.expanded svg {
-            transform: rotate(180deg);
-        }
+.home-scroll-btn svg {
+    width: 18px;
+    height: 18px;
+}
 
-        /* Зона прокрутки (без фиксированной высоты) */
-        .profile-history-scroll {
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
+    /* =========================================
+    МИГАНИЕ ОБОДКА КНОПКИ (РОВНО 2 РАЗА)
+    ========================================= */
+@keyframes blinkEdge {
+    0%  { border-color: rgba(212, 175, 55, 0.3); box-shadow: none; } 
+    25%   { border-color: var(--gold); box-shadow: 0 0 7px var(--gold); } /* Вспышка 1 */
+    50%  { border-color: rgba(212, 175, 55, 0.3); box-shadow: none; }      /* Пауза 1 */
+    75%  { border-color: var(--gold); box-shadow: 0 0 7px var(--gold); } /* Вспышка 2 */
+    100%  { border-color: rgba(212, 175, 55, 0.3); box-shadow: none; }      /* Пауза 2 */
+    100% { border-color: rgba(212, 175, 55, 0.3); box-shadow: none; }      /* Конец */
+}
 
-        /* Когда история раскрыта (4+ записей) */
-        .profile-history-scroll.expanded {
-            max-height: 320px; /* Ограничиваем высоту, чтобы пошел скролл */
-            overflow-y: auto;
-            scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
-        }
-        .profile-history-scroll.expanded::-webkit-scrollbar {
-            display: none;
-        }
+/* Запускаем ТОЛЬКО когда приложение появляется (класс animate-in) */
+#appContainer.animate-in .home-cta-btn {
+    /* Длительность: 0.8с (4 фазы по 0.2с), задержка 0.5с */
+    animation: blinkEdge 0.8s ease-in-out 0.5s both;
+}
 
-        @keyframes slideDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+/* =========================================
+   БЕСКОНЕЧНАЯ КАРУСЕЛЬ АКЦИЙ
+   ========================================= */
+.promo-carousel-wrapper {
+    margin-top: 25px !important; 
+    margin-bottom: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible; 
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+    position: relative;
+    background: transparent !important;
+    box-shadow: none !important;
+}
 
-        /* Бейджи статусов */
-        .status-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-        .status-badge.active {
-            background: rgba(212, 175, 55, 0.15);
-            color: var(--gold);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-        }
-        .status-badge.completed {
-            background: rgba(255, 255, 255, 0.05);
-            color: #888;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        .status-badge.cancelled {
-            background: rgba(255, 77, 77, 0.1);
-            color: #ff4d4d;
-            border: 1px solid rgba(255, 77, 77, 0.2);
-        }
-        
-        /* Приглушаем отмененные и завершенные */
-        .home-booking-item.cancelled, .home-booking-item.completed {
-            opacity: 0.7;
-            border-left-color: #555;
-        }
+.promo-track {
+    display: flex;
+    gap: 12px; /* ИСПРАВЛЕНО: добавлен px */
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    
+    /* ИСПРАВЛЕНО: touch-action разрешает только горизонтальный свайп */
+    touch-action: pan-x; 
+    overscroll-behavior-x: contain;
+    overscroll-behavior-y: none;
+    
+    padding-top: 15px;
+    padding-bottom: 40px; 
+    
+    /* ЦЕНТРИРОВАНИЕ под карточку 260px */
+    padding-left: calc(50vw - 130px - 6px); 
+    padding-right: calc(50vw - 130px - 6px);
+    
+    align-items: center;
+    perspective: 1200px;
+}
 
-            /* =========================================
-           АНИМАЦИЯ ВЫЛЕТА СНИЗУ (БЕЗ ПРЫЖКОВ)
-           ========================================= */
-                /* По умолчанию все блоки видны */
-        .home-level-card, .home-bookings-card, .home-scroll-area, .home-bottom-actions, .install-app-btn, .promo-tabs, .promo-carousel-wrapper, .bottom-nav {
-            opacity: 1;
-            transform: translateY(0);
-        }
+.promo-track::-webkit-scrollbar {
+    display: none;
+}
 
-        /* Анимация применяется ТОЛЬКО когда есть класс animate-in */
-        /* Используем backwards, чтобы блоки ждали своей очереди внизу и не прыгали */
-        #appContainer.animate-in .home-level-card {
-            animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.1s backwards;
-        }
-        
-        #appContainer.animate-in .home-bookings-card {
-            animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.2s backwards;
-        }
-        
-        /* ДОБАВЛЕНО: Вылет самого скролла внутри карточки (чуть с задержкой) */
-        #appContainer.animate-in .home-scroll-area {
-            animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.25s backwards;
-        }
+.promo-item {
+    min-width: 260px !important; 
+    height: 220px !important;
+    scroll-snap-align: center;
+    border-radius: 24px;
+    
+    /* Бело-серый премиальный градиент */
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(20, 20, 22, 0.8) 100%);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 15px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, opacity 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    transform-origin: center center;
+    will-change: transform;
+    transform-style: preserve-3d;
+}
 
-                #appContainer.animate-in .home-bottom-actions {
-            animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.3s backwards;
-        }
+/* Текст и цена в тёмной теме тоже белые/серые */
+.promo-item h4 { color: #F5F5F5 !important; }
+.promo-item p { color: #A0A0A0 !important; }
+.promo-item .promo-price { color: #F5F5F5 !important; }
+.promo-item .promo-price span { color: #666 !important; }
+.promo-badge { border-color: rgba(255, 255, 255, 0.3) !important; color: #F5F5F5 !important; background: rgba(255, 255, 255, 0.1) !important; }
 
-        /* ДОБАВЛЕНО: Вылет кнопки "Скачать приложение" */
-        #appContainer.animate-in .install-app-btn {
-            animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.35s backwards;
-        }
+/* 3D-эффект (будет управляться через JS) */
+.promo-item.active {
+    transform: scale(1);
+    opacity: 1;
+    border-color: var(--gold);
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
+}
+.promo-item.inactive {
+    transform: scale(0.85);
+    opacity: 0.5;
+}
 
-        /* ДОБАВЛЕНО: Вылет табов (ТОП/БАРБЕР) */
-        #appContainer.animate-in .promo-tabs {
-            animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.4s backwards;
-        }
+.promo-item h4 {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--gold);
+    line-height: 1.2;
+    margin-bottom: 5px;
+    z-index: 2;
+}
 
-        /* ДОБАВЛЕНО: Вылет самой карусели акций */
-        #appContainer.animate-in .promo-carousel-wrapper {
-            animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.45s backwards;
-        }
-        
-        /* Чуть сдвинули нижнее меню, чтобы оно вылетало самым последним */
-        #appContainer.animate-in .bottom-nav {
-            animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.5s backwards;
-        }
+.promo-item p {
+    font-size: 12px;
+    color: var(--text-muted);
+    z-index: 2;
+}
 
-        @keyframes slideUpEntrance {
-            0% { opacity: 0; transform: translateY(60px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
+.promo-item .promo-price {
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    margin-top: auto;
+    z-index: 2;
+}
 
-            /* =========================================
-           КАРТОЧКА УРОВНЯ
-           ========================================= */
+.promo-item .promo-price span {
+    font-size: 14px;
+    color: var(--text-muted);
+    text-decoration: line-through;
+    margin-right: 8px;
+    font-weight: 600;
+}
 
-        .home-level-card {
-            display: flex;
-            flex-direction: row; 
-            align-items: center;
-            justify-content: flex-start;
-            text-align: left;
-            padding: 20px;
-            gap: 15px;
-            position: relative;
-            --level-color: #D4AF37;
-            
-            /* Жестко задаем скругление */
-            border-radius: 24px; 
-            
-            /* Прозрачный фон, заметное стекло */
-            background: rgba(20, 20, 22, 0.25); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px);
-            
-            border: 1px solid rgba(255, 255, 255, 0.15); 
-            box-shadow: 
-                inset 0 2px 5px rgba(255, 255, 255, 0.25), 
-                inset 0 -2px 5px rgba(0, 0, 0, 0.4),       
-                0 8px 32px rgba(0, 0, 0, 0.3);              
-        }
+/* Декоративная картинка/иконка на фоне карточки */
+.promo-bg-icon {
+    position: absolute;
+    right: -10px;
+    bottom: -10px;
+    font-size: 80px;
+    opacity: 0.1;
+    z-index: 1;
+    transform: rotate(-15deg);
+}
 
-        /* Сама бегущая линия (по умолчанию скрыта) */
-        .home-level-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 24px; /* Обязательно для закругления маски! */
-            padding: 2px; 
-            background: conic-gradient(
-                from var(--border-angle),
-                transparent 0deg,
-                var(--level-color) 20deg,
-                var(--level-color) 90deg, 
-                transparent 110deg,
-                transparent 360deg
-            );
-            -webkit-mask:
-                linear-gradient(#000 0 0) content-box,
-                linear-gradient(#000 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            
-            opacity: 0;
-            pointer-events: none;
-            z-index: 10;
-        }
+.install-app-btn {
+    flex: 1; 
+    width: auto;
+    min-height: 75px; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: rgba(20, 20, 22, 0.35);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.15); 
+    box-shadow: 
+        inset 0 2px 5px rgba(255, 255, 255, 0.15), 
+        inset 0 -2px 5px rgba(0, 0, 0, 0.3),       
+        0 8px 32px rgba(0, 0, 0, 0.2);
+    border-radius: 22px;
+    padding: 10px 15px !important; 
+    color: #fff;
+    font-size: 13px; /* Чуть уменьшили шрифт */
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s var(--spring);
+}
 
-        /* Класс, который запускает анимацию (добавляется через JS) */
-        .home-level-card.animate-border::before {
-            animation: runOnce 3s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
+/* Стили для текста внутри кнопки скачать */
+.install-text {
+    text-align: left;
+    line-height: 1.2;
+    font-size: 13px;
+}
+.install-app-btn:active { transform: scale(0.97); }
+.install-app-btn .plus-icon {
+    color: var(--gold);
+    font-size: 18px;
+    font-weight: 900;
+}
 
-        @keyframes runOnce {
-            0% { --border-angle: 0deg; opacity: 0; }
-            5% { opacity: 1; }      /* Быстро появляется */
-            50% { opacity: 1; }     /* Летит на полной яркости */
-            100% { --border-angle: 360deg; opacity: 0; } /* Плавно тает оставшуюся половину пути */
-        }
+/* Табы для акций */
+.promo-tabs {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    padding: 0 5px;
+}
+.promo-tab {
+    flex: 1;
+    background: rgba(20, 20, 22, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-muted);
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    transition: all 0.3s var(--smooth);
+}
+.promo-tab.active {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: rgba(212, 175, 55, 0.6);
+    color: var(--gold);
+}
 
-        /* Размеры и цвета (без изменений) */
-        .home-level-circle {
-            width: 120px; 
-            height: 120px;
-            flex-shrink: 0;
-        }
-        .home-level-circle .status-text-inner {
-            font-size: 26px; 
-            color: var(--level-color); 
-            transition: color 0.3s ease;
-        }
-        .home-level-info {
-            flex-grow: 1; 
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-        .home-level-info .status-level-name {
-            font-size: 22px; 
-            margin-bottom: 5px;
-            color: var(--level-color); 
-            transition: color 0.3s ease;
-        }
-        .home-level-info .status-hint {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.4;
-        }
-        .home-level-card .status-circle-bg,
-        .home-level-card .status-circle-progress {
-            stroke-width: 5;
-        }
-        .home-level-card .status-circle-progress {
-            stroke: var(--level-color); 
-            transition: stroke 0.3s ease, stroke-dashoffset 1s var(--smooth);
-        }
+/* Чуть уменьшаем отступы у кнопки записи, чтобы освободить место */
+.home-bottom-actions { margin-top: 5px; padding-bottom: 5px; }
+.promo-carousel-wrapper { margin-top: 10px; }
 
-                /* Мягкие края для блока записей */
-                /* Блок записей (добавлен отступ сверху) */
-                /* Блок записей */
-        .home-bookings-card {
-            margin-top: 15px !important; 
-            border-radius: 24px !important;
-            background: rgba(25, 25, 28, 0.45) !important; 
-            border: 1px solid rgba(255, 255, 255, 0.06) !important; 
-            box-shadow: 
-                inset 0 1px 2px rgba(255, 255, 255, 0.05),
-                0 8px 30px rgba(0, 0, 0, 0.2) !important;
-            padding: 20px 15px 15px 15px !important; /* Уменьшили нижний отступ */
-        }
+    /* =========================================
+    АККУРАТНЫЕ КНОПКИ В МОДАЛКЕ УПРАВЛЕНИЯ
+    ========================================= */
+.action-modal-btn {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 10px; /* Одинаковый отступ между кнопками */
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s var(--smooth);
+}
+.action-modal-btn:last-child {
+    margin-bottom: 0; /* Убираем отступ у последней кнопки */
+}
+.action-modal-btn:active {
+    transform: scale(0.96);
+}
 
-        /* Зона прокрутки */
-        .home-scroll-area {
-            max-height: 110px; /* Чуть уменьшили высоту, чтобы блок не был огромным */
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            scroll-snap-type: y mandatory; 
-            scrollbar-width: none; 
-        }
-        
-        .home-scroll-area::-webkit-scrollbar {
-            display: none; 
-        }
+/* Кнопка "Перенести" (Золотая) */
+.action-btn-primary {
+    background: var(--gold);
+    color: #000;
+}
 
-        .home-scroll-area .home-booking-item {
-            scroll-snap-align: start;
-            margin-bottom: 0; 
-        }
+/* Кнопка "Отменить" (Красная, прозрачная) */
+.action-btn-danger {
+    background: rgba(255, 77, 77, 0.1);
+    color: #ff4d4d;
+    border: 1px solid rgba(255, 77, 77, 0.4);
+}
 
-        .home-scroll-area .home-booking-item:not(:last-child) {
-            margin-bottom: 10px; 
-        }
+/* Кнопка "Закрыть" (Серая) */
+.action-btn-cancel {
+    background: transparent;
+    color: var(--text-muted);
+    border: 1px solid #555;
+}
 
-        /* Общие стили для кнопок-стрелок (теперь они компактные) */
-        .home-scroll-btn {
-            background: transparent;
-            border: none;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: all 0.2s var(--smooth);
-        }
-        
-        .home-scroll-btn:active {
-            transform: scale(0.95);
-            color: var(--gold);
-        }
-        
-        .home-scroll-btn svg {
-            width: 18px;
-            height: 18px;
-        }
-        
-            /* =========================================
-           МИГАНИЕ ОБОДКА КНОПКИ (РОВНО 2 РАЗА)
-           ========================================= */
-        @keyframes blinkEdge {
-            0%  { border-color: rgba(212, 175, 55, 0.3); box-shadow: none; } 
-            25%   { border-color: var(--gold); box-shadow: 0 0 7px var(--gold); } /* Вспышка 1 */
-            50%  { border-color: rgba(212, 175, 55, 0.3); box-shadow: none; }      /* Пауза 1 */
-            75%  { border-color: var(--gold); box-shadow: 0 0 7px var(--gold); } /* Вспышка 2 */
-            100%  { border-color: rgba(212, 175, 55, 0.3); box-shadow: none; }      /* Пауза 2 */
-            100% { border-color: rgba(212, 175, 55, 0.3); box-shadow: none; }      /* Конец */
-        }
+/* Вылет скролла внутри карточки активных записей */
+#appContainer.animate-in .home-scroll-area {
+    animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.25s backwards;
+}
+/* =========================================
+АДАПТАЦИЯ АКЦИЙ (САЙТ vs ПРИЛОЖЕНИЕ)
+========================================= */
 
-        /* Запускаем ТОЛЬКО когда приложение появляется (класс animate-in) */
-        #appContainer.animate-in .home-cta-btn {
-            /* Длительность: 0.8с (4 фазы по 0.2с), задержка 0.5с */
-            animation: blinkEdge 0.8s ease-in-out 0.5s both;
-        }
+/* --- ДЛЯ САЙТА (по умолчанию) --- */
+.promo-tabs { 
+    display: none !important; /* Прячем вкладки на сайте */
+}       
+.promo-badge { 
+    display: block; /* Показываем бейджи на сайте */
+}
 
-            /* =========================================
-           БЕСКОНЕЧНАЯ КАРУСЕЛЬ АКЦИЙ
-           ========================================= */
-        .promo-carousel-wrapper {
-            margin-top: 20px;
-            margin-bottom: 0; /* Убрали -20px, чтобы тень не обрезалась снизу */
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: visible; /* Разрешаем свечению выходить за пределы контейнера */
-            width: calc(100% + 40px);
-            margin-left: -20px;
-            margin-right: -20px;
-            position: relative;
-        }
+/* --- ДЛЯ ПРИЛОЖЕНИЯ (PWA) --- */
+html.is-pwa .promo-tabs { 
+    display: flex !important; /* Показываем вкладки в PWA */
+}       
+html.is-pwa .promo-badge { 
+    display: none !important; /* Прячем бейджи в PWA */
+}      
+html.is-pwa .install-app-btn { 
+    display: none !important; /* Прячем кнопку Скачать в PWA */
+}
 
-        .promo-track {
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
-            
-            padding-top: 10px;
-            
-            /* БЫЛО: padding-bottom: 35px; */
-            padding-bottom: 25px; /* СТАЛО: уменьшили отступ снизу */
-            
-            padding-left: calc(50vw - 130px); 
-            padding-right: calc(50vw - 130px);
-            
-            align-items: center;
-        }
-        
-        .promo-track::-webkit-scrollbar {
-            display: none; /* Chrome/Safari */
-        }
+/* Стиль бейджа (ТОП / БАРБЕР) */
+.promo-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(212, 175, 55, 0.1);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    color: var(--gold);
+    font-size: 9px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    z-index: 5;
+}
 
-        .promo-item {
-            min-width: 260px; 
-            
-            /* БЫЛО: height: 160px; */
-            height: 140px; /* СТАЛО: уменьшили высоту карточки */
-            
-            scroll-snap-align: center;
-            border-radius: 24px;
-            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(30, 30, 30, 0.8) 100%);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            
-            /* БЫЛО: padding: 20px; */
-            padding: 15px; /* СТАЛО: уменьшили внутренние отступы */
-            
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            transform-origin: center center;
-            will-change: transform;
-        }
+/* Отступаем текст, чтобы бейдж не налезал */
+.promo-item h4 {
+    padding-right: 65px !important; 
+}
+/* =========================================
+ТАКТИЛЬНЫЙ ОТКЛИК НА НАЖАТИЕ
+========================================= */
+.is-pressing {
+    transform: scale(0.95) !important;
+    filter: brightness(1.12) !important;
+    transition:
+        transform 0.07s cubic-bezier(0.25, 1, 0.5, 1),
+        filter 0.07s ease !important;
+}
 
-        /* 3D-эффект (будет управляться через JS) */
-        .promo-item.active {
-            transform: scale(1);
-            opacity: 1;
-            border-color: var(--gold);
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
-        }
-        .promo-item.inactive {
-            transform: scale(0.85);
-            opacity: 0.5;
-        }
+/* Обратная связь при отмене долгого нажатия */
+.is-cancelled {
+    animation: cancelShake 0.42s ease;
+}
 
-        .promo-item h4 {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--gold);
-            line-height: 1.2;
-            margin-bottom: 5px;
-            z-index: 2;
-        }
+@keyframes cancelShake {
+    0%   { filter: brightness(1.2); }
+    30%  { filter: brightness(0.7) saturate(0.3); }
+    70%  { filter: brightness(1.4) saturate(1.3); }
+    100% { filter: brightness(1); }
+}
 
-        .promo-item p {
-            font-size: 12px;
-            color: var(--text-muted);
-            z-index: 2;
-        }
+#viewHome {
+    overflow-y: clip; /* ЗАМЕНИЛИ hidden на clip */
+    padding-bottom: 90px; 
+    background: linear-gradient(var(--bg-gradient-start), var(--bg-gradient-end)), var(--bg-image) center/cover !important;
+}
 
-        .promo-item .promo-price {
-            font-size: 20px;
-            font-weight: 800;
-            color: #fff;
-            margin-top: auto;
-            z-index: 2;
-        }
+/* =========================================
+ВЕРХНИЙ РЯД: УРОВЕНЬ + КНОПКА СКАЧАТЬ
+========================================= */
+.home-top-row {
+    display: flex;
+    gap: 10px; /* Расстояние между уровнем и кнопкой */
+    width: 100%;
+    margin-bottom: 0 !important; /* Отступ снизу (вместо старого margin у level-card) */
+}
 
-        .promo-item .promo-price span {
-            font-size: 14px;
-            color: var(--text-muted);
-            text-decoration: line-through;
-            margin-right: 8px;
-            font-weight: 600;
-        }
+/* Уровень занимает всё свободное место (около 75-80%) */
+.home-top-row .home-level-card {
+    flex: 1; 
+    margin-bottom: 0; /* Убираем старый отступ */
+    min-width: 0;
+}
 
-        /* Декоративная картинка/иконка на фоне карточки */
-        .promo-bg-icon {
-            position: absolute;
-            right: -10px;
-            bottom: -10px;
-            font-size: 80px;
-            opacity: 0.1;
-            z-index: 1;
-            transform: rotate(-15deg);
-        }
+/* Чтобы плюсик и текст в кнопке не ломались */
+.install-text {
+    white-space: nowrap;
+}
 
-                /* Кнопка "Скачать приложение" */
-        .install-app-btn {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: rgba(20, 20, 22, 0.35); /* Стеклянный фон */
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.15); 
-            box-shadow: 
-                inset 0 2px 5px rgba(255, 255, 255, 0.15), 
-                inset 0 -2px 5px rgba(0, 0, 0, 0.3),       
-                0 8px 32px rgba(0, 0, 0, 0.2);
-            border-radius: 16px;
-            padding: 12px;
-            color: #fff;
-            font-size: 14px;
-            font-weight: 700;
-            margin-top: 10px;
-            cursor: pointer;
-            transition: transform 0.2s var(--spring);
-        }
-        .install-app-btn:active { transform: scale(0.97); }
-        .install-app-btn .plus-icon {
-            color: var(--gold);
-            font-size: 18px;
-            font-weight: 900;
-        }
+/* =========================================
+ЧУТЬ УМЕНЬШАЕМ ОТСТУПЫ, ЧТОБЫ АКЦИИ БЫЛИ ВИДНЫ
+========================================= */
 
-        /* Табы для акций */
-        .promo-tabs {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-            margin-bottom: 5px;
-            padding: 0 5px;
-        }
-        .promo-tab {
-            flex: 1;
-            background: rgba(20, 20, 22, 0.55);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-muted);
-            padding: 8px 12px;
-            border-radius: 12px;
-            font-size: 11px;
-            font-weight: 600;
-            transition: all 0.3s var(--smooth);
-        }
-        .promo-tab.active {
-            background: rgba(212, 175, 55, 0.15);
-            border-color: rgba(212, 175, 55, 0.6);
-            color: var(--gold);
-        }
+/* Делаем кнопку "Записаться" крупнее и выше */
+.home-cta-btn {
+    padding: 18px 15px !important; /* Увеличили высоту */
+    border-radius: 22px !important;
+}
+.home-cta-btn .cta-text span {
+    font-size: 18px; /* Чуть больше шрифт */
+}
 
-        /* Чуть уменьшаем отступы у кнопки записи, чтобы освободить место */
-        .home-bottom-actions { margin-top: 5px; padding-bottom: 5px; }
-        .promo-carousel-wrapper { margin-top: 10px; }
+/* Уменьшаем пустоту вокруг карусели акций */
+.promo-track {
+    padding-bottom: 60px !important; /* Было 35px, стало 20px */
+    perspective: 1200px;
+}
 
-            /* =========================================
-           АККУРАТНЫЕ КНОПКИ В МОДАЛКЕ УПРАВЛЕНИЯ
-           ========================================= */
-        .action-modal-btn {
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 10px; /* Одинаковый отступ между кнопками */
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s var(--smooth);
-        }
-        .action-modal-btn:last-child {
-            margin-bottom: 0; /* Убираем отступ у последней кнопки */
-        }
-        .action-modal-btn:active {
-            transform: scale(0.96);
-        }
+.promo-item {
+    height: 140px !important; /* Чуть уменьшили высоту карточек (было 160px) */
+    padding: 15px !important;
+    transform-style: preserve-3d; /* ДОБАВИТЬ */
+    transform-origin: center center; /* ДОБАВИТЬ */
+    will-change: transform, opacity; /* Оптимизация для браузера */
+}
 
-        /* Кнопка "Перенести" (Золотая) */
-        .action-btn-primary {
-            background: var(--gold);
-            color: #000;
-        }
+/* =========================================
+СКРЫТИЕ ШАПКИ НА ГЛАВНОЙ И ЗАПИСИ
+========================================= */
+.app-header {
+    transition: 
+        opacity 0.35s cubic-bezier(0.25, 1, 0.5, 1),
+        transform 0.35s cubic-bezier(0.25, 1, 0.5, 1);
+}
 
-        /* Кнопка "Отменить" (Красная, прозрачная) */
-        .action-btn-danger {
-            background: rgba(255, 77, 77, 0.1);
-            color: #ff4d4d;
-            border: 1px solid rgba(255, 77, 77, 0.4);
-        }
+/* Когда body имеет класс header-hidden — шапка уезжает вверх */
+body.header-hidden .app-header {
+    opacity: 0;
+    transform: translateY(-100%);
+    pointer-events: none;
+}
 
-        /* Кнопка "Закрыть" (Серая) */
-        .action-btn-cancel {
-            background: transparent;
-            color: var(--text-muted);
-            border: 1px solid #555;
-        }
+/* Уменьшаем верхний отступ, раз шапки нет */
+body.header-hidden #viewHome.active,
+body.header-hidden #viewBook.active {
+    padding-top: calc(20px + env(safe-area-inset-top, 0px));
+}
 
-        /* Вылет скролла внутри карточки активных записей */
-        #appContainer.animate-in .home-scroll-area {
-            animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.25s backwards;
-        }
-        /* =========================================
-        АДАПТАЦИЯ АКЦИЙ (САЙТ vs ПРИЛОЖЕНИЕ)
-        ========================================= */
+/* =========================================
+НАЗВАНИЕ БРЕНДА В УГЛУ КАРТОЧКИ УРОВНЯ
+========================================= */
+.shop-brand-name {
+    position: absolute;
+    top: 16px;
+    right: 18px;
+    z-index: 2;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-main);
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    padding-bottom: 5px;
+}
 
-        /* --- ДЛЯ САЙТА (по умолчанию) --- */
-        .promo-tabs { 
-            display: none !important; /* Прячем вкладки на сайте */
-        }       
-        .promo-badge { 
-            display: block; /* Показываем бейджи на сайте */
-        }
+.shop-brand-name::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, var(--gold) 30%, var(--gold) 100%);
+    opacity: 0.6;
+}
 
-        /* --- ДЛЯ ПРИЛОЖЕНИЯ (PWA) --- */
-        html.is-pwa .promo-tabs { 
-            display: flex !important; /* Показываем вкладки в PWA */
-        }       
-        html.is-pwa .promo-badge { 
-            display: none !important; /* Прячем бейджи в PWA */
-        }      
-        html.is-pwa .install-app-btn { 
-            display: none !important; /* Прячем кнопку Скачать в PWA */
-        }
+.shop-brand-name span {
+    color: var(--gold);
+    margin-left: 1px;
+}
 
-        /* Стиль бейджа (ТОП / БАРБЕР) */
-        .promo-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(212, 175, 55, 0.1);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            color: var(--gold);
-            font-size: 9px;
-            font-weight: 800;
-            padding: 4px 8px;
-            border-radius: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            z-index: 5;
-        }
+/* --- БЛОК С ТЕКСТОМ УРОВНЯ --- */
+.home-level-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;   /* Центрируем весь текст по вертикали */
+    align-items: flex-start;
+    flex-grow: 1;
+    align-self: stretch;
+    padding-right: 15px;       /* Убрали жесткие 100px, оставили небольшой отступ */
+    padding-top: 15px;         /* Чуть опускаем текст, чтобы он не заезжал под бренд */
+    z-index: 1;
+}
 
-        /* Отступаем текст, чтобы бейдж не налезал */
-        .promo-item h4 {
-            padding-right: 65px !important; 
-        }
-        /* =========================================
-        ТАКТИЛЬНЫЙ ОТКЛИК НА НАЖАТИЕ
-        ========================================= */
-        .is-pressing {
-            transform: scale(0.95) !important;
-            filter: brightness(1.12) !important;
-            transition:
-                transform 0.07s cubic-bezier(0.25, 1, 0.5, 1),
-                filter 0.07s ease !important;
-        }
+/* Название уровня (VIP) — строго по центру */
+.home-level-info .status-level-name {
+    font-size: 22px;
+    margin-bottom: 4px;        /* Небольшой отступ до текста подсказки */
+    color: var(--level-color);
+    transition: color 0.3s ease;
+    line-height: 1.1;
+}
 
-        /* Обратная связь при отмене долгого нажатия */
-        .is-cancelled {
-            animation: cancelShake 0.42s ease;
-        }
+/* Подсказка (сколько осталось) — растягиваем на всю ширину */
+.home-level-info .status-hint {
+    font-size: 13px;           /* Чуть увеличили размер для читаемости */
+    color: var(--text-muted);
+    line-height: 1.4;
+    max-width: 100%;           /* Разрешаем тексту занимать всю ширину */
+    white-space: normal;       /* Разрешаем перенос, но он будет красивым */
+}
 
-        @keyframes cancelShake {
-            0%   { filter: brightness(1.2); }
-            30%  { filter: brightness(0.7) saturate(0.3); }
-            70%  { filter: brightness(1.4) saturate(1.3); }
-            100% { filter: brightness(1); }
-        }
+/* =========================================
+   ЭКРАН ЗАПИСИ: ВЕРХНИЙ БЛОК С КНОПКОЙ
+   ========================================= */
+.book-top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(20, 20, 22, 0.25);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    padding: 15px 20px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 
+        inset 0 2px 5px rgba(255, 255, 255, 0.25), 
+        inset 0 -2px 5px rgba(0, 0, 0, 0.4),       
+        0 8px 32px rgba(0, 0, 0, 0.3);
+}
 
-        #viewHome {
-            overflow: hidden;
-            padding-bottom: 90px; /* оставляем место под фиксированное нижнее меню */
-        }
+.book-top-info {
+    flex: 1;
+    padding-right: 15px;
+}
 
-        /* =========================================
-        ВЕРХНИЙ РЯД: УРОВЕНЬ + КНОПКА СКАЧАТЬ
-        ========================================= */
-        .home-top-row {
-            display: flex;
-            gap: 10px; /* Расстояние между уровнем и кнопкой */
-            width: 100%;
-            margin-bottom: 15px; /* Отступ снизу (вместо старого margin у level-card) */
-        }
+.book-top-info h2 {
+    font-size: 18px;
+    color: var(--text-main);
+    margin-bottom: 5px;
+    line-height: 1.2;
+}
 
-        /* Уровень занимает всё свободное место (около 75-80%) */
-        .home-top-row .home-level-card {
-            flex: 1; 
-            margin-bottom: 0; /* Убираем старый отступ */
-            min-width: 0;
-        }
+.book-top-info p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.3;
+}
 
-        /* Кнопка скачать (занимает около 20-25%) */
-        .home-top-row .install-app-btn {
-            width: 75px; /* Фиксированная ширина справа */
-            flex-shrink: 0;
-            margin-top: 0; /* Убираем старый отступ */
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
-            font-size: 10px;
-            text-align: center;
-            line-height: 1.2;
-            padding: 10px 5px;
-            border-radius: 20px;
-        }
+.book-phone-btn {
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 12px 15px;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.2s var(--spring);
+    flex-shrink: 0;
+}
 
-        /* Чтобы плюсик и текст в кнопке не ломались */
-        .install-text {
-            white-space: nowrap;
-        }
+.book-phone-btn svg {
+    width: 24px;
+    height: 24px;
+}
 
-        /* =========================================
-        ЧУТЬ УМЕНЬШАЕМ ОТСТУПЫ, ЧТОБЫ АКЦИИ БЫЛИ ВИДНЫ
-        ========================================= */
+.book-phone-btn span {
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+}
 
-        /* Немного сжимаем кнопку "Записаться" */
-        .home-cta-btn {
-            padding: 10px 15px !important; /* Было 14px, стало 10px */
-        }
+.book-phone-btn:active {
+    transform: scale(0.95);
+    background: rgba(212, 175, 55, 0.3);
+}
 
-        /* Уменьшаем пустоту вокруг карусели акций */
-        .promo-track {
-            padding-bottom: 20px !important; /* Было 35px, стало 20px */
-        }
+/* =========================================
+   ПРОФИЛЬ: БЛОК С ТЕЛЕФОНАМИ
+   ========================================= */
+.profile-contact-block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-        .promo-item {
-            height: 140px !important; /* Чуть уменьшили высоту карточек (было 160px) */
-            padding: 15px !important;
-        }
+.contact-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+
+.contact-row:active {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.contact-label {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.contact-value {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+.contact-value.gold {
+    color: var(--gold);
+}
+
+/* =========================================
+   КНОПКА "ЗАПИСЬ ПО ТЕЛЕФОНУ" (как Записаться)
+   ========================================= */
+.phone-cta-btn {
+    width: 100%; 
+    margin: 0 0 90px 0; /* Опустили ниже (отступ сверху 25px) */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 55, 0.12); /* Такой же золотой фон */
+    backdrop-filter: blur(15px); 
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(212, 175, 55, 0.3); /* Такая же рамка */
+    border-radius: 22px;
+    padding: 18px 15px; /* Такая же высота */
+    color: var(--gold); /* Золотой текст */
+    cursor: pointer;
+    box-shadow: 
+        inset 0 1px 1px rgba(255, 255, 255, 0.2), 
+        0 8px 25px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s var(--spring);
+}
+
+.phone-cta-btn:active {
+    transform: scale(0.96);
+    background: rgba(212, 175, 55, 0.25);
+}
+
+.phone-cta-btn svg {
+    color: var(--gold); /* Иконка трубки будет золотой */
+}
+
+
+/* =========================================
+   АНИМАЦИЯ БЕЛЫХ ЛИНИЙ И СВЕЧЕНИЯ (ТЁМНАЯ ТЕМА)
+   ========================================= */
+@property --promo-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+/* Создаем псевдоэлемент для линий */
+.promo-item::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    
+    padding: 1px; /* БЫЛО 2px. Теперь линия в 4 раза толще */
+    
+    /* Старт с правого верхнего угла (+45deg) */
+    background: conic-gradient(
+        from calc(var(--promo-angle) + 45deg),
+        transparent 0deg,
+        rgba(255, 255, 255, 1) 30deg,   /* Линия стала в 3 раза длиннее (было 10deg) */
+        transparent 60deg,
+        transparent 180deg,
+        rgba(255, 255, 255, 1) 210deg,  /* Вторая линия */
+        transparent 240deg,
+        transparent 360deg
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+/* Запуск линий: строго линейная скорость */
+.promo-item.is-active-card::before {
+    animation: promoLineRun 0.6s linear forwards; /* БЫЛО 1.2s. Теперь в 2 раза быстрее */
+}
+
+@keyframes promoLineRun {
+    0% { 
+        --promo-angle: 0deg; 
+        opacity: 0; 
+    }
+    15% { 
+        opacity: 1; /* Плавно проявляем на ходу */
+    }
+    80% { 
+        opacity: 1; 
+    }
+    100% { 
+        --promo-angle: 180deg; 
+        opacity: 0; 
+    }
+}
+
+/* Белое свечение (задержка 0.5s, чтобы началось на затухании линий) */
+.promo-item.is-active-card {
+    animation: promoGlowWhite 0.3s ease-in-out 0.35s forwards; 
+}
+
+@keyframes promoGlowWhite {
+    0% { 
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); 
+        border-color: rgba(255, 255, 255, 0.15); 
+    }
+    100% { 
+        box-shadow: 0 10px 30px rgba(255, 255, 255, 0.15), 0 0 20px rgba(255, 255, 255, 0.1); 
+        border-color: rgba(255, 255, 255, 0.4); 
+    }
+}
