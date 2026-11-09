@@ -34,6 +34,8 @@ const servicesData = {
     ]
 };
 
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
 const barbersData = [
     { id: 'b_al', name: 'Али', role: 'ТОП-БАРБЕР', photo: 'img/Ali.jpg', type: 'top' },
     { id: 'b_ben', name: 'Бенджо', role: 'Барбер', photo: 'img/Benjo.jpg', type: 'barber' },
@@ -1085,12 +1087,14 @@ function verifySms() {
     } else showToast("Неверный код", "error");
 }
 function updateAuthUI() {
-    document.getElementById('loginBtnProfile').style.display = currentUser ? 'none' : 'block';
-    document.getElementById('logoutBtn').style.display = currentUser ? 'block' : 'none';
+    const loginBtn = document.getElementById('loginBtnProfile');
+    const logoutBtn = document.getElementById('logoutBtn');
+    
+    if (loginBtn) loginBtn.style.display = currentUser ? 'none' : 'block';
+    if (logoutBtn) logoutBtn.style.display = currentUser ? 'block' : 'none';
     
     const userPhoneRow = document.getElementById('profileUserPhoneRow');
     const userPhoneVal = document.getElementById('profileUserPhoneVal');
-
     if (currentUser) {
         document.getElementById('profileHeader').innerHTML = `
             <div class="profile-avatar-gold">
@@ -1431,26 +1435,6 @@ function renderPromos(type) {
             });
         }
     }, 50);
-}
-
-function createPromoHTML(promo) {
-    const badgeText = promo.type === 'top' ? 'ТОП' : 'БАРБЕР';
-
-    return `
-        <div class="promo-item" onclick="openPromoCart('${promo.serviceId}', '${promo.barberId}')">
-            <!-- Бейдж (на сайте виден, в приложении скрыт через CSS) -->
-            <div class="promo-badge">${badgeText}</div>
-            
-            <div class="promo-bg-icon">${promo.icon}</div>
-            <div>
-                <h4>${promo.title}</h4>
-                <p>${promo.desc}</p>
-            </div>
-            <div class="promo-price">
-                <span>${promo.oldPrice} ₽</span>${promo.price} ₽
-            </div>
-        </div>
-    `;
 }
 
 function createPromoHTML(promo) {
