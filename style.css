@@ -2808,3 +2808,26 @@ html:not(.is-pwa) .phone-cta-btn {
 html.is-pwa .phone-cta-btn {
     display: flex !important;
 }
+
+/* =========================================
+   ФИКС ТОЛЬКО ДЛЯ IPHONE / IPAD (SAFARI)
+   ========================================= */
+@supports (-webkit-touch-callout: none) {
+    
+    /* 1. Исправляем высоту экрана под адресную строку Safari */
+    body, #appContainer {
+        height: 100dvh !important;
+    }
+
+    /* 2. Разрешаем прокрутку в Личном кабинете */
+    #viewProfile.active {
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important; /* Плавный скролл как в приложении */
+    }
+
+    /* 3. Критически важный фикс: не даем flex-контейнеру обрезать контент */
+    .view {
+        min-height: 0; 
+        -webkit-overflow-scrolling: touch;
+    }
+}

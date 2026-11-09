@@ -12,8 +12,8 @@ html.light-theme {
     --text-muted: #4A4A4A;  /* Темнее серый, чтобы было видно */
 
     --bg-image: url('img/background-light.jpg');
-    --bg-gradient-start: rgba(226, 226, 232, 0.60);  /* Темнее */
-    --bg-gradient-end: rgba(226, 226, 232, 0.90);    /* Темнее */
+    --bg-gradient-start: rgba(255, 255, 255, 0.855);  
+    --bg-gradient-end: rgba(255, 255, 255, 0.918); 
 
 }
 
@@ -328,4 +328,102 @@ html.light-theme .splash-greeting-oval {
 html.light-theme .splash-greeting-oval span {
     color: var(--gold) !important; /* Имя оставляем золотым */
     text-shadow: 0 0 10px rgba(212, 175, 55, 0.6); /* Добавляем золотое свечение имени */
+}
+
+/* =========================================
+   УВЕДОМЛЕНИЯ (TOAST) В СВЕТЛОЙ ТЕМЕ
+   ========================================= */
+html.light-theme .toast {
+    background: rgba(255, 255, 255, 0.98) !important; /* Белый фон */
+    color: var(--text-main) !important; /* Темный текст */
+    border: 1px solid var(--gold) !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+}
+/* =========================================
+   СТЕКЛЯННЫЕ ОБВОДКИ И ФИКС СТИКЕРА (СВЕТЛАЯ ТЕМА)
+   ========================================= */
+
+/* 1. Тонкая серая стеклянная обводка для ВСЕХ блоков */
+html.light-theme .header-pill,
+html.light-theme .bottom-nav,
+html.light-theme .home-level-card,
+html.light-theme .profile-main-card,
+html.light-theme .home-bookings-card,
+html.light-theme .profile-history-card,
+html.light-theme .service-card,
+html.light-theme .master-card,
+html.light-theme .tab-btn,
+html.light-theme .promo-tab,
+html.light-theme .install-app-btn,
+html.light-theme .nav-bubble,
+html.light-theme .history-toggle-btn,
+html.light-theme .promo-item,
+html.light-theme .book-top-section,
+html.light-theme .contact-row,
+html.light-theme .modal-content,
+html.light-theme .drawer,
+html.light-theme .phone-cta-btn {
+    /* Обводка чуть толще и темнее */
+    border: 1.5px solid rgba(0, 0, 0, 0.15) !important; 
+    
+    /* ЭФФЕКТ СТЕКЛА: блик сверху и мягкая тень снизу */
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),   /* Яркий верхний блик */
+        inset 0 -1px 2px rgba(0, 0, 0, 0.05),     /* Легкая нижняя тень */
+        0 4px 15px rgba(0, 0, 0, 0.03) !important; /* Внешняя мягкая тень */
+}
+
+/* =========================================
+   СТЕКЛЯННЫЕ ОБВОДКИ И ФИКС СТИКЕРА (СВЕТЛАЯ ТЕМА)
+   ========================================= */
+
+/* 1. Тонкая серая стеклянная обводка для ВСЕХ блоков */
+html.light-theme .header-pill,
+html.light-theme .bottom-nav,
+html.light-theme .home-level-card,
+html.light-theme .profile-main-card,
+html.light-theme .home-bookings-card,
+html.light-theme .profile-history-card,
+html.light-theme .service-card,
+html.light-theme .master-card,
+html.light-theme .tab-btn,
+html.light-theme .promo-tab,
+html.light-theme .install-app-btn,
+html.light-theme .nav-bubble,
+html.light-theme .history-toggle-btn,
+html.light-theme .promo-item,
+html.light-theme .book-top-section,
+html.light-theme .contact-row,
+html.light-theme .modal-content,
+html.light-theme .drawer,
+html.light-theme .phone-cta-btn {
+    /* Обводка чуть толще и темнее */
+    border: 1.5px solid rgba(0, 0, 0, 0.15) !important; 
+    
+    /* ЭФФЕКТ СТЕКЛА: блик сверху и мягкая тень снизу */
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),   /* Яркий верхний блик */
+        inset 0 -1px 2px rgba(0, 0, 0, 0.05),     /* Легкая нижняя тень */
+        0 4px 15px rgba(0, 0, 0, 0.03) !important; /* Внешняя мягкая тень */
+}
+
+/* 2. Возвращаем золотую обводку активной карточке акции */
+html.light-theme .promo-item.is-active-card {
+    border-color: var(--gold) !important;
+    /* Оставляем блик, но убираем серую тень, чтобы свечение было ярче */
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),   
+        0 10px 30px rgba(231, 201, 126, 0.221) !important; 
+}
+
+/* 3. Фикс исчезающего стикера на телефоне */
+html.light-theme .promo-bg-icon {
+    opacity: 0.25 !important;
+    filter: none !important; 
+}
+
+/* 3. Фикс исчезающего стикера на телефоне */
+html.light-theme .promo-bg-icon {
+    opacity: 0.25 !important;
+    filter: none !important; 
 }
