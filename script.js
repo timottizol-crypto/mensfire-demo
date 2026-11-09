@@ -34,7 +34,6 @@ const servicesData = {
     ]
 };
 
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
 const barbersData = [
     { id: 'b_al', name: 'Али', role: 'ТОП-БАРБЕР', photo: 'img/Ali.jpg', type: 'top' },
@@ -1144,7 +1143,7 @@ function updateStatusUI() {
     const statusSub = document.getElementById('statStatusSub');
     const profileCircle = document.getElementById('profileProgressCircle');
 
-    if (!currentUser) return;
+    if (!currentUser || !statusText) return;
 
     // Считаем только валидные визиты
     const validVisitsCount = bookings.filter(b => b.status === 'active' || b.status === 'completed').length;

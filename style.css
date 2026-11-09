@@ -157,7 +157,7 @@ body {
     ОСНОВНОЕ ПРИЛОЖЕНИЕ
     ========================== */
 #appContainer {
-    height: 100vh;
+    height: 100dvh;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -1608,15 +1608,16 @@ body {
 .home-bottom-actions {
     display: flex;
     gap: 12px;
-    margin-top: 10px;
-    padding-bottom: 20px;
+    margin-top: auto !important; /* Прижимает блок к низу */
+    padding-top: clamp(5px, 1.5vh, 15px) !important; 
+    padding-bottom: clamp(5px, 1vh, 15px); 
 }
 
         /* Кнопка записи (Стеклянная, прозрачная с желтым оттенком) */
 .home-cta-btn {
     flex: 1;
     width: auto; 
-    min-height: 75px;
+    min-height: clamp(45px, 7vh, 75px); /* Высота сжимается от 75 до 45px */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1625,13 +1626,26 @@ body {
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(212, 175, 55, 0.3); 
     border-radius: 20px;
-    padding: 15px 15px !important; 
+    padding: clamp(8px, 1.5vh, 18px) 15px !important; /* Отступы сжимаются */
     color: var(--gold); 
     cursor: pointer;
-    box-shadow: 
-        inset 0 1px 1px rgba(255, 255, 255, 0.2), 
-        0 8px 25px rgba(0, 0, 0, 0.2);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 8px 25px rgba(0, 0, 0, 0.2);
     transition: all 0.2s var(--spring);
+}
+
+.home-scroll-area {
+    height: clamp(80px, 12vh, 115px) !important; /* Высота скролла записей теперь тоже резиновая */
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y !important;
+    scroll-snap-type: y mandatory; 
+    scrollbar-width: none; 
+    display: flex;
+    flex-direction: column;
+}
+/* Текст внутри кнопки тоже чуть сжимается на маленьких экранах */
+.home-cta-btn .cta-text span {
+    font-size: clamp(14px, 2.2vh, 18px) !important; 
 }
 
 .home-cta-btn:active {
@@ -1897,7 +1911,7 @@ body {
     animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.25s backwards;
 }
 
-        #appContainer.animate-in .home-bottom-actions {
+#appContainer.animate-in .home-bottom-actions {
     animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.3s backwards;
 }
 
@@ -2057,16 +2071,7 @@ body {
     padding: 15px 15px 10px 15px !important; 
 }
 
-.home-scroll-area {
-    height: 115px !important; /* БЫЛО: 138px */
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y !important;
-    scroll-snap-type: y mandatory; 
-    scrollbar-width: none; 
-    display: flex;
-    flex-direction: column;
-}
+
 /* Текст, когда нет записей */
 .empty-bookings-msg {
     display: flex;
@@ -2149,8 +2154,8 @@ body {
    БЕСКОНЕЧНАЯ КАРУСЕЛЬ АКЦИЙ
    ========================================= */
 .promo-carousel-wrapper {
-    margin-top: 25px !important; 
-    margin-bottom: 0 !important;
+    margin-top: clamp(5px, 1.5vh, 20px) !important; 
+    margin-bottom: clamp(5px, 1.5vh, 20px) !important; 
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2159,30 +2164,24 @@ body {
     margin-left: -20px;
     margin-right: -20px;
     position: relative;
-    background: transparent !important;
-    box-shadow: none !important;
 }
 
 .promo-track {
     display: flex;
-    gap: 12px; /* ИСПРАВЛЕНО: добавлен px */
+    gap: 12px; 
     overflow-x: auto;
+    overflow-y: hidden;
     scroll-snap-type: x mandatory;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
-    
-    /* ИСПРАВЛЕНО: touch-action разрешает только горизонтальный свайп */
     touch-action: pan-x; 
     overscroll-behavior-x: contain;
-    overscroll-behavior-y: none;
     
     padding-top: 15px;
-    padding-bottom: 40px; 
+    padding-bottom: 50px !important;
     
-    /* ЦЕНТРИРОВАНИЕ под карточку 260px */
     padding-left: calc(50vw - 130px - 6px); 
     padding-right: calc(50vw - 130px - 6px);
-    
     align-items: center;
     perspective: 1200px;
 }
@@ -2193,8 +2192,7 @@ body {
 
 .promo-item {
     min-width: 260px !important; 
-    height: 220px !important;
-    scroll-snap-align: center;
+    height: clamp(120px, 18vh, 200px) !important; 
     border-radius: 24px;
     
     /* Бело-серый премиальный градиент */
@@ -2390,36 +2388,23 @@ body {
     animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.25s backwards;
 }
 /* =========================================
-АДАПТАЦИЯ АКЦИЙ (САЙТ vs ПРИЛОЖЕНИЕ)
-========================================= */
+   АДАПТАЦИЯ АКЦИЙ (ЕДИНЫЙ СТИЛЬ ВЕЗДЕ)
+   ========================================= */
 
-/* --- ДЛЯ САЙТА (по умолчанию) --- */
+/* Прячем вкладки во всех режимах */
 .promo-tabs { 
-    display: none !important; /* Прячем вкладки на сайте */
+    display: none !important; 
 }       
+
+/* Показываем бейджи во всех режимах */
 .promo-badge { 
-    display: block; /* Показываем бейджи на сайте */
+    display: block !important; 
 }
-
-/* --- ДЛЯ ПРИЛОЖЕНИЯ (PWA) --- */
-html.is-pwa .promo-tabs { 
-    display: flex !important; /* Показываем вкладки в PWA */
-}       
-html.is-pwa .promo-badge { 
-    display: none !important; /* Прячем бейджи в PWA */
-}      
-html.is-pwa .install-app-btn { 
-    display: none !important; /* Прячем кнопку Скачать в PWA */
-}
-
 /* Стиль бейджа (ТОП / БАРБЕР) */
 .promo-badge {
     position: absolute;
     top: 15px;
     right: 15px;
-    background: rgba(212, 175, 55, 0.1);
-    border: 1px solid rgba(212, 175, 55, 0.3);
-    color: var(--gold);
     font-size: 9px;
     font-weight: 800;
     padding: 4px 8px;
@@ -2429,9 +2414,9 @@ html.is-pwa .install-app-btn {
     z-index: 5;
 }
 
-/* Отступаем текст, чтобы бейдж не налезал */
-.promo-item h4 {
-    padding-right: 65px !important; 
+/* Прячем кнопку "Скачать" в PWA (чтобы она не мешала) */
+html.is-pwa .install-app-btn { 
+    display: none !important; 
 }
 /* =========================================
 ТАКТИЛЬНЫЙ ОТКЛИК НА НАЖАТИЕ
@@ -2457,11 +2442,21 @@ html.is-pwa .install-app-btn {
 }
 
 #viewHome {
-    overflow-y: clip; /* ЗАМЕНИЛИ hidden на clip */
-    padding-bottom: 90px; 
+    overflow-y: hidden !important; /* Включаем скролл, если контент не влез */
+    scrollbar-width: none;       /* Скрываем скроллбар в Firefox */
+    padding-bottom: calc(85px + env(safe-area-inset-bottom, 0px)) !important; /* Отступ под нижнее меню */
     background: linear-gradient(var(--bg-gradient-start), var(--bg-gradient-end)), var(--bg-image) center/cover !important;
 }
+/* Скрываем скроллбар в Chrome/Safari */
+#viewHome::-webkit-scrollbar {
+    display: none;
+}
 
+@media (max-height: 720px) {
+    #viewHome {
+        overflow-y: auto !important;
+    }
+}
 /* =========================================
 ВЕРХНИЙ РЯД: УРОВЕНЬ + КНОПКА СКАЧАТЬ
 ========================================= */
@@ -2484,32 +2479,6 @@ html.is-pwa .install-app-btn {
     white-space: nowrap;
 }
 
-/* =========================================
-ЧУТЬ УМЕНЬШАЕМ ОТСТУПЫ, ЧТОБЫ АКЦИИ БЫЛИ ВИДНЫ
-========================================= */
-
-/* Делаем кнопку "Записаться" крупнее и выше */
-.home-cta-btn {
-    padding: 18px 15px !important; /* Увеличили высоту */
-    border-radius: 22px !important;
-}
-.home-cta-btn .cta-text span {
-    font-size: 18px; /* Чуть больше шрифт */
-}
-
-/* Уменьшаем пустоту вокруг карусели акций */
-.promo-track {
-    padding-bottom: 60px !important; /* Было 35px, стало 20px */
-    perspective: 1200px;
-}
-
-.promo-item {
-    height: 140px !important; /* Чуть уменьшили высоту карточек (было 160px) */
-    padding: 15px !important;
-    transform-style: preserve-3d; /* ДОБАВИТЬ */
-    transform-origin: center center; /* ДОБАВИТЬ */
-    will-change: transform, opacity; /* Оптимизация для браузера */
-}
 
 /* =========================================
 СКРЫТИЕ ШАПКИ НА ГЛАВНОЙ И ЗАПИСИ
@@ -2716,7 +2685,11 @@ body.header-hidden #viewBook.active {
    ========================================= */
 .phone-cta-btn {
     width: 100%; 
-    margin: 0 0 90px 0; /* Опустили ниже (отступ сверху 25px) */
+    min-height: clamp(45px, 7vh, 70px);
+    margin-top: -25px !important;
+    position: relative; 
+    z-index: 10;
+    margin-bottom: clamp(10px, 2vh, 20px) !important;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2725,13 +2698,14 @@ body.header-hidden #viewBook.active {
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(212, 175, 55, 0.3); /* Такая же рамка */
     border-radius: 22px;
-    padding: 18px 15px; /* Такая же высота */
+    padding: clamp(8px, 1.5vh, 18px) 15px;  /* Такая же высота */
     color: var(--gold); /* Золотой текст */
     cursor: pointer;
     box-shadow: 
         inset 0 1px 1px rgba(255, 255, 255, 0.2), 
         0 8px 25px rgba(0, 0, 0, 0.2);
     transition: all 0.2s var(--spring);
+    touch-action: manipulation;
 }
 
 .phone-cta-btn:active {
