@@ -2240,12 +2240,14 @@ body {
     line-height: 1.2;
     margin-bottom: 5px;
     z-index: 2;
+    padding-right: 85px !important;
 }
 
 .promo-item p {
     font-size: 12px;
     color: var(--text-muted);
     z-index: 2;
+    
 }
 
 .promo-item .promo-price {
@@ -2791,4 +2793,18 @@ body.header-hidden #viewBook.active {
         box-shadow: 0 10px 30px rgba(255, 255, 255, 0.15), 0 0 20px rgba(255, 255, 255, 0.1); 
         border-color: rgba(255, 255, 255, 0.4); 
     }
+}
+
+/* =========================================
+   КНОПКА "ЗАПИСЬ ПО ТЕЛЕФОНУ" ТОЛЬКО В ПРИЛОЖЕНИИ
+   ========================================= */
+
+/* 1. Скрываем кнопку ВЕЗДЕ, где НЕТ класса is-pwa (то есть на сайте) */
+html:not(.is-pwa) .phone-cta-btn {
+    display: none !important;
+}
+
+/* 2. В приложении (где есть класс is-pwa) принудительно показываем */
+html.is-pwa .phone-cta-btn {
+    display: flex !important;
 }
