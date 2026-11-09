@@ -2810,7 +2810,7 @@ html.is-pwa .phone-cta-btn {
 }
 
 /* =========================================
-   ФИКС ТОЛЬКО ДЛЯ IPHONE / IPAD (SAFARI)
+   ФИКСЫ ТОЛЬКО ДЛЯ IPHONE / IPAD (SAFARI)
    ========================================= */
 @supports (-webkit-touch-callout: none) {
     
@@ -2819,35 +2819,16 @@ html.is-pwa .phone-cta-btn {
         height: 100dvh !important;
     }
 
-    /* 2. Разрешаем прокрутку в Личном кабинете */
-    #viewProfile.active {
+    /* 2. Разрешаем прокрутку самой вкладки */
+    .view.active {
         overflow-y: auto !important;
-        -webkit-overflow-scrolling: touch !important; /* Плавный скролл как в приложении */
+        -webkit-overflow-scrolling: touch !important;
     }
 
     /* 3. Критически важный фикс: не даем flex-контейнеру обрезать контент */
     .view {
         min-height: 0; 
         -webkit-overflow-scrolling: touch;
-    }
-}
-
-/* =========================================
-   ЖЕСТКИЙ ФИКС СКРОЛЛА ДЛЯ IPHONE
-   ========================================= */
-@supports (-webkit-touch-callout: none) {
-    /* Принудительно разрешаем скролл для всех вкладок */
-    .view.active {
-        overflow-y: scroll !important; 
-        -webkit-overflow-scrolling: touch !important;
-    }
-    
-    /* Убираем блокировку скролла, если она где-то осталась */
-    body, html {
-        overflow: hidden;
-        position: fixed;
-        height: 100%;
-        width: 100%;
     }
     
     #appContainer {
@@ -2856,9 +2837,9 @@ html.is-pwa .phone-cta-btn {
         -webkit-overflow-scrolling: touch;
     }
 
-    /* Фикс для самой истории визитов (внутри профиля) */
+    /* 4. ГЛАВНЫЙ ФИКС: Убираем внутренний скролл у истории на iPhone */
     .profile-history-scroll.expanded {
-        overflow-y: scroll !important;
-        -webkit-overflow-scrolling: touch !important;
+        max-height: none !important; /* Открываем на всю высоту */
+        overflow-y: visible !important; /* Отключаем внутренний скролл */
     }
 }
