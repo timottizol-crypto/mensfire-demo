@@ -1648,7 +1648,7 @@ function handleInstallClick() {
     const PRESSABLE = [
         'button',
         '.nav-item',
-        '.glass-card',
+        // '.glass-card',  <-- УБРАЛИ, чтобы блоки записей не прыгали
         '.home-level-card',
         '.home-cta-btn',
         '.service-card',
@@ -1692,17 +1692,11 @@ function handleInstallClick() {
         holdTimer = setTimeout(() => {
             longPressFired = true;
             el.classList.remove('is-pressing');
-            el.classList.add('is-cancelled');
-            setTimeout(() => el.classList.remove('is-cancelled'), 450);
-
-            // Вибро (Android)
-            if (navigator.vibrate) {
-                try { navigator.vibrate(30); } catch (_) {}
-            }
-
-            if (typeof showToast === 'function') {
-                showToast('Действие отменено', 'info');
-            }
+            
+            // МЫ УБРАЛИ ОТСЮДА ВСЁ:
+            // уведомление (showToast), вибрацию и анимацию тряски (is-cancelled)
+            // Теперь пользователь просто держит палец, и если отпустит после 2 секунд — клик не сработает.
+            
         }, 2000);
     }, { passive: true });
 
@@ -1724,7 +1718,7 @@ function handleInstallClick() {
             e.stopImmediatePropagation();
             longPressFired = false;
         }
-    }, true); // capture — сработает раньше любых inline onclick
+    }, true); 
 })();
 
 /* ============================================
@@ -1763,3 +1757,82 @@ function toggleTheme() {
 
 // Применяем сохранённую тему при загрузке
 initTheme();      
+
+/* =========================================
+   НЕЖНАЯ ВИБРАЦИЯ ПРИ НАЖАТИИ (ТОЛЬКО ANDROID)
+   ========================================= */
+(function() {
+    // Если устройство не поддерживает вибрацию (iOS) — просто выходим
+    if (!('vibrate' in navigator)) return;
+
+    const VIBRATE_SELECTORS = [
+        'button',
+        '.nav-item',
+        '.home-level-card',
+        '.home-cta-btn',
+        '.service-card',
+        '.master-card',
+        '.promo-item',
+        '.promo-tab',
+        '.tab-btn',
+        '.date-opt',
+        '.time-opt',
+        '.header-pill',
+        '.action-modal-btn',
+        '.checkout-btn',
+        '.install-app-btn',
+        '.history-toggle-btn',
+        '.btn-cancel-small',
+        '.logout-btn',
+        '.close-btn',
+        '[onclick]'
+    ].join(', ');
+
+    document.addEventListener('pointerdown', (e) => {
+        // Только ЛКМ / касание, не правая кнопка
+        if (e.button !== undefined && e.button !== 0) return;
+
+        const el = e.target.closest(VIBRATE_SELECTORS);
+        if (!el) return;
+        if (el.disabled || el.classList.contains('disabled')) return;
+
+        // Нежная короткая вибрация — 8мс, очень мягкий импульс
+        try { navigator.vibrate([5, 25, 5]); } catch (_) {}
+    }, { passive: true });
+})();
+
+/* =========================================
+   ВИБРАЦИЯ ДЛЯ iOS (ОТДЕЛЬНЫЙ БЛОК)
+   ========================================= */
+(function() {
+    // 1. Проверяем, что мы на iOS и библиотека загрузилась
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    if (!isIOS || typeof window.iosHaptic !== 'function') return;
+
+    // 2. Список элементов, при нажатии на которые должна быть вибрация
+    const HAPTIC_SELECTORS = [
+        'button', '.nav-item', '.home-level-card', '.home-cta-btn',
+        '.service-card', '.master-card', '.promo-item', '.promo-tab',
+        '.tab-btn', '.date-opt', '.time-opt', '.header-pill',
+        '.action-modal-btn', '.checkout-btn', '.install-app-btn',
+        '.history-toggle-btn', '.btn-cancel-small', '.logout-btn',
+        '.close-btn', '[onclick]'
+    ].join(', ');
+
+    // 3. Слушаем касания
+    document.addEventListener('pointerdown', (e) => {
+        // Только ЛКМ / касание
+        if (e.button !== undefined && e.button !== 0) return;
+
+        const el = e.target.closest(HAPTIC_SELECTORS);
+        if (!el) return;
+        if (el.disabled || el.classList.contains('disabled')) return;
+
+        // 4. Вызываем вибрацию
+        try {
+            window.iosHaptic(); // Одиночный мягкий "клик"
+        } catch (_) {
+            // Если что-то пошло не так (например, iOS не поддерживает), просто игнорируем
+        }
+    }, { passive: true });
+})();
