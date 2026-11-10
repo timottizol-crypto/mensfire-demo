@@ -818,18 +818,40 @@ function toggleService(service) {
     renderServices(service.type);
     checkMasterAvailability();
 
-    // Если услугу ДОБАВИЛИ (а не убрали), плавно скроллим вниз к мастерам
+    // Если услугу ДОБАВИЛИ (а не убрали)
     if (index === -1) {
-        setTimeout(() => {
-            const mastersSection = document.getElementById('mastersGrid');
-            if (mastersSection) {
-                // block: 'center' прокрутит так, чтобы мастера были по центру экрана
-                mastersSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (service.type === 'top') {
+            // Если это ТОП-услуга — ВСЕГДА скроллим вниз к Али
+            setTimeout(() => {
+                const viewBook = document.getElementById('viewBook');
+                const mastersGrid = document.getElementById('mastersGrid');
+                if (viewBook && mastersGrid) {
+                    viewBook.scrollTo({ 
+                        top: mastersGrid.offsetTop - 60, // 60px отступ сверху
+                        behavior: 'smooth' 
+                    });
+                }
+            }, 150);
+        } else {
+            // Для обычных услуг Барбера:
+            if (selectedBarber) {
+                // Если мастер УЖЕ выбран — сразу открываем корзину
+                openDrawer();
+            } else {
+                // Если мастера нет — скроллим к блоку с мастерами
+                setTimeout(() => {
+                    const viewBook = document.getElementById('viewBook');
+                    const mastersGrid = document.getElementById('mastersGrid');
+                    if (viewBook && mastersGrid) {
+                        viewBook.scrollTo({ 
+                            top: mastersGrid.offsetTop - 60, 
+                            behavior: 'smooth' 
+                        });
+                    }
+                }, 150);
             }
-        }, 150);
+        }
     }
-
-    // УБРАЛИ автоматическое открытие корзины отсюда, чтобы клиент сначала увидел мастера
 }
 
 function renderMasters() {
@@ -863,13 +885,12 @@ function selectBarber(barber) {
     renderMasters();
 
     if (cart.length > 0) {
-        // Если услуги уже выбраны, открываем корзину (клиент уже видел услугу)
+        // Если услуги уже выбраны, открываем корзину
         openDrawer();
     } else {
         // Если клиент выбрал мастера ПЕРВЫМ (услуг еще нет)
         showToast(`Выберите услуги для ${barber.name}`, 'info');
         
-        // Находим нужную кнопку вкладки (ТОП или БАРБЕР) и программно нажимаем
         const targetTab = document.querySelector(`.tab-btn[onclick*="'${barber.type}'"]`);
         if (targetTab) {
             filterServices(barber.type, targetTab);
@@ -877,10 +898,13 @@ function selectBarber(barber) {
         
         // Плавно скроллим ВВЕРХ к списку услуг
         setTimeout(() => {
+            const viewBook = document.getElementById('viewBook');
             const servicesSection = document.querySelector('.category-tabs');
-            if (servicesSection) {
-                // block: 'start' прокрутит так, чтобы вкладки услуг были в самом верху
-                servicesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            if (viewBook && servicesSection) {
+                viewBook.scrollTo({ 
+                    top: servicesSection.offsetTop - 20, // Отступ сверху
+                    behavior: 'smooth' 
+                });
             }
         }, 150);
     }

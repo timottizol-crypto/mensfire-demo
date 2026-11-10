@@ -438,3 +438,12 @@ html.light-theme .install-app-btn {
 html.light-theme .install-app-btn .plus-icon {
     color: var(--gold) !important; /* Плюсик оставляем золотым */
 }
+
+/* =========================================
+   ЖЕЛТАЯ РАМКА ВЫБРАННОГО МАСТЕРА (СВЕТЛАЯ ТЕМА)
+   ========================================= */
+html.light-theme .master-card.selected {
+    border: 2px solid var(--gold) !important; /* Толстая желтая рамка */
+    background: rgba(199, 154, 42, 0.15) !important; /* Чуть ярче фон */
+    box-shadow: 0 0 15px rgba(199, 154, 42, 0.25) !important; /* Свечение */
+}
