@@ -114,10 +114,14 @@ window.addEventListener('DOMContentLoaded', () => {
                         installingWorker.onstatechange = () => {
                             if (installingWorker.state === 'installed') {
                                 if (navigator.serviceWorker.controller) {
-                                    // Если есть новый контент — показываем уведомление
-                                    if (confirm('Доступно обновление приложения. Перезагрузить?')) {
-                                        window.location.reload();
-                                    }
+                                    // Вместо confirm используем ваш красивый Toast
+                                    showToast('Доступно обновление! Нажмите, чтобы обновить.', 'success');
+                                    
+                                    // Через 2 секунды автоматически применяем обновление
+                                    // (можно убрать, если хотите, чтобы пользователь сам нажимал)
+                                    setTimeout(() => {
+                                        installingWorker.postMessage({ type: 'SKIP_WAITING' });
+                                    }, 2000);
                                 }
                             }
                         };
@@ -125,6 +129,14 @@ window.addEventListener('DOMContentLoaded', () => {
                 });
             });
         }
+        // Принудительная проверка обновлений при возвращении на экран (для iOS)
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && 'serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistration().then(reg => {
+                    if (reg) reg.update();
+                });
+            }
+        });
 
         if (isStandalone && localStorage.getItem('menfire_just_installed') === 'true') {
             setTimeout(() => {

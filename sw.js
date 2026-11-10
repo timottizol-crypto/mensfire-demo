@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mensfire-v116'; // <-- Подняли версию
+const CACHE_NAME = 'mensfire-v117'; // <-- Подняли версию
 const ASSETS = [
   './index.html',
   './style.css',
@@ -37,4 +37,13 @@ self.addEventListener('fetch', (event) => {
       return cachedResponse || fetch(event.request);
     })
   );
+});
+
+/* =========================================
+   ОБРАБОТКА ЗАПРОСА НА НЕМЕДЛЕННОЕ ОБНОВЛЕНИЕ
+   ========================================= */
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
 });
