@@ -167,7 +167,7 @@ window.addEventListener('DOMContentLoaded', () => {
             renderMasters();
             initNavBubble();
             initPromoCarousel();
-            if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+            
         }, 3500);
 
     } catch (error) {
