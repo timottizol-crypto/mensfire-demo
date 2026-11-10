@@ -315,12 +315,12 @@
         </div>
     </div>
     <script src="script.js"></script>
-        <!-- Скрипт для вибрации на iOS -->
+    <!-- Скрипт для вибрации на iOS -->
     <script type="module">
         import { haptic } from 'https://cdn.jsdelivr.net/npm/ios-haptics@0.0.5/+esm';
         
-        // Делаем функцию глобальной, чтобы она была видна в основном скрипте
+        // Сохраняем функцию в глобальную переменную с ПРАВИЛЬНЫМ именем
         window.iosHaptic = haptic;
-</script>
+    </script>
 </body>
 </html>
