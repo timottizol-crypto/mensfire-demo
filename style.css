@@ -1817,9 +1817,7 @@ body {
     cursor: pointer;
     transition: all 0.2s var(--smooth);
 }
-.history-toggle-btn:active {
-    transform: scale(0.9);
-}
+
 .history-toggle-btn svg {
     width: 20px;
     height: 20px;
@@ -2842,4 +2840,15 @@ html.is-pwa .phone-cta-btn {
         max-height: none !important; /* Открываем на всю высоту */
         overflow-y: visible !important; /* Отключаем внутренний скролл */
     }
+}
+
+/* =========================================
+   ЗАПРЕТ АНИМАЦИИ НАЖАТИЯ ДЛЯ ИСТОРИИ (IPHONE)
+   ========================================= */
+.history-toggle-btn,
+.history-toggle-btn:active,
+.history-toggle-btn.is-pressing {
+    transform: none !important; 
+    filter: none !important; 
+    transition: none !important;
 }

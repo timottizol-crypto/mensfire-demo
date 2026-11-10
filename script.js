@@ -96,6 +96,36 @@ const greetingsList = [
 window.addEventListener('DOMContentLoaded', () => {
     try {
 
+        /* =========================================
+        АВТООБНОВЛЕНИЕ ПРИЛОЖЕНИЯ (PWA)
+        ========================================= */
+        if ('serviceWorker' in navigator) {
+            let refreshing;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                window.location.reload();
+                refreshing = true;
+            });
+
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').then(reg => {
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        installingWorker.onstatechange = () => {
+                            if (installingWorker.state === 'installed') {
+                                if (navigator.serviceWorker.controller) {
+                                    // Если есть новый контент — показываем уведомление
+                                    if (confirm('Доступно обновление приложения. Перезагрузить?')) {
+                                        window.location.reload();
+                                    }
+                                }
+                            }
+                        };
+                    };
+                });
+            });
+        }
+
         if (isStandalone && localStorage.getItem('menfire_just_installed') === 'true') {
             setTimeout(() => {
                 showToast('Спасибо за установку!', 'success');
