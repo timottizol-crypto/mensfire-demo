@@ -1797,7 +1797,7 @@ initTheme();
         if (el.disabled || el.classList.contains('disabled')) return;
 
         // Нежная короткая вибрация — 8мс, очень мягкий импульс
-        try { navigator.vibrate([5, 25, 5]); } catch (_) {}
+        try { navigator.vibrate(8); } catch (_) {}
     }, { passive: true });
 })();
 
