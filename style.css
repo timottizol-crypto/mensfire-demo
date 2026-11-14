@@ -52,11 +52,6 @@ body {
     ЭТАП 2: ЭКРАН ЗАГРУЗКИ
     ========================== */     
 
-.splash-title-wrapper {
-    position: relative;
-    display: inline-block;
-    margin-bottom: 25px;
-}
 .splash-title {
     font-size: 52px;
     font-weight: 800;
@@ -126,18 +121,6 @@ body {
 }
 @keyframes ovalAppear {
     to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.splash-loader {
-    position: absolute;
-    bottom: 60px;
-    width: 140px;
-    height: 3px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 3px;
-    overflow: hidden;
-    opacity: 0;
-    animation: fadeIn 0.4s ease 1s forwards;
 }
 .splash-loader-bar {
     width: 0%;
@@ -282,7 +265,6 @@ body {
 }
 
 .right-pill span {
-    font-size: 10px; /* Уменьшили, чтобы точно влезло по высоте */
     font-weight: 800;
     color: var(--gold);
     white-space: nowrap;
@@ -374,10 +356,6 @@ body {
     85%  { --border-angle: 306deg; opacity: 1; }
     100% { --border-angle: 360deg; opacity: 0; }
 }
-@keyframes headerBorderIn {
-    to { border-color: rgba(212, 175, 55, 0.42); }
-}
-
 @keyframes popIn {
     0% { transform: scale(0.5); opacity: 0; }
     70% { transform: scale(1.1); opacity: 1; }
@@ -756,6 +734,7 @@ body {
     left: 0;
     width: 100%;
     height: 85vh;
+    height: 85dvh;
     background: rgba(28, 28, 30, 0.72);
     backdrop-filter: blur(40px) saturate(180%);
     -webkit-backdrop-filter: blur(40px) saturate(180%);
@@ -1022,73 +1001,6 @@ body {
     font-weight: 500;
     transition: font-size 0.4s ease;
 }
-
-/* --- НИЖНИЙ БЛОК (Уровень) --- */
-.status-block-simple {
-    flex: 0 0 100%;          /* на всю ширину */
-    display: flex;
-    flex-wrap: wrap;         /* разрешаем перенос текста под диаграмму */
-    align-items: center;
-    gap: 5px 15px;
-    transition:
-        flex-basis 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-        gap 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.mini-diagram {
-    flex: 0 0 auto;
-    position: relative;
-    width: 45px;
-    height: 45px;
-    transition:
-        width 0.4s cubic-bezier(0.25, 1, 0.5, 1),
-        height 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-}
-
-.mini-diagram svg {
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-}
-
-.mini-diagram .status-circle-bg {
-    fill: none;
-    stroke: #333;
-    stroke-width: 8;
-}
-
-.mini-diagram .status-circle-progress {
-    fill: none;
-    stroke: var(--gold);
-    stroke-width: 8;
-    stroke-linecap: round;
-    transition: stroke-dashoffset 1s, stroke 0.3s;
-}
-
-.level-text-wrapper {
-    flex: 1 1 auto;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    
-}
-
-.level-text-wrapper .status-level-name {
-    font-size: 18px;
-    font-weight: 800;
-    margin-bottom: 2px;
-    color: var(--gold);
-    transition: font-size 0.4s ease, margin 0.4s ease;
-}
-
-.level-text-wrapper .status-hint {
-    font-size: 12px;
-    color: var(--text-muted);
-    transition: font-size 0.4s ease, opacity 0.4s ease;
-}
-
-
 /* =========================================
 СЖАТОЕ СОСТОЯНИЕ
 ========================================= */
@@ -1122,8 +1034,7 @@ body {
 }
 
 /* Оба блока становятся по половине ширины */
-.profile-main-card.collapsed .profile-header-horizontal,
-.profile-main-card.collapsed .status-block-simple {
+.profile-main-card.collapsed .profile-header-horizontal {
     flex: 0 0 calc(50% - 5px);
 }
 
@@ -1165,15 +1076,6 @@ body {
 .profile-main-card.collapsed .profile-info p {
     font-size: 10px;
 }
-
-
-/* Уровень внутри блока (без фона) */
-.status-block-inner {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
 /* Текстовая часть (чтобы длинные названия услуг не ломали верстку) */
 .hb-info {
     overflow: hidden;
@@ -1220,9 +1122,10 @@ body {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-size: 15px;
+    font-size: 22px;
     font-weight: 800;
-    color: var(--gold);
+    color: var(--level-color);
+    transition: color 0.3s ease;
 }
 .status-level-name {
     font-size: 18px;
@@ -1252,89 +1155,6 @@ body {
     background: rgba(255, 77, 77, 0.1);
 }
 
-.next-visit-card {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(30, 30, 30, 0.7) 100%);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid var(--gold);
-    border-radius: 20px;
-    padding: 25px 20px 20px;
-    margin-bottom: 25px;
-    position: relative;
-    box-shadow: 
-        inset 0 1px 0 rgba(255, 255, 255, 0.1),
-        0 10px 30px rgba(212, 175, 55, 0.1);
-}
-.next-visit-card::before {
-    content: 'Ближайший визит';
-    position: absolute;
-    top: -10px;
-    left: 20px;
-    background: var(--gold);
-    color: #000;
-    font-size: 10px;
-    font-weight: 800;
-    padding: 3px 12px;
-    border-radius: 10px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-.next-visit-info { display: flex; flex-direction: column; gap: 12px; }
-.nvi-block p {
-    color: var(--text-muted);
-    font-size: 11px;
-    margin-bottom: 2px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-weight: 600;
-}
-.nvi-block h3 { font-size: 17px; }
-
-.history-title {
-    font-size: 16px;
-    margin-bottom: 15px;
-    color: var(--text-muted);
-    font-weight: 600;
-}
-.booking-list {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-.booking-card {
-    background: var(--bg-card);
-    padding: 18px;
-    border-radius: 16px;
-    border-left: 4px solid #333;
-    transition: all 0.2s var(--smooth);
-}
-.booking-card:hover { border-left-color: var(--gold); }
-.bc-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-}
-.bc-header h3 { font-size: 15px; }
-.bc-header p { font-size: 11px; color: var(--text-muted); }
-.bc-services {
-    font-size: 13px;
-    color: #ddd;
-    margin-bottom: 12px;
-    line-height: 1.4;
-}
-.bc-footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 13px;
-    color: var(--text-muted);
-}
-.bc-price {
-    font-size: 18px;
-    font-weight: bold;
-    color: var(--gold);
-}
 .btn-cancel {
     background: transparent;
     border: 1px solid #555;
@@ -1545,9 +1365,6 @@ body {
     /* =========================================
     ФОН НА ГЛАВНОМ ЭКРАНЕ (ЗАТЕМНЕННЫЙ)
     ========================================= */
-#viewHome {
-    background: linear-gradient(var(--bg-gradient-start), var(--bg-gradient-end)), var(--bg-image) center/cover !important;
-}
 
 /* Убираем фон с остальных вкладок, чтобы там был просто черный цвет */
 #viewBook, #viewProfile, #viewBookings {
@@ -1558,52 +1375,19 @@ body {
     ГЛАВНЫЙ ЭКРАН (СТЕКЛЯННЫЕ БЛОКИ)
     ========================== */
 
-.collapsible-list::-webkit-scrollbar {
-    width: 4px;
-}
-.collapsible-list::-webkit-scrollbar-track {
-    background: transparent;
-}
-.collapsible-list::-webkit-scrollbar-thumb {
-    background: rgba(212, 175, 55, 0.3);
-    border-radius: 4px;
-}
-
-/* Показ списка при добавлении класса expanded */
-.collapsible-list.expanded {
-    display: block;
-}
-
-
 .home-level-card:active {
     transform: scale(0.97);
 }
 .home-level-circle {
     position: relative;
-    width: 110px; /* Увеличили размер диаграммы */
-    height: 110px;
+    width: clamp(100px, 14vh, 130px); /* Ограничили: на обычных экранах 100px, на больших до 130px */
+    height: auto;
+    aspect-ratio: 1 / 1;
     flex-shrink: 0;
 }
 .home-level-circle .status-text-inner {
-    font-size: 22px; /* Увеличили текст внутри круга */
+    font-size: clamp(22px, 3.5vh, 30px);
 }
-.home-level-info .status-level-name {
-    font-size: 20px;
-    margin-bottom: 5px;
-}
-.home-level-info .status-hint {
-    font-size: 13px;
-}
-.home-arrow-right {
-    position: absolute;
-    right: 20px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 24px;
-    height: 24px;
-    opacity: 0.3;
-}
-
 /* Нижний блок (Кнопка + Акция) */
 .home-bottom-actions {
     display: flex;
@@ -1617,7 +1401,7 @@ body {
 .home-cta-btn {
     flex: 1;
     width: auto; 
-    min-height: clamp(45px, 7vh, 75px); /* Высота сжимается от 75 до 45px */
+    min-height: clamp(50px, 9vh, 85px); /* Высота сжимается от 75 до 45px */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1626,7 +1410,7 @@ body {
     -webkit-backdrop-filter: blur(15px);
     border: 1px solid rgba(212, 175, 55, 0.3); 
     border-radius: 20px;
-    padding: clamp(8px, 1.5vh, 18px) 15px !important; /* Отступы сжимаются */
+    padding: clamp(10px, 2vh, 20px) 15px !important;
     color: var(--gold); 
     cursor: pointer;
     box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 8px 25px rgba(0, 0, 0, 0.2);
@@ -1645,7 +1429,7 @@ body {
 }
 /* Текст внутри кнопки тоже чуть сжимается на маленьких экранах */
 .home-cta-btn .cta-text span {
-    font-size: clamp(14px, 2.2vh, 18px) !important; 
+    font-size: clamp(16px, 2.8vh, 22px) !important; 
 }
 
 .home-cta-btn:active {
@@ -1670,46 +1454,6 @@ body {
     opacity: 0.8;
     margin-top: 2px;
 }
-
-/* Карточка акции (стеклянная) */
-.promo-card-side {
-    flex: 0.9;
-    background: rgba(20, 20, 22, 0.55);
-    backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
-    -webkit-backdrop-filter: blur(18px) saturate(200%) brightness(1.12);
-    border: 1px solid rgba(212, 175, 55, 0.2);
-    border-radius: 20px;
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    cursor: pointer;
-    box-shadow: 
-        inset 1px 0 1px rgba(255, 100, 100, 0.15), 
-        inset -1px 0 1px rgba(100, 200, 255, 0.15), 
-        0 4px 15px rgba(0, 0, 0, 0.3);
-    transition: transform 0.2s var(--spring);
-}
-.promo-card-side:active {
-    transform: scale(0.96);
-}
-.promo-card-side .promo-icon {
-    font-size: 24px;
-    margin-bottom: 5px;
-}
-.promo-card-side h4 {
-    font-size: 13px;
-    font-weight: 800;
-    color: var(--gold);
-    margin-bottom: 2px;
-}
-.promo-card-side p {
-    font-size: 10px;
-    color: var(--text-muted);
-}
-
 /* Карточка записей */
 .home-booking-item {
     background: rgba(255, 255, 255, 0.03);
@@ -1737,50 +1481,6 @@ body {
     color: var(--text-muted);
     line-height: 1.3;
 }
-
-.home-expand-btn {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    font-size: 12px;
-    font-weight: 600;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 5px;
-    margin-top: 15px;
-    padding: 10px;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-.home-expand-btn:active {
-    color: var(--gold);
-}
-.home-expand-btn svg {
-    width: 20px;
-    height: 20px;
-    fill: currentColor;
-    transition: transform 0.3s var(--spring);
-}
-.home-expand-btn.expanded svg {
-    transform: rotate(180deg);
-}
-
-/* Тонкий золотой скроллбар */
-#homeBookingsContainer::-webkit-scrollbar {
-    width: 4px;
-}
-#homeBookingsContainer::-webkit-scrollbar-track {
-    background: transparent;
-}
-#homeBookingsContainer::-webkit-scrollbar-thumb {
-    background: rgba(212, 175, 55, 0.3);
-    border-radius: 4px;
-}
-
-
-
     /* =========================================
     ИСТОРИЯ ВИЗИТОВ (СТИЛЬ КАК У АКТИВНЫХ)
     ========================================= */
@@ -1846,12 +1546,6 @@ body {
 .profile-history-scroll.expanded::-webkit-scrollbar {
     display: none;
 }
-
-@keyframes slideDown {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
 /* Бейджи статусов */
 .status-badge {
     display: inline-block;
@@ -1947,13 +1641,12 @@ body {
     ========================================= */
 
 .home-level-card {
-    display: flex;
-    flex-direction: row; 
+    display: grid;
+    grid-template-columns: auto 1fr; /* Круг занимает свое место, текст — остальное */
     align-items: center;
-    justify-content: flex-start;
-    min-height: 130px;   
+    min-height: clamp(130px, 20vh, 190px); 
     text-align: left;
-    padding: 20px;
+    padding: clamp(20px, 3vh, 28px); 
     gap: 15px;
     position: relative;
     --level-color: #D4AF37;
@@ -1971,6 +1664,13 @@ body {
         inset 0 2px 5px rgba(255, 255, 255, 0.25), 
         inset 0 -2px 5px rgba(0, 0, 0, 0.4),       
         0 8px 32px rgba(0, 0, 0, 0.3);              
+}
+@media (max-width: 350px) {
+    .home-level-card {
+        grid-template-columns: 1fr; /* Одна колонка */
+        justify-items: center;      /* Центрируем всё */
+        text-align: center;
+    }
 }
 
 /* Сама бегущая линия (по умолчанию скрыта) */
@@ -2012,32 +1712,9 @@ body {
 }
 
 /* Размеры и цвета (без изменений) */
-.home-level-circle {
-    width: 120px; 
-    height: 120px;
-    flex-shrink: 0;
-}
 .home-level-circle .status-text-inner {
-    font-size: 26px; 
     color: var(--level-color); 
     transition: color 0.3s ease;
-}
-.home-level-info {
-    flex-grow: 1; 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-.home-level-info .status-level-name {
-    font-size: 22px; 
-    margin-bottom: 5px;
-    color: var(--level-color); 
-    transition: color 0.3s ease;
-}
-.home-level-info .status-hint {
-    font-size: 13px;
-    color: var(--text-muted);
-    line-height: 1.4;
 }
 .home-level-card .status-circle-bg,
 .home-level-card .status-circle-progress {
@@ -2105,31 +1782,6 @@ body {
 .home-scroll-area .home-booking-item:not(:last-child) {
     margin-bottom: 10px; 
 }
-
-/* Общие стили для кнопок-стрелок (теперь они компактные) */
-.home-scroll-btn {
-    background: transparent;
-    border: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.2s var(--smooth);
-}
-
-.home-scroll-btn:active {
-    transform: scale(0.95);
-    color: var(--gold);
-}
-
-.home-scroll-btn svg {
-    width: 18px;
-    height: 18px;
-}
-
     /* =========================================
     МИГАНИЕ ОБОДКА КНОПКИ (РОВНО 2 РАЗА)
     ========================================= */
@@ -2169,19 +1821,30 @@ body {
     gap: 12px; 
     overflow-x: auto;
     overflow-y: hidden;
-    scroll-snap-type: x mandatory;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
     touch-action: pan-x; 
     overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
     
     padding-top: 15px;
     padding-bottom: 50px !important;
-    
-    padding-left: calc(50vw - 130px - 6px); 
-    padding-right: calc(50vw - 130px - 6px);
+    padding-left: calc(50vw - (var(--promo-card-width) / 2));
+    padding-right: calc(50vw - (var(--promo-card-width) / 2));
     align-items: center;
     perspective: 1200px;
+}
+:root {
+    --promo-card-width: 260px;
+    --promo-gap: 12px;
+}
+.promo-track {
+    padding-left: calc(50vw - (var(--promo-card-width) / 2));
+    padding-right: calc(50vw - (var(--promo-card-width) / 2));
+}
+.promo-item {
+    min-width: var(--promo-card-width) !important;
+
 }
 
 .promo-track::-webkit-scrollbar {
@@ -2189,7 +1852,6 @@ body {
 }
 
 .promo-item {
-    min-width: 260px !important; 
     height: clamp(120px, 18vh, 200px) !important; 
     border-radius: 24px;
     
@@ -2210,7 +1872,10 @@ body {
     transform-origin: center center;
     will-change: transform;
     transform-style: preserve-3d;
+    scroll-snap-align: center;
+    scroll-snap-stop: always;
 }
+
 
 /* Текст и цена в тёмной теме тоже белые/серые */
 .promo-item h4 { color: #F5F5F5 !important; }
@@ -2220,21 +1885,10 @@ body {
 .promo-badge { border-color: rgba(255, 255, 255, 0.3) !important; color: #F5F5F5 !important; background: rgba(255, 255, 255, 0.1) !important; }
 
 /* 3D-эффект (будет управляться через JS) */
-.promo-item.active {
-    transform: scale(1);
-    opacity: 1;
-    border-color: var(--gold);
-    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
-}
-.promo-item.inactive {
-    transform: scale(0.85);
-    opacity: 0.5;
-}
 
 .promo-item h4 {
     font-size: 18px;
     font-weight: 800;
-    color: var(--gold);
     line-height: 1.2;
     margin-bottom: 5px;
     z-index: 2;
@@ -2313,35 +1967,6 @@ body {
     font-weight: 900;
 }
 
-/* Табы для акций */
-.promo-tabs {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-    margin-bottom: 5px;
-    padding: 0 5px;
-}
-.promo-tab {
-    flex: 1;
-    background: rgba(20, 20, 22, 0.55);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    color: var(--text-muted);
-    padding: 8px 12px;
-    border-radius: 12px;
-    font-size: 11px;
-    font-weight: 600;
-    transition: all 0.3s var(--smooth);
-}
-.promo-tab.active {
-    background: rgba(212, 175, 55, 0.15);
-    border-color: rgba(212, 175, 55, 0.6);
-    color: var(--gold);
-}
-
-/* Чуть уменьшаем отступы у кнопки записи, чтобы освободить место */
-.home-bottom-actions { margin-top: 5px; padding-bottom: 5px; }
-.promo-carousel-wrapper { margin-top: 10px; }
-
     /* =========================================
     АККУРАТНЫЕ КНОПКИ В МОДАЛКЕ УПРАВЛЕНИЯ
     ========================================= */
@@ -2381,11 +2006,6 @@ body {
     background: transparent;
     color: var(--text-muted);
     border: 1px solid #555;
-}
-
-/* Вылет скролла внутри карточки активных записей */
-#appContainer.animate-in .home-scroll-area {
-    animation: slideUpEntrance 0.7s cubic-bezier(0.25, 1, 0.5, 1) 0.25s backwards;
 }
 /* =========================================
    АДАПТАЦИЯ АКЦИЙ (ЕДИНЫЙ СТИЛЬ ВЕЗДЕ)
@@ -2542,32 +2162,210 @@ body.header-hidden #viewBook.active {
 .home-level-info {
     display: flex;
     flex-direction: column;
-    justify-content: center;   /* Центрируем весь текст по вертикали */
+    justify-content: center;
     align-items: flex-start;
-    flex-grow: 1;
-    align-self: stretch;
-    padding-right: 15px;       /* Убрали жесткие 100px, оставили небольшой отступ */
-    padding-top: 15px;         /* Чуть опускаем текст, чтобы он не заезжал под бренд */
+    min-width: 0; /* Важно для Grid */
+    padding-right: 15px;
     z-index: 1;
+}
+
+/* Центрируем текст, когда он упал вниз на узком экране */
+@media (max-width: 350px) {
+    .home-level-info {
+        align-items: center;
+        padding-right: 0;
+        margin-bottom: 10px; /* Отступ от круга, если он оказался под ним */
+    }
 }
 
 /* Название уровня (VIP) — строго по центру */
 .home-level-info .status-level-name {
-    font-size: 22px;
-    margin-bottom: 4px;        /* Небольшой отступ до текста подсказки */
+    /* Шрифт растет от 22px до 28px в зависимости от ширины экрана */
+    font-size: clamp(22px, 5vw, 28px); 
+    margin-bottom: 4px;
     color: var(--level-color);
     transition: color 0.3s ease;
-    line-height: 1.1;
+    line-height: 1.2;
+    white-space: nowrap; /* СТРОГИЙ ЗАПРЕТ ПЕРЕНОСА */
+    word-break: normal;  /* Убираем разрыв слов */
 }
 
-/* Подсказка (сколько осталось) — растягиваем на всю ширину */
 .home-level-info .status-hint {
-    font-size: 13px;           /* Чуть увеличили размер для читаемости */
+    font-size: 13px;
     color: var(--text-muted);
     line-height: 1.4;
-    max-width: 100%;           /* Разрешаем тексту занимать всю ширину */
-    white-space: normal;       /* Разрешаем перенос, но он будет красивым */
+    max-width: 100%;
+    padding-right: 95px;
+    white-space: normal;
 }
+
+/* Скрываем пустую подсказку, чтобы она не занимала место */
+.home-level-info .status-hint:empty {
+    display: none;
+}
+/* Баллы — отдельная стеклянная пилюля в правом нижнем углу карточки */
+.status-points {
+    position: absolute;
+    bottom: 14px;
+    right: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border-radius: 20px;
+
+    /* Золотое стекло (не серое) */
+    background: rgba(212, 175, 55, 0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(212, 175, 55, 0.4);
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.2),
+        0 4px 12px rgba(212, 175, 55, 0.15);
+
+    color: var(--gold);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+    line-height: 1;
+    cursor: pointer;
+
+    /* Отдельный слой — независим от карточки */
+    z-index: 3;
+    pointer-events: auto;
+    isolation: isolate;
+
+    animation: fadeInEmpty 0.4s ease;
+    transition: transform 0.15s, background 0.2s, box-shadow 0.2s;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.status-points:active {
+    transform: scale(0.95);
+    background: rgba(212, 175, 55, 0.28);
+    box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.3),
+        0 2px 8px rgba(212, 175, 55, 0.25);
+}
+
+.status-points .points-icon {
+    font-size: 12px;
+    line-height: 1;
+}
+/* Кликабельность баллов */
+.status-points {
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+/* Модалка истории баллов */
+.points-history-modal {
+    max-width: 380px;
+    max-height: 85dvh;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+
+    /* Единый стеклянный язык — как у home-level-card / header-pill / bottom-nav */
+    background: rgba(20, 20, 22, 0.35) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    box-shadow:
+        inset 0 2px 5px rgba(255, 255, 255, 0.22),
+        inset 0 -2px 5px rgba(0, 0, 0, 0.35),
+        0 8px 32px rgba(0, 0, 0, 0.3) !important;
+}
+
+.points-history-list {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 15px;
+    padding-right: 4px;
+}
+.points-history-list::-webkit-scrollbar {
+    width: 4px;
+}
+.points-history-list::-webkit-scrollbar-thumb {
+    background: rgba(212, 175, 55, 0.3);
+    border-radius: 4px;
+}
+.points-history-total {
+    font-size: 13px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 6px 0 14px 0;
+    margin-bottom: 8px;
+    background: transparent;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+.points-history-total span {
+    color: var(--gold);
+    font-weight: 800;
+    font-size: 15px;
+}
+.points-history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 4px;
+    background: transparent;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);  /* золотая линия */
+    margin-bottom: 0;
+}
+.points-history-item:last-child {
+    border-bottom: none;
+}
+.phi-left {
+    flex: 1;
+    min-width: 0;
+}
+.phi-date {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--gold);
+    margin-bottom: 2px;
+}
+.phi-barber {
+    font-size: 12px;
+    color: var(--text-main);
+    margin-bottom: 2px;
+}
+.phi-detail {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+.phi-points {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--gold);
+    white-space: nowrap;
+    margin-left: 10px;
+    flex-shrink: 0;
+}
+
+.points-history-empty {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 25px 10px;
+    line-height: 1.5;
+}
+.points-history-note {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    padding: 12px 0 0 0;
+    background: transparent;
+    border: none;
+    border-top: 1px solid rgba(212, 175, 55, 0.3);
+    margin-bottom: 15px;
+    line-height: 1.4;
+    font-style: italic;
+}
+
 
 /* =========================================
    ЭКРАН ЗАПИСИ: ВЕРХНИЙ БЛОК С КНОПКОЙ
@@ -2659,6 +2457,7 @@ body.header-hidden #viewBook.active {
     background: rgba(255, 255, 255, 0.03);
     border-radius: 12px;
     transition: background 0.2s;
+    gap: 10px; /* Добавили отступ между левым текстом и номером */
 }
 
 .contact-row:active {
@@ -2668,12 +2467,17 @@ body.header-hidden #viewBook.active {
 .contact-label {
     font-size: 13px;
     color: var(--text-muted);
+    flex-shrink: 1; /* Разрешаем тексту сжиматься или переноситься на две строки, если места мало */
+    line-height: 1.3;
 }
 
 .contact-value {
     font-size: 15px;
     font-weight: 800;
     color: var(--text-main);
+    white-space: nowrap; /* СТРОГИЙ ЗАПРЕТ переноса номера на новую строку */
+    flex-shrink: 0;      /* Номер не будет сжиматься, даже если текст слева длинный */
+    text-align: right;   /* Выравниваем номер по правому краю */
 }
 
 .contact-value.gold {
@@ -2757,7 +2561,7 @@ body.header-hidden #viewBook.active {
 
 /* Запуск линий: строго линейная скорость */
 .promo-item.is-active-card::before {
-    animation: promoLineRun 0.6s linear forwards; /* БЫЛО 1.2s. Теперь в 2 раза быстрее */
+    animation: promoLineRun 0.45s linear forwards; /* БЫЛО 1.2s. Теперь в 2 раза быстрее */
 }
 
 @keyframes promoLineRun {
@@ -2779,7 +2583,7 @@ body.header-hidden #viewBook.active {
 
 /* Белое свечение (задержка 0.5s, чтобы началось на затухании линий) */
 .promo-item.is-active-card {
-    animation: promoGlowWhite 0.3s ease-in-out 0.35s forwards; 
+    animation: promoGlowWhite 0.3s ease-in-out 0s forwards; 
 }
 
 @keyframes promoGlowWhite {

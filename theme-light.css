@@ -39,7 +39,6 @@ html.light-theme .header-pill,
 html.light-theme .bottom-nav,
 html.light-theme .home-level-card,
 html.light-theme .profile-main-card,
-html.light-theme .home-bookings-card,
 html.light-theme .profile-history-card, /* ИСПРАВЛЕНИЕ: Серые блоки */
 html.light-theme .service-card,
 html.light-theme .master-card,
@@ -56,7 +55,6 @@ html.light-theme .history-toggle-btn {
 }
 
 /* Фикс для блока активных записей и истории (внутренние карточки) */
-html.light-theme .home-bookings-card,
 html.light-theme .profile-history-card {
     background: rgba(255, 255, 255, 0.6) !important; /* Чуть прозрачнее */
 }
@@ -101,7 +99,6 @@ html.light-theme .home-booking-item {
 /* ---------- 6. Акции (Промо) и Стикеры ---------- */
 html.light-theme .promo-item {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 240, 230, 0.9) 100%) !important;
-    border: 1px solid rgba(199, 154, 42, 0.4) !important;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06) !important;
 }
 
@@ -118,13 +115,6 @@ html.light-theme .promo-item .promo-price span {
 html.light-theme .promo-item p {
     color: var(--text-muted) !important;
 }
-
-/* Стикеры (эмодзи на фоне) */
-html.light-theme .promo-bg-icon {
-    opacity: 0.3 !important; /* Увеличили видимость */
-    filter: grayscale(50%) !important; /* Убираем лишнюю пестроту */
-}
-
 /* Бейджи ТОП/БАРБЕР */
 html.light-theme .promo-badge {
     background: rgba(255, 255, 255, 0.9) !important;
@@ -201,7 +191,6 @@ html.light-theme .status-circle-bg {
 }
 
 /* Если у тебя есть элементы, где эта диаграмма черная - они станут светлыми */
-html.light-theme .mini-diagram .status-circle-bg,
 html.light-theme .home-level-circle .status-circle-bg {
     stroke: #E0E0E0 !important;
 }
@@ -270,11 +259,7 @@ html.light-theme .phone-cta-btn:active {
 /* Убрали !important, чтобы анимация могла менять цвет рамки */
 html.light-theme .promo-item {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(245, 240, 230, 0.9) 100%) !important;
-    border: 2px solid rgba(199, 154, 42, 0.4); /* Убрали !important */
 }
-html.light-theme .promo-item h4 { color: var(--text-main) !important; }
-html.light-theme .promo-item p { color: var(--text-muted) !important; }
-html.light-theme .promo-item .promo-price { color: var(--text-main) !important; }
 
 /* Золотые линии */
 html.light-theme .promo-item::before {
@@ -348,7 +333,6 @@ html.light-theme .header-pill,
 html.light-theme .bottom-nav,
 html.light-theme .home-level-card,
 html.light-theme .profile-main-card,
-html.light-theme .home-bookings-card,
 html.light-theme .profile-history-card,
 html.light-theme .service-card,
 html.light-theme .master-card,
@@ -360,43 +344,7 @@ html.light-theme .history-toggle-btn,
 html.light-theme .promo-item,
 html.light-theme .book-top-section,
 html.light-theme .contact-row,
-html.light-theme .modal-content,
-html.light-theme .drawer,
-html.light-theme .phone-cta-btn {
-    /* Обводка чуть толще и темнее */
-    border: 1.5px solid rgba(0, 0, 0, 0.15) !important; 
-    
-    /* ЭФФЕКТ СТЕКЛА: блик сверху и мягкая тень снизу */
-    box-shadow: 
-        inset 0 1px 0 rgba(255, 255, 255, 0.9),   /* Яркий верхний блик */
-        inset 0 -1px 2px rgba(0, 0, 0, 0.05),     /* Легкая нижняя тень */
-        0 4px 15px rgba(0, 0, 0, 0.03) !important; /* Внешняя мягкая тень */
-}
-
-/* =========================================
-   СТЕКЛЯННЫЕ ОБВОДКИ И ФИКС СТИКЕРА (СВЕТЛАЯ ТЕМА)
-   ========================================= */
-
-/* 1. Тонкая серая стеклянная обводка для ВСЕХ блоков */
-html.light-theme .header-pill,
-html.light-theme .bottom-nav,
-html.light-theme .home-level-card,
-html.light-theme .profile-main-card,
-html.light-theme .home-bookings-card,
-html.light-theme .profile-history-card,
-html.light-theme .service-card,
-html.light-theme .master-card,
-html.light-theme .tab-btn,
-html.light-theme .promo-tab,
-html.light-theme .install-app-btn,
-html.light-theme .nav-bubble,
-html.light-theme .history-toggle-btn,
-html.light-theme .promo-item,
-html.light-theme .book-top-section,
-html.light-theme .contact-row,
-html.light-theme .modal-content,
-html.light-theme .drawer,
-html.light-theme .phone-cta-btn {
+html.light-theme .drawer {
     /* Обводка чуть толще и темнее */
     border: 1.5px solid rgba(0, 0, 0, 0.15) !important; 
     
@@ -421,13 +369,6 @@ html.light-theme .promo-bg-icon {
     opacity: 0.25 !important;
     filter: none !important; 
 }
-
-/* 3. Фикс исчезающего стикера на телефоне */
-html.light-theme .promo-bg-icon {
-    opacity: 0.25 !important;
-    filter: none !important; 
-}
-
 /* =========================================
    ФИКС ТЕКСТА НА КНОПКЕ "СКАЧАТЬ" (СВЕТЛАЯ ТЕМА)
    ========================================= */
@@ -446,4 +387,34 @@ html.light-theme .master-card.selected {
     border: 2px solid var(--gold) !important; /* Толстая желтая рамка */
     background: rgba(199, 154, 42, 0.15) !important; /* Чуть ярче фон */
     box-shadow: 0 0 15px rgba(199, 154, 42, 0.25) !important; /* Свечение */
+}
+/* Светлая тема */
+
+html.light-theme .points-history-modal {
+    background: rgba(255, 255, 255, 0.75) !important;
+    border: 1.5px solid rgba(0, 0, 0, 0.15) !important;
+    box-shadow:
+        inset 0 2px 4px rgba(255, 255, 255, 0.9),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.05),
+        0 8px 30px rgba(0, 0, 0, 0.08) !important;
+}
+html.light-theme .status-points {
+    background: rgba(199, 154, 42, 0.15);
+    border-color: rgba(199, 154, 42, 0.5);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.8),
+        0 4px 12px rgba(199, 154, 42, 0.12);
+    color: var(--gold);
+}
+html.light-theme .status-points:active {
+    background: rgba(199, 154, 42, 0.28);
+}
+html.light-theme .points-history-item {
+    border-bottom-color: rgba(199, 154, 42, 0.4);
+}
+html.light-theme .points-history-total {
+    border-bottom-color: rgba(199, 154, 42, 0.4);
+}
+html.light-theme .points-history-note {
+    border-top-color: rgba(199, 154, 42, 0.4);
 }

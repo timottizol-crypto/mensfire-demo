@@ -59,7 +59,7 @@ let selectedBarber = null;
 let selectedDate = null;
 let selectedTime = null;
 let currentUser = JSON.parse(localStorage.getItem('menfire_user')) || null;
-        let rawBookings = JSON.parse(localStorage.getItem('menfire_bookings')) || [];
+let rawBookings = JSON.parse(localStorage.getItem('menfire_bookings')) || [];
 // Добавляем статус, если его нет
 rawBookings.forEach(b => { if (!b.status) b.status = 'active'; });
 let bookings = rawBookings.filter(b => b && b.barber && b.appointmentDate && b.time);
@@ -70,13 +70,106 @@ let fromPromo = false;
 
 // Функция для расчета уровней (от 0 до 6)
 function getLevelInfo(count) {
-    if (count < 3) return { level: "Новичок", nextLevel: "Постоянный", current: count, target: 3, base: 0 };
-    if (count < 6) return { level: "Постоянный", nextLevel: "Любимчик", current: count - 3, target: 3, base: 3 };
-    if (count < 10) return { level: "Любимчик", nextLevel: "VIP", current: count - 6, target: 4, base: 6 };
-    if (count < 15) return { level: "VIP", nextLevel: "Эксклюзив", current: count - 10, target: 5, base: 10 };
-    if (count < 21) return { level: "Эксклюзив", nextLevel: "Легенда", current: count - 15, target: 6, base: 15 };
-    // Максимальный уровень
-    return { level: "Легенда", nextLevel: "Максимум", current: 1, target: 1, base: 21 };
+    if (count < 10) return {
+        level: "Бронзовый",
+        nextLevel: "Серебряный",
+        current: count,
+        target: 10,
+        base: 0,
+        percent: 1
+    };
+    if (count < 20) return {
+        level: "Серебряный",
+        nextLevel: "Золотой",
+        current: count - 10,
+        target: 10,
+        base: 10,
+        percent: 2
+    };
+    return {
+        level: "Золотой",
+        nextLevel: "Максимум",
+        current: 10,
+        target: 10,
+        base: 20,
+        percent: 3
+    };
+}
+
+function getPointsHistory() {
+    const validVisits = bookings
+        .filter(b => (b.status === 'active' || b.status === 'completed'))
+        .filter(b => (b.total || 0) > 1000)
+        .map(b => ({
+            date: parseDate(b) || 0,
+            dateStr: b.appointmentDate,
+            barber: b.barber?.name || '—',
+            total: b.total || 0,
+            status: b.status
+        }))
+        .sort((a, b) => a.date - b.date);
+
+    let runningPoints = 0;
+    return validVisits.map((v, i) => {
+        let rate;
+        if (i < 10) rate = 0.01;
+        else if (i < 20) rate = 0.02;
+        else rate = 0.03;
+        const points = Math.floor(v.total * rate);
+        runningPoints += points;
+        return { ...v, rate, points, runningPoints };
+    });
+}
+
+function calculatePoints() {
+    const history = getPointsHistory();
+    return history.length > 0 ? history[history.length - 1].runningPoints : 0;
+}
+
+function openPointsHistory() {
+    renderPointsHistory();
+    document.getElementById('pointsHistoryModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function renderPointsHistory() {
+    const list = document.getElementById('pointsHistoryList');
+    const totalEl = document.getElementById('pointsHistoryTotal');
+    if (!list) return;
+
+    if (!currentUser) {
+        list.innerHTML = `<div class="points-history-empty">Войдите, чтобы видеть историю начислений</div>`;
+        if (totalEl) totalEl.style.display = 'none';
+        return;
+    }
+
+    const history = getPointsHistory();
+    if (history.length === 0) {
+        list.innerHTML = `<div class="points-history-empty">Пока нет начислений.<br>Запишитесь на услугу от 1000 ₽</div>`;
+        if (totalEl) totalEl.style.display = 'none';
+        return;
+    }
+
+    const totalPoints = history[history.length - 1].runningPoints;
+    const reversed = [...history].reverse();
+
+    // Итог — отдельно, НАД скроллом
+    if (totalEl) {
+        totalEl.style.display = '';
+        totalEl.innerHTML = `Всего накоплено: <span>${totalPoints} баллов</span>`;
+    }
+
+    // Записи — только они скроллятся
+    list.innerHTML = reversed.map(item => `
+        <div class="points-history-item">
+            <div class="phi-left">
+                <div class="phi-date">${item.dateStr}</div>
+                <div class="phi-barber">${item.barber}</div>
+                <div class="phi-detail">${item.total} ₽ × ${(item.rate * 100).toFixed(0)}%</div>
+            </div>
+            <div class="phi-points">+${item.points}</div>
+        </div>
+    `).join('');
 }
 
 // Рандомные приветствия на разных языках
@@ -115,8 +208,9 @@ window.addEventListener('DOMContentLoaded', () => {
                             if (installingWorker.state === 'installed') {
                                 if (navigator.serviceWorker.controller) {
                                     // Вместо confirm используем ваш красивый Toast
-                                    showToast('Доступно обновление! Нажмите, чтобы обновить.', 'success');
-                                    
+                                    showToast('Доступно обновление! Нажмите, чтобы обновить.', 'success', () => {
+                                        installingWorker.postMessage({ type: 'SKIP_WAITING' });
+                                    });
                                     // Через 2 секунды автоматически применяем обновление
                                     // (можно убрать, если хотите, чтобы пользователь сам нажимал)
                                     setTimeout(() => {
@@ -187,31 +281,6 @@ window.addEventListener('DOMContentLoaded', () => {
         console.error("Ошибка при загрузке:", error);
         document.getElementById('splashScreen').classList.add('hidden');
         document.getElementById('appContainer').classList.add('visible');
-    }
-        // АВТООБНОВЛЕНИЕ SERVICE WORKER
-    if ('serviceWorker' in navigator) {
-        let refreshing;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-            if (refreshing) return;
-            window.location.reload();
-            refreshing = true;
-        });
-        
-        navigator.serviceWorker.register('sw.js').then(reg => {
-            reg.onupdatefound = () => {
-                const installingWorker = reg.installing;
-                installingWorker.onstatechange = () => {
-                    if (installingWorker.state === 'installed') {
-                        if (navigator.serviceWorker.controller) {
-                            // Новый контент доступен, перезагружаем страницу
-                            if (confirm('Доступно обновление приложения. Перезагрузить?')) {
-                                window.location.reload();
-                            }
-                        }
-                    }
-                };
-            };
-        });
     }
 });
 
@@ -312,13 +381,10 @@ let touchStartX = 0;
 let touchStartY = 0;
 
 document.addEventListener('touchstart', e => {
-    if (document.querySelector('.modal.active') || document.querySelector('.drawer.active')) return;
     // ДОБАВЛЯЕМ .promo-carousel-wrapper в исключения
     if (e.target.closest('.date-grid') || e.target.closest('.booking-scroll-wrapper') || e.target.closest('.promo-carousel-wrapper')) return;
     
-    if (e.target.closest('.date-grid') || 
-        e.target.closest('.booking-scroll-wrapper') || 
-        e.target.closest('.bookings-scroll-wrapper') || 
+    if (e.target.closest('.date-grid') ||
         e.target.closest('.promo-carousel-wrapper') ||
         e.target.closest('.home-scroll-area') ||
         e.target.closest('.profile-history-scroll') ||
@@ -329,13 +395,10 @@ document.addEventListener('touchstart', e => {
 }, { passive: true });
 
 document.addEventListener('touchend', e => {
-    if (document.querySelector('.modal.active') || document.querySelector('.drawer.active')) return;
     // ДОБАВЬ .promo-carousel-wrapper СЮДА
     if (e.target.closest('.date-grid') || e.target.closest('.bookings-scroll-wrapper') || e.target.closest('.promo-carousel-wrapper')) return;
 
-    if (e.target.closest('.date-grid') || 
-        e.target.closest('.booking-scroll-wrapper') || 
-        e.target.closest('.bookings-scroll-wrapper') || 
+    if (e.target.closest('.date-grid') ||
         e.target.closest('.promo-carousel-wrapper') ||
         e.target.closest('.home-scroll-area') ||
         e.target.closest('.profile-history-scroll') ||
@@ -437,15 +500,9 @@ function initNavBubble() {
     const activeNav = document.querySelector('.nav-item.active');
     if (!bubble || !activeNav) return;
 
-        bubble.classList.remove('expanding');
-        bubble.classList.remove('squashing');
+    bubble.classList.remove('expanding');
+    bubble.classList.remove('squashing');
     
-    // Когда пузырь приехал (закончил анимацию left) — возвращаем исходный размер
-    bubble.addEventListener('transitionend', (e) => {
-        if (e.propertyName === 'left') {
-            bubble.classList.remove('moving'); 
-        }
-    });
 
     bubble.style.transition = 'none';
     updateNavBubble(activeNav, true);
@@ -462,92 +519,90 @@ function renderHomeScreen() {
 }
 
 function renderHomeLevel() {
-const circle = document.getElementById('homeProgressCircle');
-const circleText = document.getElementById('homeProgressText');
-const statusText = document.getElementById('homeStatStatusText');
-const statusSub = document.getElementById('homeStatStatusSub');
-const levelCard = document.querySelector('.home-level-card'); 
+    const circle = document.getElementById('homeProgressCircle');
+    const circleText = document.getElementById('homeProgressText');
+    const statusText = document.getElementById('homeStatStatusText');
+    const statusSub = document.getElementById('homeStatStatusSub');
+    const levelCard = document.querySelector('.home-level-card');
+    const levelInfo = document.querySelector('.home-level-info');
 
-if (!currentUser) {
-    statusText.innerText = "Гость";
-    statusSub.innerText = "Войдите, чтобы копить визиты";
-    circle.style.strokeDashoffset = 100; 
-    circleText.innerText = "0/0";
-    levelCard.style.setProperty('--level-color', '#555555'); 
-    return;
-}
+    if (!currentUser) {
+        statusText.innerText = "Гость";
+        statusSub.innerText = "Войдите, чтобы копить визиты";
+        circle.style.strokeDashoffset = 100;
+        circleText.innerText = "0/0";
+        levelCard.style.setProperty('--level-color', '#555555');
+        levelInfo?.querySelector('.status-points')?.remove();
+        return;
+    }
 
-const validVisitsCount = bookings.filter(b => b.status === 'active' || b.status === 'completed').length;
-const info = getLevelInfo(validVisitsCount);
+    // Считаем только визиты с суммой > 1000₽
+    const validVisitsCount = bookings.filter(b =>
+        (b.status === 'active' || b.status === 'completed') &&
+        (b.total || 0) > 1000
+    ).length;
 
-// --- ЛОГИКА АНИМАЦИИ ЛИНИИ ---
-// Анимация запускается ТОЛЬКО если главный экран активен.
-// Иначе (например, во время completeBooking или updateAuthUI) — просто
-// не трогаем previousLevelName, чтобы анимация дождалась перехода на главную.
-const isHomeActive = document.getElementById('viewHome').classList.contains('active');
+    const info = getLevelInfo(validVisitsCount);
+    const points = calculatePoints();
 
-if (isHomeActive && previousLevelName !== info.level) {
-    // Уровень изменился И мы на главной — запускаем анимацию
-    levelCard.classList.remove('animate-border');
-    void levelCard.offsetWidth;              // форс-перезапуск
-    levelCard.classList.add('animate-border');
-
-    previousLevelName = info.level;          // запоминаем ПОСЛЕ запуска
-
-    clearTimeout(window.lineAnimTimer);
-    window.lineAnimTimer = setTimeout(() => {
+    // --- Анимация бегущей линии (без изменений) ---
+    const isHomeActive = document.getElementById('viewHome').classList.contains('active');
+    if (isHomeActive && previousLevelName !== info.level) {
         levelCard.classList.remove('animate-border');
-    }, 3000);
-} else if (isHomeActive) {
-    // Мы на главной, но уровень НЕ изменился — просто снимаем класс на всякий случай
-    levelCard.classList.remove('animate-border');
-} else {
-    // Мы НЕ на главной — ничего не трогаем, previousLevelName обновится
-    // только когда пользователь реально перейдёт на главную
-    levelCard.classList.remove('animate-border');
-}
-// -----------------------------
+        void levelCard.offsetWidth;
+        levelCard.classList.add('animate-border');
+        previousLevelName = info.level;
+        clearTimeout(window.lineAnimTimer);
+        window.lineAnimTimer = setTimeout(() => {
+            levelCard.classList.remove('animate-border');
+        }, 3000);
+    } else if (isHomeActive) {
+        levelCard.classList.remove('animate-border');
+    } else {
+        levelCard.classList.remove('animate-border');
+    }
 
-    // --- ОПРЕДЕЛЯЕМ ЦВЕТА В ЗАВИСИМОСТИ ОТ ТЕМЫ ---
+    // --- Цвета: 3 уровня ---
     const isLight = document.documentElement.classList.contains('light-theme');
-    
+
     const levelColorsDark = {
-        "Новичок": "#B0B0B0",     
-        "Постоянный": "#CD7F32",  
-        "Любимчик": "#D4AF37",    
-        "VIP": "#E5E4E2",         
-        "Эксклюзив": "#4A90E2",   
-        "Легенда": "#E0115F"      
+        "Бронзовый":  "#CD7F32",
+        "Серебряный": "#C0C0C0",
+        "Золотой":    "#D4AF37"
     };
 
     const levelColorsLight = {
-        "Новичок": "#8C8C8C",     // Темнее серый
-        "Постоянный": "#A65D26",  // Темнее бронза
-        "Любимчик": "#C79A2A",    // Насыщенное золото
-        "VIP": "#7A7A7A",         // Темно-серый (вместо белого)
-        "Эксклюзив": "#2B6BB5",   // Темнее синий
-        "Легенда": "#B80E4A"      // Темнее розовый
+        "Бронзовый":  "#A65D26",
+        "Серебряный": "#8C8C8C",
+        "Золотой":    "#C79A2A"
     };
-    
+
     const currentColor = (isLight ? levelColorsLight[info.level] : levelColorsDark[info.level]) || "#D4AF37";
-    // ----------------------------------------------
-levelCard.style.setProperty('--level-color', currentColor);
+    levelCard.style.setProperty('--level-color', currentColor);
 
-statusText.innerText = info.level;
-statusSub.innerText = info.level === "Легенда" ? "Вы лучший!" : `До "${info.nextLevel}" осталось ${info.target - info.current} виз.`;
+    statusText.innerText = info.level;
+    // --- Баллы в карточке уровня ---
+    levelInfo?.querySelector('.status-points')?.remove();
+    if (levelInfo) {
+        const pointsEl = document.createElement('div');
+        pointsEl.className = 'status-points';
+        pointsEl.innerHTML = `<span class="points-icon">💎</span>${points} баллов`;
+        pointsEl.onclick = (e) => { e.stopPropagation(); openPointsHistory(); };
+        levelInfo.appendChild(pointsEl);
+    }
+    // --- Прогресс-круг ---
+    const radius = 42, circumference = 2 * Math.PI * radius;
+    circle.style.strokeDasharray = `${circumference} ${circumference}`;
 
-const radius = 42, circumference = 2 * Math.PI * radius;
-circle.style.strokeDasharray = `${circumference} ${circumference}`;
+    const progress = info.current / info.target;
+    circle.style.strokeDashoffset = circumference - (progress * circumference);
 
-const progress = info.current / info.target;
-circle.style.strokeDashoffset = circumference - (progress * circumference);
-
-if (info.level === "Легенда") {
-    circle.style.strokeDashoffset = 0;
-    circleText.innerText = "MAX";
-} else {
-    circleText.innerText = `${info.current}/${info.target}`;
-}
+    if (info.level === "Золотой") {
+        circle.style.strokeDashoffset = 0;
+        circleText.innerText = "MAX";
+    } else {
+        circleText.innerText = `${info.current}/${info.target}`;
+    }
 }
 
 function renderHomeBookings() {
@@ -804,12 +859,18 @@ function goHomeFromHeader() {
     }
 }
 
-function showToast(message, type = 'info') {
+function showToast(message, type = 'info', onClick = null) {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.innerHTML = `<span>${type==='error'?'⚠️':type==='success'?'✅':'ℹ️'}</span><span>${message}</span>`;
     container.appendChild(toast);
+
+    if (onClick) {
+        toast.style.cursor = 'pointer';
+        toast.onclick = () => { onClick(); toast.remove(); };
+    }
+
     setTimeout(() => {
         toast.style.opacity = '0';
         toast.style.transform = 'translateY(-10px)';
@@ -1139,13 +1200,13 @@ function completeBooking() {
     document.getElementById('successModal').classList.add('active');
     renderHomeScreen();
     renderProfileBookings();
-    updateStatusUI();
 }
 
 function goToCabinetFromSuccess() {
     document.getElementById('successModal').classList.remove('active');
     switchView('viewProfile', document.getElementById('navProfile'));
     updateAuthUI();
+    fromPromo = false;
 }
 function closeSuccessAndGoHome() {
     document.getElementById('successModal').classList.remove('active');
@@ -1218,7 +1279,6 @@ function updateAuthUI() {
         // Скрываем номер пользователя, если он не авторизован
         if (userPhoneRow) userPhoneRow.style.display = 'none';
     }
-    
     renderHomeScreen();
     renderProfileBookings();
 }
@@ -1230,57 +1290,6 @@ function logout() {
     switchView('viewBook', document.getElementById('navBook'));
     showToast('Вы вышли', 'info');
 }
-
-function updateStatusUI() {
-    const statusText = document.getElementById('statStatusText');
-    const statusSub = document.getElementById('statStatusSub');
-    const profileCircle = document.getElementById('profileProgressCircle');
-
-    if (!currentUser || !statusText) return;
-
-    // Считаем только валидные визиты
-    const validVisitsCount = bookings.filter(b => b.status === 'active' || b.status === 'completed').length;
-    const info = getLevelInfo(validVisitsCount);
-
-                // --- ОПРЕДЕЛЯЕМ ЦВЕТА В ЗАВИСИМОСТИ ОТ ТЕМЫ ---
-    const isLight = document.documentElement.classList.contains('light-theme');
-    
-    const levelColorsDark = {
-        "Новичок": "#B0B0B0",     
-        "Постоянный": "#CD7F32",  
-        "Любимчик": "#D4AF37",    
-        "VIP": "#E5E4E2",         
-        "Эксклюзив": "#4A90E2",   
-        "Легенда": "#E0115F"      
-    };
-
-    const levelColorsLight = {
-        "Новичок": "#8C8C8C",
-        "Постоянный": "#A65D26",
-        "Любимчик": "#C79A2A",
-        "VIP": "#7A7A7A",
-        "Эксклюзив": "#2B6BB5",
-        "Легенда": "#B80E4A"
-    };
-    
-    const currentColor = (isLight ? levelColorsLight[info.level] : levelColorsDark[info.level]) || "#D4AF37";
-    // ----------------------------------------------
-
-
-    statusText.innerText = info.level;
-    statusText.style.color = currentColor; // Красим текст в цвет уровня
-    statusSub.innerText = info.level === "Легенда" ? "Вы лучший!" : `До "${info.nextLevel}" осталось ${info.target - info.current} виз.`;
-
-    // Рисуем мини-диаграмму в профиле
-    if (profileCircle) {
-        const radius = 42, circumference = 2 * Math.PI * radius;
-        profileCircle.style.strokeDasharray = `${circumference} ${circumference}`;
-        const progress = info.current / info.target;
-        profileCircle.style.strokeDashoffset = circumference - (progress * circumference);
-        profileCircle.style.stroke = currentColor;
-    }
-}
-
 
 function parseDate(b) {
     if (!b.appointmentDate) return Infinity;
@@ -1377,93 +1386,66 @@ function initPromoCarousel() {
     renderPromos(currentPromoType);
 }
 
-function switchPromoTab(type, btn) {
-    document.querySelectorAll('.promo-tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    currentPromoType = type;
-    renderPromos(type);
-}
-
 function renderPromos(type) {
     const track = document.getElementById('promoTrack');
     if (!track) return;
 
-    const isPWA = document.documentElement.classList.contains('is-pwa');
-    const filteredPromos = isPWA ? promosData.filter(p => p.type === type) : promosData;
-    
+    const filteredPromos = promosData;
+
     let cardsHTML = '';
-    for(let i=0; i<3; i++) {
+    for (let i = 0; i < 3; i++) {
         filteredPromos.forEach((promo) => {
             cardsHTML += createPromoHTML(promo);
         });
     }
-    
+
     track.innerHTML = cardsHTML;
     const items = track.querySelectorAll('.promo-item');
 
-    // ФУНКЦИЯ ПОДСВЕТКИ ЦЕНТРАЛЬНОЙ КАРТОЧКИ
+    // Подсветка центральной карточки
     const setActivePromo = () => {
         if (!items.length) return;
-        
         const trackRect = track.getBoundingClientRect();
         const centerX = trackRect.left + trackRect.width / 2;
-        let closestItem = null;
-        let minDistance = Infinity;
-
-        // Находим карточку, которая ближе всего к центру
+        let closestItem = null, minDist = Infinity;
         items.forEach(item => {
-            const itemRect = item.getBoundingClientRect();
-            const itemCenterX = itemRect.left + itemRect.width / 2;
-            const distance = Math.abs(centerX - itemCenterX);
-            
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestItem = item;
-            }
+            const r = item.getBoundingClientRect();
+            const d = Math.abs(centerX - (r.left + r.width / 2));
+            if (d < minDist) { minDist = d; closestItem = item; }
         });
-
-        // Убираем класс у ВСЕХ карточек
         items.forEach(item => item.classList.remove('is-active-card'));
-        
-        // Добавляем класс центральной карточке
         if (closestItem) {
-            void closestItem.offsetWidth; // Форсируем рефлоу (сбрасываем старую анимацию)
+            void closestItem.offsetWidth;
             closestItem.classList.add('is-active-card');
         }
     };
 
-    // ФУНКЦИЯ 3D-ЭФФЕКТА (наклоны)
+    // 3D-эффект
     const update3DEffect = () => {
         const trackRect = track.getBoundingClientRect();
         const centerX = trackRect.left + trackRect.width / 2;
-        
         items.forEach(item => {
-            const itemRect = item.getBoundingClientRect();
-            const itemCenterX = itemRect.left + itemRect.width / 2;
-            
-            const distance = centerX - itemCenterX;
-            const offset = distance / (trackRect.width / 2); 
-            const absOffset = Math.min(Math.abs(offset), 1.5); 
-            
-            const rotateY = offset * -15;        
-            const translateY = absOffset * 15;   
-            const scale = 1 - (absOffset * 0.1); 
-            const opacity = 1 - (absOffset * 0.3); 
+            const r = item.getBoundingClientRect();
+            const distance = centerX - (r.left + r.width / 2);
+            const offset = distance / (trackRect.width / 2);
+            const absOffset = Math.min(Math.abs(offset), 1.5);
+            const rotateY = offset * -15;
+            const translateY = absOffset * 15;
+            const scale = 1 - (absOffset * 0.1);
+            const opacity = 1 - (absOffset * 0.3);
             const zIndex = 10 - Math.round(absOffset * 10);
-
             item.style.transform = `translateY(${translateY}px) scale(${scale}) rotateY(${rotateY}deg)`;
-            item.style.opacity = Math.max(opacity, 0.3); 
+            item.style.opacity = Math.max(opacity, 0.3);
             item.style.zIndex = zIndex;
         });
     };
 
-    // Применяем эффект и подсвечиваем стартовую карточку при загрузке (ПЕРВЫЙ ВХОД)
     setTimeout(() => {
         update3DEffect();
-        setActivePromo(); 
+        setActivePromo();
     }, 50);
 
-    // Логика бесконечной карусели
+    // Ширина одной копии (3 карточки + 3 gap)
     let singleSetWidth = 0;
     if (items.length > filteredPromos.length) {
         const firstItem = items[0];
@@ -1471,60 +1453,129 @@ function renderPromos(type) {
         singleSetWidth = firstItemOfSecondSet.offsetLeft - firstItem.offsetLeft;
     }
 
-    let scrollTimeout;
-    track.onscroll = null; 
-    
-    track.onscroll = () => {
-        update3DEffect();
-        
-        // 1. КАК ТОЛЬКО НАЧАЛИ ЛИСТАТЬ — УБИРАЕМ СВЕЧЕНИЕ СО ВСЕХ КАРТОЧЕК
-        items.forEach(item => item.classList.remove('is-active-card'));
+    // ===== Хелперы =====
+    function getCenterIndex() {
+        const trackRect = track.getBoundingClientRect();
+        const centerX = trackRect.left + trackRect.width / 2;
+        let closest = 0, minDist = Infinity;
+        items.forEach((item, i) => {
+            const r = item.getBoundingClientRect();
+            const d = Math.abs(centerX - (r.left + r.width / 2));
+            if (d < minDist) { minDist = d; closest = i; }
+        });
+        return closest;
+    }
 
-        window.clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(() => {
-            if (singleSetWidth === 0) return;
-            
-            const scrollLeft = track.scrollLeft;
-            let needsReset = false;
-            let newScrollLeft = scrollLeft;
-            
-            if (scrollLeft >= singleSetWidth * 2 - 50) {
-                newScrollLeft = scrollLeft - singleSetWidth;
-                needsReset = true;
-            } else if (scrollLeft <= 50) {
-                newScrollLeft = scrollLeft + singleSetWidth;
-                needsReset = true;
-            }
-            
-            if (needsReset) {
-                track.style.scrollSnapType = 'none';
-                items.forEach(item => item.style.transition = 'none');
-                track.scrollLeft = newScrollLeft;
-                update3DEffect();
-                void track.offsetWidth;
-                requestAnimationFrame(() => {
-                    items.forEach(item => item.style.transition = '');
-                    requestAnimationFrame(() => {
-                        track.style.scrollSnapType = 'x mandatory';
-                    });
-                });
-            }
-            
-            // 2. КОГДА ПАЛЕЦ ОТПУЩЕН И КАРУСЕЛЬ ОСТАНОВИЛАСЬ — ВКЛЮЧАЕМ СВЕЧЕНИЕ
-            setActivePromo(); 
-        }, 150); // Задержка 150мс после остановки
+    function smoothScrollTo(el, target, duration, onDone) {
+        const start = el.scrollLeft;
+        const distance = target - start;
+        if (Math.abs(distance) < 1) { if (onDone) onDone(); return; }
+        const startTime = performance.now();
+        function tick(now) {
+            const t = Math.min((now - startTime) / duration, 1);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.scrollLeft = start + distance * eased;
+            if (t < 1) requestAnimationFrame(tick);
+            else if (onDone) onDone();
+        }
+        requestAnimationFrame(tick);
+    }
+
+    function jumpScroll(track, targetLeft, items) {
+        isSettling = true;
+        items.forEach(item => item.style.transition = 'none');
+        track.scrollLeft = targetLeft;
+        update3DEffect();
+        void track.offsetWidth;
+        requestAnimationFrame(() => {
+            items.forEach(item => item.style.transition = '');
+            requestAnimationFrame(() => { isSettling = false; });
+        });
+    }
+
+    function scrollToIndex(index, duration, onDone) {
+        const targetItem = items[index];
+        if (!targetItem) { if (onDone) onDone(); return; }
+        const trackRect = track.getBoundingClientRect();
+        const centerX = trackRect.left + trackRect.width / 2;
+        const r = targetItem.getBoundingClientRect();
+        const targetScroll = track.scrollLeft + (centerX - (r.left + r.width / 2));
+        isSettling = true;
+        smoothScrollTo(track, targetScroll, duration, () => {
+            isSettling = false;
+            if (onDone) onDone();
+        });
+    }
+
+    // ===== Состояние =====
+    let lastSettledIndex = null;
+    let scrollTimeout;
+    let isSettling = false;
+
+    const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+    const maxSwipe = isTouchDevice ? 2 : Infinity;
+
+    // ===== Главный обработчик остановки =====
+    const handleScrollEnd = () => {
+        if (singleSetWidth === 0 || isSettling) return;
+        const scrollLeft = track.scrollLeft;
+
+        // 1. Бесшовный переход через край
+        if (scrollLeft >= singleSetWidth * 2 - 1) {
+            jumpScroll(track, scrollLeft - singleSetWidth, items);
+            lastSettledIndex = getCenterIndex();
+            setActivePromo();
+            return;
+        } else if (scrollLeft <= 1) {
+            jumpScroll(track, scrollLeft + singleSetWidth, items);
+            lastSettledIndex = getCenterIndex();
+            setActivePromo();
+            return;
+        }
+
+        const currentIndex = getCenterIndex();
+
+        // 2. ОГРАНИЧЕНИЕ: на тач — не больше 2, на ПК — без лимита
+        if (lastSettledIndex !== null && Math.abs(currentIndex - lastSettledIndex) > maxSwipe) {
+            const direction = Math.sign(currentIndex - lastSettledIndex);
+            const clampedIndex = lastSettledIndex + direction * maxSwipe;
+            scrollToIndex(clampedIndex, 300, () => {
+                lastSettledIndex = clampedIndex;
+                setActivePromo();
+            });
+            return;
+        }
+
+        // 3. Всё в порядке — просто обновляем
+        lastSettledIndex = currentIndex;
+        setActivePromo();
     };
 
-    // Центрируем при старте
+    // ===== Подписки =====
+    track.onscroll = null;
+    track.onscroll = () => {
+        update3DEffect();
+        items.forEach(item => item.classList.remove('is-active-card'));
+        window.clearTimeout(scrollTimeout);
+        if (!('onscrollend' in window)) {
+            scrollTimeout = setTimeout(handleScrollEnd, 250);
+        }
+    };
+
+    if ('onscrollend' in track) {
+        track.onscrollend = handleScrollEnd;
+    }
+
+
+    // Центрируем при старте — без smoothScrollTo, без scrollSnapType
     setTimeout(() => {
         if (singleSetWidth > 0) {
-            track.style.scrollSnapType = 'none';
+            isSettling = true;
             track.scrollLeft = singleSetWidth;
             update3DEffect();
-            setActivePromo(); // Подсвечиваем после центрирования
-            requestAnimationFrame(() => {
-                track.style.scrollSnapType = 'x mandatory';
-            });
+            setActivePromo();
+            lastSettledIndex = getCenterIndex();   // ← добавили
+            requestAnimationFrame(() => { isSettling = false; });
         }
     }, 50);
 }
@@ -1646,9 +1697,9 @@ function handleInstallClick() {
 ========================================= */
 (function() {
     const PRESSABLE = [
+        '.status-points',
         'button',
-        '.nav-item',
-        // '.glass-card',  <-- УБРАЛИ, чтобы блоки записей не прыгали
+        '.nav-item',       
         '.home-level-card',
         '.home-cta-btn',
         '.service-card',
@@ -1731,6 +1782,7 @@ function initTheme() {
     if (saved === 'light') {
         document.documentElement.classList.add('light-theme');
         if (themeIcon) themeIcon.innerText = '🌙'; // В светлой теме показываем луну
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', '#F5F5F7');
     } else {
         if (themeIcon) themeIcon.innerText = '☀️'; // В темной теме показываем солнце
     }
@@ -1742,6 +1794,7 @@ function toggleTheme() {
     const isLight = html.classList.contains('light-theme');
     localStorage.setItem('mensfire_theme', isLight ? 'light' : 'dark');
     
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isLight ? '#F5F5F7' : '#0a0a0a');
     // Меняем иконку
     const themeIcon = document.getElementById('themeIcon');
     if (themeIcon) {
@@ -1750,7 +1803,6 @@ function toggleTheme() {
 
     // ПЕРЕРИСОВЫВАЕМ ЭЛЕМЕНТЫ С ЦВЕТАМИ
     if (typeof renderHomeLevel === 'function') renderHomeLevel();
-    if (typeof updateStatusUI === 'function') updateStatusUI();
     
     showToast(isLight ? 'Светлая тема' : 'Тёмная тема', 'info');
 }

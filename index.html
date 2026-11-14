@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/jpeg" href="img/icon-dark.png">
+    <link rel="icon" type="image/png" href="img/icon-dark.png">
     <link rel="apple-touch-icon" href="img/icon-dark.png">
     <title>MENSFIRE | Приложение</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;800&display=swap" rel="stylesheet">
@@ -75,7 +75,7 @@
             <!-- Верхний ряд: Уровень + Кнопка Скачать -->
             <div class="home-top-row">
                 <!-- Блок уровня пользователя -->
-                <div class="glass-card home-level-card" onclick="switchView('viewProfile', document.getElementById('navProfile'))">
+                <div class="home-level-card" onclick="switchView('viewProfile', document.getElementById('navProfile'))">
                     <div class="home-level-circle">
                         <svg viewBox="0 0 100 100">
                             <circle class="status-circle-bg" cx="50" cy="50" r="42"></circle>
@@ -85,7 +85,7 @@
                     </div>
                     <div class="home-level-info">
                         <div class="status-level-name" id="homeStatStatusText">Новичок</div>
-                        <div class="status-hint" id="homeStatStatusSub">До статуса "Постоянный" осталось 3 визита</div>
+                        <div class="status-hint" id="homeStatStatusSub"></div>
                     </div>
                        <div class="shop-brand-name">MENS<span>FIRE</span></div>
                 </div>
@@ -296,6 +296,18 @@
             <button class="action-modal-btn action-btn-primary" onclick="rescheduleBooking()">Перенести</button>
             <button class="action-modal-btn action-btn-danger" onclick="confirmCancel()">Отменить</button>
             <button class="action-modal-btn action-btn-cancel" onclick="closeActionModal()">Закрыть</button>
+        </div>
+    </div>
+    <!-- МОДАЛКА: История баллов -->
+    <div class="modal" id="pointsHistoryModal">
+        <div class="modal-content points-history-modal">
+            <h2 style="text-align: center; margin-bottom: 15px; font-size: 20px;">История баллов</h2>
+            <div class="points-history-total" id="pointsHistoryTotal"></div>
+            <div class="points-history-list" id="pointsHistoryList"></div>
+            <p class="points-history-note">
+                💡 Уровень повышается только при записи на сумму больше 1000 ₽
+            </p>
+            <button class="checkout-btn" onclick="document.getElementById('pointsHistoryModal').classList.remove('active')">Закрыть</button>
         </div>
     </div>
         <!-- Модалка с инструкцией для iOS -->
