@@ -456,7 +456,8 @@ body {
     align-items: center;
     justify-content: center;
     color: var(--text-muted);
-    font-size: 11px;
+    font-size: 10px;
+    padding: 0 2px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s var(--spring);
@@ -2192,14 +2193,16 @@ body.header-hidden #viewBook.active {
 
 .home-level-info .status-hint {
     font-size: 13px;
-    color: var(--text-muted);
+    color: var(--gold); /* Сделали текст золотым, чтобы выделялся */
+    font-weight: 600;
     line-height: 1.4;
     max-width: 100%;
-    padding-right: 95px;
-    white-space: normal;
+    padding-right: 95px; /* Защита от наезда на баллы */
+    white-space: nowrap; /* Запрещаем перенос строки */
+    margin-top: 2px;
 }
 
-/* Скрываем пустую подсказку, чтобы она не занимала место */
+/* Если текст пустой — скрываем */
 .home-level-info .status-hint:empty {
     display: none;
 }

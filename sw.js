@@ -1,8 +1,10 @@
-const CACHE_NAME = 'mensfire-v146'; // <-- Подняли версию
+const CACHE_NAME = 'mensfire-v170'; // <-- Подняли версию
 const ASSETS = [
   './index.html',
   './style.css',
   './script.js',
+  './nishman.css',
+  './nishman-data.js',
   './manifest.json',
   './img/icon-dark.png',
   './img/background.jpg',

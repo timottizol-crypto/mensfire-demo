@@ -273,6 +273,7 @@ window.addEventListener('DOMContentLoaded', () => {
             renderMasters();
             initNavBubble();
             initPromoCarousel();
+            renderNishmanProducts();
             
         }, 3500);
 
@@ -285,7 +286,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
         // Порядок вкладок для свайпов (слева направо)
-const viewOrder = ['viewHome', 'viewBook', 'viewProfile'];
+const viewOrder = ['viewHome', 'viewBook', 'viewNishman', 'viewProfile'];
 
 function switchView(viewId, navElement) {
     const currentView = document.querySelector('.view.active');
@@ -334,7 +335,8 @@ function switchView(viewId, navElement) {
     const titles = {
         'viewHome': 'Главная',
         'viewBook': 'Записаться',
-        'viewProfile': 'Профиль', // Сократили для красоты
+        'viewNishman': 'Магазин', 
+        'viewProfile': 'Профиль', 
         'viewBookings': 'Мои записи'
     };
     
@@ -581,6 +583,7 @@ function renderHomeLevel() {
     levelCard.style.setProperty('--level-color', currentColor);
 
     statusText.innerText = info.level;
+    statusSub.innerText = `Кэшбэк ${info.percent}%`;
     // --- Баллы в карточке уровня ---
     levelInfo?.querySelector('.status-points')?.remove();
     if (levelInfo) {
@@ -597,12 +600,14 @@ function renderHomeLevel() {
     const progress = info.current / info.target;
     circle.style.strokeDashoffset = circumference - (progress * circumference);
 
-    if (info.level === "Золотой") {
+        if (info.level === "Золотой") {
         circle.style.strokeDashoffset = 0;
         circleText.innerText = "MAX";
     } else {
         circleText.innerText = `${info.current}/${info.target}`;
     }
+    // Убеждаемся, что текст внутри круга активен
+    circleText.style.display = "block"; 
 }
 
 function renderHomeBookings() {
@@ -1888,3 +1893,30 @@ initTheme();
         }
     }, { passive: true });
 })();
+
+
+function renderNishmanProducts() {
+    const grid = document.getElementById('nishmanGrid');
+    if (!grid) return;
+
+    // Группируем товары по категориям
+    const categories = [...new Set(nishmanProducts.map(p => p.category))];
+
+    grid.innerHTML = categories.map(cat => {
+        const productsInCat = nishmanProducts.filter(p => p.category === cat);
+        
+        return `
+            <div class="nishman-category-title">${cat}</div>
+            ${productsInCat.map(prod => `
+                <div class="service-card" onclick="openProductDetail('${prod.id}')">
+                    <div style="height: 80px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(0,0,0,0.3)); border-radius: 10px; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; color: var(--gold); font-weight: 800; font-size: 12px; letter-spacing: 1px; border: 1px solid rgba(212, 175, 55, 0.2);">
+                        NISHMAN
+                    </div>
+                    <h3 style="font-size: 12px; margin-bottom: 4px;">${prod.title}</h3>
+                    <div class="time" style="font-size: 10px; margin-bottom: 8px; line-height: 1.2;">${prod.desc}</div>
+                    <div class="price" style="font-size: 14px;">${prod.price} ₽</div>
+                </div>
+            `).join('')}
+        `;
+    }).join('');
+}

@@ -20,6 +20,7 @@
     </script>
 
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="nishman.css"> 
     <link rel="stylesheet" href="theme-light.css">
 </head>
 <body class="header-hidden">
@@ -167,6 +168,27 @@
             <div class="masters-grid" id="mastersGrid"></div>
         </div>
 
+                <!-- ЭКРАН ПРОДУКЦИИ NISHMAN -->
+        <div id="viewNishman" class="view">
+            
+            <!-- Блок с видео -->
+            <div class="nishman-video-container">
+                <!-- Замени img/nishman-promo.mp4 на реальное название твоего видеофайла -->
+                <video autoplay loop muted playsinline class="nishman-video" poster="img/background.jpg">
+                    <source src="img/nishman-promo.mp4" type="video/mp4">
+                </video>
+                
+                <!-- Кнопка поверх видео (слева внизу) -->
+                <button class="nishman-about-btn" onclick="document.getElementById('aboutNishmanModal').classList.add('active')">
+                    NISHMAN
+                </button>
+            </div>
+
+            <div class="services-grid" id="nishmanGrid">
+                <!-- Карточки товаров добавляются через JS -->
+            </div>
+        </div>
+
         <!-- ЭКРАН ПРОФИЛЯ -->
         <div id="viewProfile" class="view">
             <!-- ЕДИНЫЙ СТЕКЛЯННЫЙ БЛОК ПРОФИЛЯ -->
@@ -223,9 +245,13 @@
                 <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
                 Записаться
             </div>
+            <div class="nav-item" onclick="switchView('viewNishman', this)" id="navNishman">
+                <svg viewBox="0 0 24 24"><path d="M20 7h-4V5c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2zM10 5h4v2h-4V5zm10 14H4V9h16v10z"/></svg>
+                Продукция
+            </div>
             <div class="nav-item" onclick="switchView('viewProfile', this)" id="navProfile">
                 <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-                Личный кабинет
+                Профиль
             </div>
         </div>
     </div>
@@ -326,6 +352,72 @@
             <button class="checkout-btn" onclick="document.getElementById('iosInstallModal').classList.remove('active')">Понятно</button>
         </div>
     </div>
+        <!-- МОДАЛКА: О компании NISHMAN -->
+    <div class="modal" id="aboutNishmanModal">
+        <div class="modal-content about-nishman-modal">
+            
+            <!-- Кнопка закрытия (крестик) -->
+            <button class="close-modal-x" onclick="document.getElementById('aboutNishmanModal').classList.remove('active'); document.body.style.overflow = '';">&times;</button>
+            
+            <h2 style="text-align: center; margin-bottom: 15px; font-size: 20px;">О компании</h2>
+            
+            <!-- Текст истории бренда (будет скроллиться) -->
+            <div class="about-nishman-text">
+                <p>Компания <b>Asil Group Cosmetic</b> была основана в 2016 году в Турции (Стамбул). Создав команду опытных специалистов, которые сделали прорыв в области косметической промышленности в Турции, Asil Group Cosmetic за довольно короткий срок приняла стабильную позицию на рынке профессиональной косметики среди крупных производителей.</p>
+                <p>Косметика для мужчин <b>Nishman</b> входит в пакет брендов компании Asil Group Cosmetic. Компания уделяет особое внимание выбору упаковки, безопасности и качеству продукта, которые способны перевернуть взгляд на косметику. Asil Group регулярно экспортирует продукцию своих брендов более чем в 40 стран мира.</p>
+                <p style="color: var(--gold); font-style: italic; font-weight: 600; margin-top: 15px; text-align: center;">«Мы не остановимся, пока о нас не услышит весь мир».</p>
+            </div>
+
+            <!-- ОРАНЖЕВЫЙ БАННЕР С КОНТАКТАМИ (прижат к низу модалки) -->
+            <div class="nishman-contact-banner">
+                <h3>СВЯЖИТЕСЬ С НАМИ, ЕСЛИ ВАМ ИНТЕРЕСНЫ ПРОДУКТЫ NISHMAN</h3>
+                <a href="tel:+74991102472" class="nishman-contact-btn">СВЯЗАТЬСЯ</a>
+                
+                <div class="nishman-footer-info">
+                    <div class="nishman-logo-text">NISH<span>MAN</span></div>
+                    <div class="nishman-contacts">
+                        <p>СВЯЗАТЬСЯ С НАМИ</p>
+                        <a href="tel:+74991102472">+7 (499) 110-24-72</a>
+                        <a href="mailto:info@nishman.ru">info@nishman.ru</a>
+                    </div>
+                    <p class="nishman-address">123112, г. Москва, Пресненская набережная, д. 12, ком. А30 помещение 3</p>
+                    <p class="nishman-copyright">©2017-2026</p>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+        <!-- МОДАЛКА: Детали товара -->
+    <div class="modal" id="productDetailModal">
+        <div class="modal-content product-detail-modal">
+            <button class="close-modal-x" onclick="document.getElementById('productDetailModal').classList.remove('active'); document.body.style.overflow = '';">&times;</button>
+            
+            <div class="product-detail-header">
+                <div class="product-detail-image">NISHMAN</div>
+            </div>
+            
+            <div class="product-detail-category" id="pdCategory">Укладка и стайлинг</div>
+            <h2 class="product-detail-title" id="pdTitle">Название товара</h2>
+            <div class="product-detail-price" id="pdPrice">1200 ₽</div>
+            
+            <div class="product-detail-badges">
+                <span class="pdbadge" id="pdVolume">100 мл</span>
+                <span class="pdbadge" id="pdHairType">Для всех волос</span>
+            </div>
+
+            <div class="product-detail-text">
+                <h4>Эффект</h4>
+                <p id="pdEffect">Описание эффекта...</p>
+                
+                <h4>Способ применения</h4>
+                <p id="pdUsage">Как использовать...</p>
+            </div>
+
+            <button class="checkout-btn" onclick="copyPhoneNumber('+7 927 789-56-21')" style="margin-top: 15px;">Связаться для покупки</button>
+        </div>
+    </div>
+    <script src="nishman-data.js"></script>
     <script src="script.js"></script>
     <!-- Скрипт для вибрации на iOS -->
     <script type="module">
@@ -334,5 +426,6 @@
         // Сохраняем функцию в глобальную переменную с ПРАВИЛЬНЫМ именем
         window.iosHaptic = haptic;
     </script>
+
 </body>
 </html>

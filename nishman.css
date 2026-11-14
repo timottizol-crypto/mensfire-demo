@@ -1,0 +1,356 @@
+
+/* =========================================
+   ВИДЕО-БЛОК NISHMAN
+   ========================================= */
+.nishman-video-container {
+    position: relative;
+    flex-shrink: 0;
+    /* 1. Делаем шире: компенсируем боковые отступы родителя (20px + 20px) */
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-right: -20px;
+    
+    /* 2. Тянем до самого верха: компенсируем верхний отступ .view (70px) + вырез под камеру */
+    margin-top: calc(-70px - env(safe-area-inset-top, 0px)); 
+    
+    /* 3. Прямые сверху, круглые снизу */
+    border-radius: 0 0 24px 24px;
+    
+    overflow: hidden;
+    aspect-ratio: 16 / 9; /* Идеальные пропорции видео */
+    background: #000;
+    
+    /* Оставляем только нижнюю границу и тень, убираем боковые и верхнюю */
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    z-index: 1;
+}
+
+/* Плавное затемнение/забеление краев видео */
+.nishman-video-container::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none; /* Чтобы клики проходили сквозь затемнение на кнопку */
+    z-index: 1; 
+    background: 
+        linear-gradient(to bottom, var(--bg-dark) 0%, transparent 15%),
+        linear-gradient(to top, var(--bg-dark) 0%, transparent 25%),
+        radial-gradient(ellipse at center, transparent 40%, var(--bg-dark) 110%);
+}
+
+.nishman-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Кнопка "О NISHMAN" */
+.nishman-about-btn {
+    position: absolute;
+    bottom: 16px;
+    left: 16px;
+    z-index: 2;
+    
+    /* Премиальное стекло */
+    background: rgba(20, 20, 22, 0.55);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(212, 175, 55, 0.6);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 8px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    
+    transition: transform 0.2s var(--spring), background 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    font-family: var(--font-main);
+}
+
+.nishman-about-btn:active {
+    transform: scale(0.95);
+    background: rgba(212, 175, 55, 0.3);
+}
+
+/* Светлая тема */
+html.light-theme .nishman-about-btn {
+    background: rgba(255, 255, 255, 0.75);
+    border-color: rgba(199, 154, 42, 0.8);
+    color: var(--gold);
+    box-shadow: 
+        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+        0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Заголовки категорий в магазине */
+.nishman-category-title {
+    grid-column: 1 / -1; /* Растягиваем на всю ширину сетки */
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    padding-left: 5px;
+    border-left: 3px solid var(--gold);
+}
+
+/* =========================================
+   МОДАЛКА О NISHMAN
+   ========================================= */
+.about-nishman-modal {
+    position: relative;
+    max-width: 400px;
+    max-height: 85dvh;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    
+    background: rgba(20, 20, 22, 0.85) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    
+    /* Убираем нижний отступ, чтобы баннер прилип к краю */
+    padding: 30px 25px 0 25px !important; 
+    overflow: hidden; /* Важно, чтобы углы модалки обрезали баннер */
+}
+
+.about-nishman-text {
+    flex-grow: 1; /* Текст занимает всё свободное место и скроллится */
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding-right: 5px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-muted);
+}
+
+.about-nishman-text p { margin-bottom: 12px; }
+.about-nishman-text b { color: var(--text-main); }
+
+/* Кнопка-крестик в углу */
+.close-modal-x {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.2s;
+}
+.close-modal-x:active { transform: scale(0.8); }
+
+/* =========================================
+   ОРАНЖЕВЫЙ БАННЕР (ВНУТРИ МОДАЛКИ)
+   ========================================= */
+.about-nishman-modal .nishman-contact-banner {
+    margin: 0 -25px; /* Растягиваем на всю ширину модалки (компенсируем padding 25px) */
+    background: #F5A623; 
+    padding: 25px 20px 0; /* Сверху отступ, снизу 0, так как там темный блок */
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0; /* Баннер не сжимается */
+}
+
+.about-nishman-modal .nishman-contact-banner h3 {
+    color: #000;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1.4;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.about-nishman-modal .nishman-contact-btn {
+    background: #000;
+    color: #FFF;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    text-decoration: none;
+    padding: 12px 30px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    transition: transform 0.2s;
+}
+
+.about-nishman-modal .nishman-contact-btn:active {
+    transform: scale(0.95);
+}
+
+/* Нижняя темная часть баннера */
+.about-nishman-modal .nishman-footer-info {
+    width: 100%;
+    background: #111;
+    padding: 20px 15px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.about-nishman-modal .nishman-logo-text {
+    font-size: 26px;
+    font-weight: 900;
+    color: #FFF;
+    letter-spacing: -1px;
+    margin-bottom: 15px;
+    line-height: 1;
+}
+
+.about-nishman-modal .nishman-logo-text span {
+    color: #666;
+}
+
+.about-nishman-modal .nishman-contacts {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+.about-nishman-modal .nishman-contacts p {
+    color: #FFF;
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+}
+
+.about-nishman-modal .nishman-contacts a {
+    color: #FFF;
+    font-size: 14px;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.3);
+    width: fit-content;
+    margin: 0 auto;
+}
+
+.about-nishman-modal .nishman-address {
+    color: #888;
+    font-size: 9px;
+    margin-bottom: 10px;
+    max-width: 220px;
+    line-height: 1.4;
+}
+
+.about-nishman-modal .nishman-copyright {
+    color: #555;
+    font-size: 9px;
+}
+
+/* =========================================
+   МОДАЛКА ДЕТАЛЕЙ ТОВАРА
+   ========================================= */
+.product-detail-modal {
+    position: relative;
+    max-width: 400px;
+    max-height: 85dvh;
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    
+    background: rgba(20, 20, 22, 0.85) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    padding: 25px !important; 
+    overflow-y: auto;
+}
+
+/* Заглушка вместо фото */
+.product-detail-header {
+    width: 100%;
+    height: 180px;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(0,0,0,0.5));
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.product-detail-image {
+    font-size: 28px;
+    font-weight: 900;
+    color: var(--gold);
+    letter-spacing: 2px;
+}
+
+.product-detail-category {
+    font-size: 11px;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+
+.product-detail-title {
+    font-size: 22px;
+    color: var(--text-main);
+    margin-bottom: 10px;
+    line-height: 1.2;
+}
+
+.product-detail-price {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--gold);
+    margin-bottom: 15px;
+}
+
+.product-detail-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+}
+
+.pdbadge {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.product-detail-text h4 {
+    font-size: 14px;
+    color: var(--text-main);
+    margin-bottom: 5px;
+    margin-top: 15px;
+}
+
+.product-detail-text p {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+/* Светлая тема */
+html.light-theme .product-detail-modal {
+    background: rgba(255, 255, 255, 0.95) !important;
+}
+html.light-theme .pdbadge {
+    background: rgba(0, 0, 0, 0.03);
+    border-color: rgba(0, 0, 0, 0.1);
+}
