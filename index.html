@@ -429,13 +429,15 @@
     <script type="module">
         import { hapticTrigger } from 'https://cdn.jsdelivr.net/npm/ios-haptics@3.3.0/+esm';
 
+        // Отклик только на реальные элементы управления.
+        // Карточки и большие кликабельные блоки исключены, чтобы
+        // прокрутка и простое касание контента не вызывали вибрацию.
         const hapticSelector = [
-            'button', '.nav-item', '.home-level-card', '.home-cta-btn',
-            '.service-card', '.master-card', '.promo-item', '.promo-tab',
-            '.tab-btn', '.date-opt', '.time-opt', '.header-pill',
-            '.action-modal-btn', '.checkout-btn', '.install-app-btn',
-            '.history-toggle-btn', '.btn-cancel-small', '.logout-btn',
-            '.close-btn', '[onclick]'
+            'button',
+            '.nav-item',
+            '.header-pill',
+            '.date-opt',
+            '.time-opt'
         ].join(', ');
 
         const attachedHapticElements = new WeakSet();
