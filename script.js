@@ -1800,7 +1800,6 @@ initTheme();
     const VIBRATE_SELECTORS = [
         'button',
         '.nav-item',
-        '.header-pill',
         '.date-opt',
         '.time-opt'
     ].join(', ');
