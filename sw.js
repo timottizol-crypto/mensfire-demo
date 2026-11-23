@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mensfire-v178'; // Версия с подтверждением установки обновления
+const CACHE_NAME = 'mensfire-v179'; // Версия с подтверждением установки обновления
 const ASSETS = [
   './index.html',
   './style.css',
