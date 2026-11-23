@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mensfire-v176'; // Принудительное обновление клиентского приложения
+const CACHE_NAME = 'mensfire-v177'; // Принудительное обновление клиентского приложения
 const ASSETS = [
   './index.html',
   './style.css',
