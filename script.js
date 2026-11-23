@@ -1822,46 +1822,28 @@ initTheme();
 
 /* =========================================
    НЕЖНАЯ ВИБРАЦИЯ ПРИ НАЖАТИИ (ТОЛЬКО ANDROID)
+   Срабатывает после полноценного клика, а не при начале касания/скролла.
    ========================================= */
 (function() {
-    // Если устройство не поддерживает вибрацию (iOS) — просто выходим
     if (!('vibrate' in navigator)) return;
 
     const VIBRATE_SELECTORS = [
         'button',
         '.nav-item',
-        '.home-level-card',
-        '.home-cta-btn',
-        '.service-card',
-        '.master-card',
-        '.promo-item',
-        '.promo-tab',
-        '.tab-btn',
-        '.date-opt',
-        '.time-opt',
         '.header-pill',
-        '.action-modal-btn',
-        '.checkout-btn',
-        '.install-app-btn',
-        '.history-toggle-btn',
-        '.btn-cancel-small',
-        '.logout-btn',
-        '.close-btn',
-        '[onclick]'
+        '.date-opt',
+        '.time-opt'
     ].join(', ');
 
-    document.addEventListener('pointerdown', (e) => {
-        // Только ЛКМ / касание, не правая кнопка
-        if (e.button !== undefined && e.button !== 0) return;
-
+    document.addEventListener('click', (e) => {
         const el = e.target.closest(VIBRATE_SELECTORS);
         if (!el) return;
-        if (el.disabled || el.classList.contains('disabled')) return;
+        if (el.disabled || el.getAttribute('aria-disabled') === 'true' ||
+            el.classList.contains('disabled')) return;
 
-        // Нежная короткая вибрация — 8мс, очень мягкий импульс
         try { navigator.vibrate(8); } catch (_) {}
-    }, { passive: true });
-})();
+    }, true);
+})();;
 
 /* iOS haptics подключаются через реальный switch-overlay в index.html.
    Старый программный вызов удалён: в новых iOS он не даёт системного отклика. */
