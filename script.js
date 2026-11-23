@@ -1788,7 +1788,55 @@ function initTheme() {
 }
 
 // Применяем сохранённую тему при загрузке
-initTheme();      
+
+initTheme();
+
+/* =========================================
+   ДЕЙСТВИЯ ШАПКИ ТОЛЬКО В ЛИЧНОМ КАБИНЕТЕ
+   ========================================= */
+(function initProfileHeaderActions() {
+    const leftPill = document.querySelector('.app-header .left-pill');
+    const rightPill = document.querySelector('.app-header .right-pill');
+
+    // Шапка видима на странице профиля. Проверка также защищает
+    // от случайных кликов по её скрытым областям в других разделах.
+    function isProfileActive() {
+        return document.getElementById('viewProfile')?.classList.contains('active') === true;
+    }
+
+    function toggleTheme() {
+        if (!isProfileActive()) return;
+
+        const isLight = document.documentElement.classList.toggle('light-theme');
+        localStorage.setItem('mensfire_theme', isLight ? 'light' : 'dark');
+
+        const themeIcon = document.getElementById('themeIcon');
+        if (themeIcon) themeIcon.innerText = isLight ? '🌙' : '☀️';
+
+        document.querySelector('meta[name="theme-color"]')
+            ?.setAttribute('content', isLight ? '#F5F5F7' : '#000000');
+        document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
+            ?.setAttribute('content', isLight ? 'default' : 'black');
+    }
+
+    function bindAction(element, action) {
+        if (!element) return;
+        element.addEventListener('click', action);
+        element.addEventListener('keydown', event => {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            event.preventDefault();
+            action();
+        });
+    }
+
+    bindAction(leftPill, () => {
+        if (!isProfileActive()) return;
+        switchView('viewHome', document.getElementById('navHome'));
+    });
+
+    bindAction(rightPill, toggleTheme);
+})();
+
 
 /* =========================================
    НЕЖНАЯ ВИБРАЦИЯ ПРИ НАЖАТИИ (ТОЛЬКО ANDROID)
