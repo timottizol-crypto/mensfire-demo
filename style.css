@@ -2659,3 +2659,187 @@ html.is-pwa .phone-cta-btn {
     filter: none !important; 
     transition: none !important;
 }
+
+/* =========================================
+   DESKTOP LAYOUT — ИЗОЛИРОВАНО ОТ МОБИЛЬНОЙ ВЕРСИИ
+   ========================================= */
+@media (min-width: 900px) {
+    html,
+    body {
+        width: 100%;
+        min-width: 0;
+    }
+
+    body {
+        overflow: hidden;
+    }
+
+    #appContainer {
+        width: 100%;
+        max-width: 1920px;
+        margin: 0 auto;
+    }
+
+    /* На компьютере используем спокойный однотонный фон.
+       Пользовательское фоновое изображение остаётся только на мобильных. */
+    #viewHome,
+    html.light-theme #viewHome {
+        background: var(--bg-dark) !important;
+    }
+
+    #splashScreen::before {
+        display: none !important;
+        background: none !important;
+        animation: none !important;
+    }
+
+    .app-header {
+        top: 18px;
+        left: 50%;
+        width: min(100% - 64px, 1440px);
+        padding: 0;
+        transform: translateX(-50%);
+        align-items: center;
+    }
+
+    .header-pill {
+        width: auto;
+        min-width: 150px;
+        height: 48px;
+        padding: 0 22px;
+    }
+
+    .left-pill .logo {
+        gap: 10px;
+    }
+
+    .left-pill .logo svg {
+        width: 19px;
+        height: 19px;
+    }
+
+    .left-pill .logo-text,
+    .left-pill .logo-text span {
+        font-size: 12px;
+    }
+
+    .right-pill {
+        min-width: 58px;
+        width: 58px;
+        padding: 0;
+    }
+
+    .header-title {
+        font-size: 15px;
+        letter-spacing: 2.5px;
+    }
+
+    .view {
+        width: min(100%, 1440px);
+        margin: 0 auto;
+        padding: 104px 48px 112px;
+        min-height: 0;
+        background: var(--bg-dark);
+        overflow-x: hidden;
+    }
+
+    #viewHome {
+        padding-top: 112px;
+        padding-bottom: 36px !important;
+        overflow-y: auto !important;
+        display: none;
+        gap: 24px;
+    }
+
+    #viewHome.active {
+        display: flex;
+    }
+
+    .home-top-row,
+    .home-bookings-card,
+    .home-bottom-actions,
+    .promo-carousel-wrapper,
+    .phone-cta-btn {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .home-top-row {
+        justify-content: flex-start;
+    }
+
+    .home-level-card {
+        max-width: 520px;
+    }
+
+    .home-bookings-card {
+        min-height: 220px;
+        max-height: 360px;
+    }
+
+    .home-bottom-actions {
+        margin-top: 0 !important;
+        padding: 0 !important;
+        gap: 16px;
+    }
+
+    .promo-carousel-wrapper {
+        overflow: hidden;
+    }
+
+    .bottom-nav {
+        left: 50%;
+        right: auto;
+        bottom: 20px;
+        width: min(720px, calc(100% - 64px));
+        height: 70px;
+        padding: 5px;
+        transform: translateX(-50%);
+    }
+
+    .nav-item {
+        font-size: 11px;
+        gap: 3px;
+    }
+
+    .nav-item svg {
+        width: 23px;
+        height: 23px;
+    }
+
+    /* Контентные разделы: широкие сетки вместо растянутых мобильных карточек. */
+    .services-grid,
+    .masters-grid {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 18px;
+    }
+
+    .category-tabs {
+        max-width: 520px;
+    }
+
+    .book-top-section {
+        width: 100%;
+    }
+
+    .nishman-video-container {
+        max-width: 100%;
+    }
+
+    .profile-main-card,
+    .profile-history-card {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+@media (min-width: 900px) and (max-width: 1200px) {
+    .view {
+        padding-left: 32px;
+        padding-right: 32px;
+    }
+
+    .app-header {
+        width: calc(100% - 48px);
+    }
+}
