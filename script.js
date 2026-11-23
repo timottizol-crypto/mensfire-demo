@@ -856,14 +856,6 @@ function renderProfileBookings() {
     }
 }
 
-function goHomeFromHeader() {
-    const homeView = document.getElementById('viewHome');
-    // Переключаем только если мы НЕ на главной странице
-    if (!homeView.classList.contains('active')) {
-        switchView('viewHome', document.getElementById('navHome'));
-    }
-}
-
 function showToast(message, type = 'info', onClick = null) {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
@@ -1714,7 +1706,6 @@ function handleInstallClick() {
         '.tab-btn',
         '.date-opt',
         '.time-opt',
-        '.header-pill',
         '.action-modal-btn',
         '.checkout-btn',
         '.install-app-btn',
@@ -1794,27 +1785,6 @@ function initTheme() {
 
     document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
         ?.setAttribute('content', saved === 'light' ? 'default' : 'black');
-}
-
-function toggleTheme() {
-    const html = document.documentElement;
-    html.classList.toggle('light-theme');
-    const isLight = html.classList.contains('light-theme');
-    localStorage.setItem('mensfire_theme', isLight ? 'light' : 'dark');
-    
-    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isLight ? '#F5F5F7' : '#0a0a0a');
-    document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
-        ?.setAttribute('content', isLight ? 'default' : 'black');
-    // Меняем иконку
-    const themeIcon = document.getElementById('themeIcon');
-    if (themeIcon) {
-        themeIcon.innerText = isLight ? '🌙' : '☀️';
-    }
-
-    // ПЕРЕРИСОВЫВАЕМ ЭЛЕМЕНТЫ С ЦВЕТАМИ
-    if (typeof renderHomeLevel === 'function') renderHomeLevel();
-    
-    showToast(isLight ? 'Светлая тема' : 'Тёмная тема', 'info');
 }
 
 // Применяем сохранённую тему при загрузке
