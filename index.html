@@ -52,7 +52,7 @@
     <div id="appContainer">
         <div class="app-header">
             <!-- Левая пилюля: Логотип -->
-            <div class="header-pill left-pill" role="button" tabindex="0" aria-label="Вернуться на главную страницу" onclick="handleProfileHeaderHome()">
+            <div class="header-pill left-pill" role="button" tabindex="0" aria-label="Вернуться на главную страницу" onclick="handleProfileHeaderHome()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleProfileHeaderHome();}">
                 <div class="logo">
                     <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
                         <circle cx="6" cy="6" r="3"></circle>
@@ -71,7 +71,7 @@
 
             
                 <!-- Правая пилюля: Переключатель темы -->
-            <div class="header-pill right-pill" role="button" tabindex="0" aria-label="Переключить тему" onclick="handleProfileHeaderTheme()">
+            <div class="header-pill right-pill" role="button" tabindex="0" aria-label="Переключить тему" onclick="handleProfileHeaderTheme()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();handleProfileHeaderTheme();}">
                 <span id="themeIcon" style="font-size: 20px;">☀️</span>
             </div>
         </div>
