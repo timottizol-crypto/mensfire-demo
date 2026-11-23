@@ -2892,13 +2892,25 @@ html.is-pwa .phone-cta-btn {
     }
 }
 
-/* Экран входа/загрузки всегда остаётся чёрным независимо от темы. */
-#splashScreen,
-html.light-theme #splashScreen {
-    background: #000 !important;
+/* На телефонах экран загрузки показывает установленную фотографию.
+   На десктопе сохраняем чёрную заставку. */
+@media (max-width: 899px) {
+    #splashScreen,
+    html.light-theme #splashScreen {
+        background: transparent !important;
+    }
+
+    #splashScreen::before,
+    html.light-theme #splashScreen::before {
+        background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.9)), var(--bg-image) center/cover !important;
+    }
 }
 
-#splashScreen::before,
-html.light-theme #splashScreen::before {
-    background: #000 !important;
+@media (min-width: 900px) {
+    #splashScreen,
+    html.light-theme #splashScreen,
+    #splashScreen::before,
+    html.light-theme #splashScreen::before {
+        background: #000 !important;
+    }
 }
