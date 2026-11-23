@@ -2207,6 +2207,20 @@ body.header-hidden #viewBook.active {
     margin-top: 2px;
 }
 
+/* Гостевая подсказка длиннее обычной — разрешаем перенос внутри карточки. */
+.home-level-card.is-guest .home-level-info {
+    padding-right: 0;
+    min-width: 0;
+}
+
+.home-level-card.is-guest .status-hint {
+    padding-right: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    word-break: normal;
+    max-width: 100%;
+}
+
 /* Если текст пустой — скрываем */
 .home-level-info .status-hint:empty {
     display: none;
