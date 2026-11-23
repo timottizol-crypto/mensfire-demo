@@ -1791,6 +1791,9 @@ function initTheme() {
     } else {
         if (themeIcon) themeIcon.innerText = '☀️'; // В темной теме показываем солнце
     }
+
+    document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
+        ?.setAttribute('content', saved === 'light' ? 'default' : 'black');
 }
 
 function toggleTheme() {
@@ -1800,6 +1803,8 @@ function toggleTheme() {
     localStorage.setItem('mensfire_theme', isLight ? 'light' : 'dark');
     
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isLight ? '#F5F5F7' : '#0a0a0a');
+    document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
+        ?.setAttribute('content', isLight ? 'default' : 'black');
     // Меняем иконку
     const themeIcon = document.getElementById('themeIcon');
     if (themeIcon) {
