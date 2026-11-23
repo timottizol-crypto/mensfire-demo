@@ -1,4 +1,4 @@
-const CACHE_NAME = 'mensfire-v175'; // <-- Подняли версию
+const CACHE_NAME = 'mensfire-v176'; // Принудительное обновление клиентского приложения
 const ASSETS = [
   './index.html',
   './style.css',
@@ -14,6 +14,8 @@ const ASSETS = [
 ];
 
 self.addEventListener('install', (event) => {
+  // Не оставляем старую версию PWA активной до закрытия всех вкладок.
+  self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
       return Promise.allSettled(
