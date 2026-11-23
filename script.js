@@ -190,44 +190,92 @@ window.addEventListener('DOMContentLoaded', () => {
     try {
 
         /* =========================================
-        АВТООБНОВЛЕНИЕ ПРИЛОЖЕНИЯ (PWA)
+        ОБНОВЛЕНИЕ PWA С ПОДТВЕРЖДЕНИЕМ ПОЛЬЗОВАТЕЛЯ
         ========================================= */
         if ('serviceWorker' in navigator) {
-            let refreshing;
+            let refreshing = false;
+            const updateModal = document.getElementById('appUpdateModal');
+            const installUpdateBtn = document.getElementById('installUpdateBtn');
+            const cancelUpdateBtn = document.getElementById('cancelUpdateBtn');
+            let updatePromptShown = false;
+
+            const showUpdatePrompt = () => {
+                if (!updateModal || updatePromptShown) return;
+                updatePromptShown = true;
+                updateModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            };
+
+            const closeUpdatePrompt = () => {
+                if (!updateModal) return;
+                updateModal.classList.remove('active');
+                document.body.style.overflow = '';
+                updatePromptShown = false;
+            };
+
+            // Отмена закрывает окно только на этот запуск. Ожидающее обновление
+            // остаётся и будет предложено снова при следующем входе.
+            if (cancelUpdateBtn) cancelUpdateBtn.addEventListener('click', closeUpdatePrompt);
+
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 if (refreshing) return;
-                window.location.reload();
                 refreshing = true;
+                window.location.reload();
             });
+
+            if (installUpdateBtn) {
+                installUpdateBtn.addEventListener('click', async () => {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    const waitingWorker = registration && registration.waiting;
+                    if (!waitingWorker) {
+                        closeUpdatePrompt();
+                        if (registration) registration.update();
+                        return;
+                    }
+                    installUpdateBtn.disabled = true;
+                    installUpdateBtn.textContent = 'Устанавливаем...';
+                    waitingWorker.postMessage({ type: 'SKIP_WAITING' });
+                });
+            }
 
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then(reg => {
-                    reg.onupdatefound = () => {
+                    // Если обновление осталось после нажатия «Отмена»,
+                    // оно снова будет предложено при каждом новом запуске.
+                    if (reg.waiting && navigator.serviceWorker.controller) showUpdatePrompt();
+
+                    reg.addEventListener('updatefound', () => {
                         const installingWorker = reg.installing;
-                        installingWorker.onstatechange = () => {
-                            if (installingWorker.state === 'installed') {
-                                if (navigator.serviceWorker.controller) {
-                                    // Вместо confirm используем ваш красивый Toast
-                                    showToast('Доступно обновление! Нажмите, чтобы обновить.', 'success', () => {
-                                        installingWorker.postMessage({ type: 'SKIP_WAITING' });
-                                    });
-                                    // Через 2 секунды автоматически применяем обновление
-                                    // (можно убрать, если хотите, чтобы пользователь сам нажимал)
-                                    setTimeout(() => {
-                                        installingWorker.postMessage({ type: 'SKIP_WAITING' });
-                                    }, 2000);
-                                }
+                        if (!installingWorker) return;
+                        installingWorker.addEventListener('statechange', () => {
+                            if (installingWorker.state === 'installed' &&
+                                navigator.serviceWorker.controller && reg.waiting) {
+                                showUpdatePrompt();
                             }
-                        };
-                    };
+                        });
+                    });
+
+                    reg.update().catch(error => {
+                        console.warn('Не удалось проверить обновление:', error);
+                    });
+                }).catch(error => {
+                    console.warn('Не удалось зарегистрировать Service Worker:', error);
                 });
             });
         }
-        // Принудительная проверка обновлений при возвращении на экран (для iOS)
+
+        // При возвращении в приложение проверяем ожидающее обновление.
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible' && 'serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistration().then(reg => {
-                    if (reg) reg.update();
+                    if (!reg) return;
+                    if (reg.waiting && navigator.serviceWorker.controller) {
+                        const modal = document.getElementById('appUpdateModal');
+                        if (modal) modal.classList.add('active');
+                    }
+                    reg.update().catch(error => {
+                        console.warn('Не удалось проверить обновление:', error);
+                    });
                 });
             }
         });
