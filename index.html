@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#0a0a0a">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="img/icon-dark.png">
     <link rel="apple-touch-icon" href="img/icon-dark.png">
@@ -17,6 +17,12 @@
         if (isStandalone) {
             document.documentElement.classList.add('is-pwa');
         }
+
+        // Подготавливаем системную верхнюю панель iOS до первого отображения приложения.
+        const savedTheme = localStorage.getItem('mensfire_theme');
+        const isLightTheme = savedTheme === 'light';
+        document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isLightTheme ? '#F5F5F7' : '#000000');
+        document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')?.setAttribute('content', isLightTheme ? 'default' : 'black');
     </script>
 
     <link rel="stylesheet" href="style.css">
@@ -419,12 +425,50 @@
     </div>
     <script src="nishman-data.js"></script>
     <script src="script.js"></script>
-    <!-- Скрипт для вибрации на iOS -->
+    <!-- Тактильный отклик iOS: реальное касание системного switch-контрола -->
     <script type="module">
-        import { haptic } from 'https://cdn.jsdelivr.net/npm/ios-haptics@0.0.5/+esm';
-        
-        // Сохраняем функцию в глобальную переменную с ПРАВИЛЬНЫМ именем
-        window.iosHaptic = haptic;
+        import { hapticTrigger } from 'https://cdn.jsdelivr.net/npm/ios-haptics@3.3.0/+esm';
+
+        const hapticSelector = [
+            'button', '.nav-item', '.home-level-card', '.home-cta-btn',
+            '.service-card', '.master-card', '.promo-item', '.promo-tab',
+            '.tab-btn', '.date-opt', '.time-opt', '.header-pill',
+            '.action-modal-btn', '.checkout-btn', '.install-app-btn',
+            '.history-toggle-btn', '.btn-cancel-small', '.logout-btn',
+            '.close-btn', '[onclick]'
+        ].join(', ');
+
+        const attachedHapticElements = new WeakSet();
+
+        function attachHaptics(root) {
+            if (root.nodeType === 1 && root.matches?.(hapticSelector)) {
+                attachHaptic(root);
+            }
+            root.querySelectorAll?.(hapticSelector).forEach(attachHaptic);
+        }
+
+        function attachHaptic(element) {
+            if (attachedHapticElements.has(element)) return;
+            if (element.disabled || element.classList.contains('disabled')) return;
+
+            try {
+                hapticTrigger(element);
+                attachedHapticElements.add(element);
+            } catch (error) {
+                console.warn('Не удалось подключить тактильный отклик:', error);
+            }
+        }
+
+        // Подключаем существующие элементы и автоматически — новые карточки/кнопки.
+        attachHaptics(document);
+        const hapticObserver = new MutationObserver(records => {
+            records.forEach(record => {
+                record.addedNodes.forEach(node => {
+                    if (node.nodeType === 1) attachHaptics(node);
+                });
+            });
+        });
+        hapticObserver.observe(document.body, { childList: true, subtree: true });
     </script>
 
 </body>
