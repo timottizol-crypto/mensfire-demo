@@ -628,14 +628,17 @@ function renderHomeLevel() {
     const levelInfo = document.querySelector('.home-level-info');
 
     if (!currentUser) {
+        levelCard.classList.add('is-guest');
         statusText.innerText = "Гость";
-        statusSub.innerText = "Войдите, чтобы копить визиты";
+        statusSub.innerText = "Войдите в кабинет, чтобы копить бонусы";
         circle.style.strokeDashoffset = 100;
         circleText.innerText = "0/0";
         levelCard.style.setProperty('--level-color', '#555555');
         levelInfo?.querySelector('.status-points')?.remove();
         return;
     }
+
+    levelCard.classList.remove('is-guest');
 
     // Считаем только визиты с суммой > 1000₽
     const validVisitsCount = bookings.filter(b =>
