@@ -1687,6 +1687,8 @@ function openPromoCart(serviceId, barberId) {
     ========================================= */
 let deferredPrompt;
 const installBtn = document.getElementById('installAppBtn');
+// Доступно обработчику beforeinstallprompt в глобальной области.
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
 // Проверяем устройство и браузер
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -1842,48 +1844,25 @@ initTheme();
 /* =========================================
    ДЕЙСТВИЯ ШАПКИ ТОЛЬКО В ЛИЧНОМ КАБИНЕТЕ
    ========================================= */
-(function initProfileHeaderActions() {
-    const leftPill = document.querySelector('.app-header .left-pill');
-    const rightPill = document.querySelector('.app-header .right-pill');
+function handleProfileHeaderHome() {
+    if (document.getElementById('viewProfile')?.classList.contains('active') !== true) return;
+    switchView('viewHome', document.getElementById('navHome'));
+}
 
-    // Шапка видима на странице профиля. Проверка также защищает
-    // от случайных кликов по её скрытым областям в других разделах.
-    function isProfileActive() {
-        return document.getElementById('viewProfile')?.classList.contains('active') === true;
-    }
+function handleProfileHeaderTheme() {
+    if (document.getElementById('viewProfile')?.classList.contains('active') !== true) return;
 
-    function toggleTheme() {
-        if (!isProfileActive()) return;
+    const isLight = document.documentElement.classList.toggle('light-theme');
+    localStorage.setItem('mensfire_theme', isLight ? 'light' : 'dark');
 
-        const isLight = document.documentElement.classList.toggle('light-theme');
-        localStorage.setItem('mensfire_theme', isLight ? 'light' : 'dark');
+    const themeIcon = document.getElementById('themeIcon');
+    if (themeIcon) themeIcon.innerText = isLight ? '🌙' : '☀️';
 
-        const themeIcon = document.getElementById('themeIcon');
-        if (themeIcon) themeIcon.innerText = isLight ? '🌙' : '☀️';
-
-        document.querySelector('meta[name="theme-color"]')
-            ?.setAttribute('content', isLight ? '#F5F5F7' : '#000000');
-        document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
-            ?.setAttribute('content', isLight ? 'default' : 'black');
-    }
-
-    function bindAction(element, action) {
-        if (!element) return;
-        element.addEventListener('click', action);
-        element.addEventListener('keydown', event => {
-            if (event.key !== 'Enter' && event.key !== ' ') return;
-            event.preventDefault();
-            action();
-        });
-    }
-
-    bindAction(leftPill, () => {
-        if (!isProfileActive()) return;
-        switchView('viewHome', document.getElementById('navHome'));
-    });
-
-    bindAction(rightPill, toggleTheme);
-})();
+    document.querySelector('meta[name="theme-color"]')
+        ?.setAttribute('content', isLight ? '#F5F5F7' : '#000000');
+    document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]')
+        ?.setAttribute('content', isLight ? 'default' : 'black');
+}
 
 
 /* =========================================
