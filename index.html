@@ -52,7 +52,7 @@
     <div id="appContainer">
         <div class="app-header">
             <!-- Левая пилюля: Логотип -->
-            <div class="header-pill left-pill" onclick="goHomeFromHeader()">
+            <div class="header-pill left-pill">
                 <div class="logo">
                     <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2">
                         <circle cx="6" cy="6" r="3"></circle>
@@ -71,7 +71,7 @@
 
             
                 <!-- Правая пилюля: Переключатель темы -->
-            <div class="header-pill right-pill" onclick="toggleTheme()" id="headerThemeBtn">
+            <div class="header-pill right-pill" id="headerThemeBtn">
                 <span id="themeIcon" style="font-size: 20px;">☀️</span>
             </div>
         </div>
@@ -435,8 +435,7 @@
         const hapticSelector = [
             'button',
             '.nav-item',
-            '.header-pill',
-            '.date-opt',
+                '.date-opt',
             '.time-opt'
         ].join(', ');
 
