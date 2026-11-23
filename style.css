@@ -2891,3 +2891,14 @@ html.is-pwa .phone-cta-btn {
         width: calc(100% - 48px);
     }
 }
+
+/* Экран входа/загрузки всегда остаётся чёрным независимо от темы. */
+#splashScreen,
+html.light-theme #splashScreen {
+    background: #000 !important;
+}
+
+#splashScreen::before,
+html.light-theme #splashScreen::before {
+    background: #000 !important;
+}
