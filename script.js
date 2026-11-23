@@ -1687,8 +1687,6 @@ function openPromoCart(serviceId, barberId) {
     ========================================= */
 let deferredPrompt;
 const installBtn = document.getElementById('installAppBtn');
-// Доступно обработчику beforeinstallprompt в глобальной области.
-const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
 // Проверяем устройство и браузер
 const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
