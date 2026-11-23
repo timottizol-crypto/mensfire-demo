@@ -191,31 +191,39 @@ window.addEventListener('DOMContentLoaded', () => {
 
         /* =========================================
         ОБНОВЛЕНИЕ PWA С ПОДТВЕРЖДЕНИЕМ ПОЛЬЗОВАТЕЛЯ
+        Показываем запрос только после завершения splash-экрана.
         ========================================= */
+        let appReady = false;
+        let updatePromptPending = false;
+        let updatePromptShown = false;
+        const updateModal = document.getElementById('appUpdateModal');
+        const installUpdateBtn = document.getElementById('installUpdateBtn');
+        const cancelUpdateBtn = document.getElementById('cancelUpdateBtn');
+
+        const showUpdatePrompt = () => {
+            if (!updateModal) return;
+            updatePromptPending = true;
+            if (!appReady || updatePromptShown) return;
+
+            updatePromptPending = false;
+            updatePromptShown = true;
+            updateModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+
+        const closeUpdatePrompt = () => {
+            if (!updateModal) return;
+            updateModal.classList.remove('active');
+            document.body.style.overflow = '';
+            updatePromptShown = false;
+        };
+
+        // Отмена закрывает окно только на этот запуск. Обновление остаётся
+        // ожидающим и будет предложено снова при следующем открытии приложения.
+        if (cancelUpdateBtn) cancelUpdateBtn.addEventListener('click', closeUpdatePrompt);
+
         if ('serviceWorker' in navigator) {
             let refreshing = false;
-            const updateModal = document.getElementById('appUpdateModal');
-            const installUpdateBtn = document.getElementById('installUpdateBtn');
-            const cancelUpdateBtn = document.getElementById('cancelUpdateBtn');
-            let updatePromptShown = false;
-
-            const showUpdatePrompt = () => {
-                if (!updateModal || updatePromptShown) return;
-                updatePromptShown = true;
-                updateModal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            };
-
-            const closeUpdatePrompt = () => {
-                if (!updateModal) return;
-                updateModal.classList.remove('active');
-                document.body.style.overflow = '';
-                updatePromptShown = false;
-            };
-
-            // Отмена закрывает окно только на этот запуск. Ожидающее обновление
-            // остаётся и будет предложено снова при следующем входе.
-            if (cancelUpdateBtn) cancelUpdateBtn.addEventListener('click', closeUpdatePrompt);
 
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 if (refreshing) return;
@@ -240,8 +248,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('sw.js').then(reg => {
-                    // Если обновление осталось после нажатия «Отмена»,
-                    // оно снова будет предложено при каждом новом запуске.
+                    // Если обновление уже ожидает, запоминаем его до открытия приложения.
                     if (reg.waiting && navigator.serviceWorker.controller) showUpdatePrompt();
 
                     reg.addEventListener('updatefound', () => {
@@ -264,15 +271,13 @@ window.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // При возвращении в приложение проверяем ожидающее обновление.
+        // При возвращении в приложение проверяем обновление, но не показываем
+        // окно поверх загрузочного экрана.
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible' && 'serviceWorker' in navigator) {
                 navigator.serviceWorker.getRegistration().then(reg => {
                     if (!reg) return;
-                    if (reg.waiting && navigator.serviceWorker.controller) {
-                        const modal = document.getElementById('appUpdateModal');
-                        if (modal) modal.classList.add('active');
-                    }
+                    if (reg.waiting && navigator.serviceWorker.controller) showUpdatePrompt();
                     reg.update().catch(error => {
                         console.warn('Не удалось проверить обновление:', error);
                     });
@@ -322,7 +327,11 @@ window.addEventListener('DOMContentLoaded', () => {
             initNavBubble();
             initPromoCarousel();
             renderNishmanProducts();
-            
+
+            // Основной интерфейс уже открыт — теперь можно показать отложенное обновление.
+            appReady = true;
+            if (updatePromptPending) showUpdatePrompt();
+
         }, 3500);
 
     } catch (error) {
@@ -330,6 +339,8 @@ window.addEventListener('DOMContentLoaded', () => {
         console.error("Ошибка при загрузке:", error);
         document.getElementById('splashScreen').classList.add('hidden');
         document.getElementById('appContainer').classList.add('visible');
+        appReady = true;
+        if (updatePromptPending) showUpdatePrompt();
     }
 });
 
