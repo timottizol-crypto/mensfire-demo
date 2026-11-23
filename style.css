@@ -168,7 +168,7 @@ body {
     width: 100%;
     padding: 0 12px;
     z-index: 100;
-    pointer-events: none; /* Клики проходят сквозь пустое пространство */
+    pointer-events: auto; /* Шапка принимает касания; скрытая шапка отключается ниже */
     gap: 10px;
 }
 
