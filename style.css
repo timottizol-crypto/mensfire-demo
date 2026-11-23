@@ -1,3 +1,8 @@
+html {
+    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+}
+
 :root {
     --bg-dark: #0a0a0a;
     --bg-card: #1E1E1E;
