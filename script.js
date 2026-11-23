@@ -424,6 +424,46 @@ function switchView(viewId, navElement) {
     }
 }
 
+/* =========================================
+   ОТКЛЮЧАЕМ PULL-TO-REFRESH БРАУЗЕРА
+   Обычная прокрутка содержимого приложения остаётся доступной.
+   ========================================= */
+let pullRefreshTouchY = 0;
+
+document.addEventListener('touchstart', event => {
+    if (event.touches && event.touches.length === 1) {
+        pullRefreshTouchY = event.touches[0].clientY;
+    }
+}, { passive: true });
+
+document.addEventListener('touchmove', event => {
+    if (!event.touches || event.touches.length !== 1) return;
+
+    const currentY = event.touches[0].clientY;
+    const movingDown = currentY > pullRefreshTouchY;
+    pullRefreshTouchY = currentY;
+
+    // Не трогаем горизонтальные жесты и обычную прокрутку вверх.
+    if (!movingDown) return;
+
+    // Если хотя бы один прокручиваемый родитель ещё не вверху,
+    // браузер должен продолжить штатную прокрутку, а не обновлять страницу.
+    let node = event.target instanceof Element ? event.target : event.target?.parentElement;
+    while (node && node !== document.body && node !== document.documentElement) {
+        const style = window.getComputedStyle(node);
+        const canScrollVertically = /(auto|scroll|overlay)/.test(style.overflowY) &&
+            node.scrollHeight > node.clientHeight;
+        if (canScrollVertically && node.scrollTop > 0) return;
+        node = node.parentElement;
+    }
+
+    const activeView = document.querySelector('.view.active');
+    if (activeView && activeView.scrollTop > 0) return;
+
+    // В верхней точке блокируем только жест вытягивания вниз.
+    if (event.cancelable) event.preventDefault();
+}, { passive: false });
+
 /* ==========================
     ЛОГИКА СВАЙПОВ (ЛИСТАНИЕ)
     ========================== */
